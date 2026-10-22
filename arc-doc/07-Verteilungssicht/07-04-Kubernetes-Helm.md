@@ -13,10 +13,9 @@ flowchart LR
         SGS["Service game-server :80"] --> GS["Deployment game-server<br/>1 Replica, Recreate"]
         GS --> SPH["Service physics :8081"] --> PH["Deployment physics<br/>2 Replicas"]
         GS --> SAI["Service enemy-ai :8083"] --> AI["Deployment enemy-ai"]
-        GS --> SLB["Service leaderboard :8082"] --> LB["Deployment leaderboard"]
-        LB --> SPG["Service postgres"] --> PG[("Deployment postgres<br/>emptyDir")]
+        GS --> SLB["Service leaderboard :8082"] --> LB["Deployment leaderboard<br/>1 Replica, H2 in emptyDir"]
         SW["Deployment player-swarm<br/>10 Spieler/Pod"] --> SGS
-        SEC[["Secrets: postgres password, llm api-key"]]
+        SEC[["Secret: llm api-key"]]
     end
     AI -- "llm.baseUrl" --> LL["LiteLLM (außerhalb des Charts)"]
     NS -. "OTLP gRPC otel.endpoint" .-> SZ["SigNoz-Collector im Cluster"]
@@ -30,6 +29,7 @@ flowchart LR
 - **Probes:** Readiness/Liveness über `/actuator/health`.
 - **Telemetrie:** gemeinsame Env-Variablen aus `_helpers.tpl`; Resource-Attribute inkl. `k8s.pod.name`, `k8s.namespace.name`, `k8s.node.name`, `deployment.environment.name=workshop`; `extraResourceAttributes` z. B. für Teams.
 - **Ingress:** optional; Annotationen für ingress-nginx setzen WebSocket-Timeouts auf 3600 s.
-- **Postgres:** im Chart bewusst flüchtig (`emptyDir`), alternativ externe DB über `postgres.externalUrl`.
+- **Leaderboard-Daten:** H2-Datei in einem `emptyDir` an `/data`, bewusst flüchtig. `leaderboard.replicas` muss 1 bleiben,
+  da jede Replica ihre eigene Datei hätte.
 - **LiteLLM/Modell** sind nicht Teil des Charts. <!-- TODO: Bitte ergänzen – wo läuft LiteLLM im Cluster-Szenario? -->
 - Ob das Cluster-Szenario im Workshop überhaupt genutzt wird, ist offen. <!-- TODO: Bitte ergänzen -->

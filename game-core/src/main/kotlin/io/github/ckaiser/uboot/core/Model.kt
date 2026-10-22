@@ -59,7 +59,7 @@ data class Chaos(
     val hullLeak: Boolean = false,
     /** Meeresströmung (m/s², positiv = nach rechts) */
     val current: Double = 0.0,
-    /** Künstliche DB-Verzögerung im Leaderboard (ms, via pg_sleep) */
+    /** Künstliche DB-Verzögerung im Leaderboard (ms, vor jedem Insert) */
     val leaderboardSlowMs: Int = 0,
     /** Künstliche Verzögerung in der Gegner-KI (ms) */
     val aiLatencyMs: Int = 0,

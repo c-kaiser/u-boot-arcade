@@ -27,7 +27,7 @@
 
 | Begriff | Definition |
 |---------|-----------|
-| Chaos / Chaos-Schalter | Gezielt auslösbare Störung (`Chaos`), heute global im Admin-Panel: Physik-Latenz, Physik-Fehlerrate, Leaderboard-DB langsam, KI-Latenz, KI-Endlosschleife, Memory Leak, Kesselkühlung defekt, Leck im Rumpf, Meeresströmung. Zielbild (**geplant**): Störung pro U-Boot auf einer Skala. |
+| Chaos / Chaos-Schalter | Gezielt auslösbare Störung (`Chaos`), heute global im Admin-Panel: Physik-Latenz, Physik-Fehlerrate, Leaderboard langsam (verzögert den Insert-Request, nicht die DB), KI-Latenz, KI-Endlosschleife, Memory Leak, Kesselkühlung defekt, Leck im Rumpf, Meeresströmung. Zielbild (**geplant**): Störung pro U-Boot auf einer Skala. |
 | KI-Endlosschleife (Runaway) | Chaos-Schalter `aiRunaway`: Gegner-KI fragt das LLM bis zu 8× pro Entscheidung mit wachsendem Kontext; treibt Tokens und Kosten. |
 | Admin-Panel | `admin.html` im Game-Server: Bots, Gegner, LLM an/aus, Chaos-Schalter. |
 | Fallback | Regelbasierte Gegner-Entscheidung, wenn LLM aus ist oder fehlschlägt (`source=fallback`, `outcome` z. B. `timeout`, `parse_error`). |
@@ -64,5 +64,5 @@
 | LLM | Large Language Model |
 | RTT | Round-Trip-Time (`game.client.rtt`) |
 | WS | WebSocket |
-| H2 | Eingebettete Java-Datenbank, **geplant** für das Leaderboard ohne Postgres |
+| H2 | Eingebettete Java-Datenbank; das Leaderboard nutzt sie als Datei-DB in allen Betriebsarten (ADR-07) |
 | ADR | Architecture Decision Record |

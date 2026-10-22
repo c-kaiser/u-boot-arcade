@@ -10,7 +10,7 @@ graph LR
     GS -->|HTTP POST /api/step| PH[physics :8081]
     GS -->|HTTP POST /api/decide| AI[enemy-ai :8083]
     GS -->|HTTP POST /api/scores, GET /api/scores/top| LB[leaderboard :8082]
-    LB -->|JDBC| DB[(Postgres)]
+    LB -->|JDBC, eingebettet| DB[(H2-Datei)]
     AI -->|HTTP, OpenAI-kompatibel /v1/chat/completions| LL[LiteLLM :4000]
     LL -->|HTTPS| M[Ollama / Anthropic / Heribert]
     GS & PH & AI & LB & SW -->|OTLP gRPC :4317| SZ[SigNoz bzw. OTLP-Ziel]
@@ -31,7 +31,7 @@ Orientierung gezeigt; Details in [Kapitel 5](../05-Bausteinsicht/).
 | LiteLLM / LLM | HTTP, OpenAI-kompatibel, `LLM_BASE_URL` (Default `http://litellm:4000/v1`), Modell `LLM_MODEL` (`enemy-brain`) | JSON | Bearer `LLM_API_KEY`; Anbieter-Keys (z. B. `ANTHROPIC_API_KEY`) nur in LiteLLM | Timeout `LLM_TIMEOUT_MS` (4 s), `LLM_MAX_TOKENS` (60) |
 | SigNoz / OTLP-Ziel | OTLP gRPC (Agent-Default), `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP/Protobuf | `OTEL_EXPORTER_OTLP_HEADERS` (z. B. `signoz-ingestion-key`) | Sampling über `OTEL_TRACES_SAMPLER(_ARG)` |
 | Langfuse | OTLP **nur HTTP**, `https://<host>/api/public/otel` | OTLP/Protobuf oder JSON | Basic `base64(pk-lf-…:sk-lf-…)`, `x-langfuse-ingestion-version=4` | **geplant** über lokalen OTel Collector (otelcol-contrib) |
-| Postgres | JDBC `DB_URL` | SQL | `DB_USER`/`DB_PASSWORD` | Liegt innerhalb der Systemgrenze; lokal H2 **geplant** |
+| H2 (eingebettet) | JDBC `DB_URL` (Default `jdbc:h2:file:./data/leaderboard`) | SQL | keine (Default-Benutzer `sa`) | Läuft im Leaderboard-Prozess, innerhalb der Systemgrenze |
 
 <!-- ABGELEITET: Aus Code erkannt, bitte verifizieren -->
 

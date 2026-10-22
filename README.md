@@ -36,8 +36,8 @@ Gradle-Version selbst. Kompiliert wird immer für Java 21 – auch mit einem neu
 ### Ohne Docker (Workshop-Umgebung) – geplant
 
 Im Workshop gibt es kein Docker; die Services laufen direkt als JVM-Prozesse mit dem OTel-Java-Agent.
-Dafür entstehen `run-local.sh`/`stop-local.sh` (Konfiguration über `.env`, Logs nach `logs/`) und ein Leaderboard-Profil
-mit H2 statt Postgres. Bis dahin: Docker Compose.
+Dafür entstehen `run-local.sh`/`stop-local.sh` (Konfiguration über `.env`, Logs nach `logs/`). Das Leaderboard braucht
+keine externe Datenbank (eingebettete H2-Datei-DB unter `data/`). Bis dahin: Docker Compose.
 
 ### Mit Docker Compose
 
@@ -91,7 +91,7 @@ Einen der beiden umlegen (`PORT=8088` für den Game-Server).
 
 ### Traces
 - **`game.tick`** (20 pro Sekunde): Physik-Aufruf, `game.broadcast`, asynchron die Gegner-Entscheidungen
-  und Leaderboard-Einträge (`INSERT` und eventuell die künstliche DB-Verzögerung als DB-Span)
+  und Leaderboard-Einträge (`INSERT` als DB-Span; die Chaos-Verzögerung verlängert den HTTP-Span `POST /api/scores`)
 - **`chat enemy-brain`** in `enemy-ai`: GenAI-Span mit `gen_ai.usage.input_tokens`/`output_tokens` und Kosten.
   Darunter der HTTP-Span zu LiteLLM und dessen eigene Spans, die Trace-ID wird durchgereicht.
 
@@ -132,7 +132,7 @@ game-core/        reine Spiellogik (Physik, Bot-KI, LLM-Prompt/Parsing) + Tests,
 physics-service/  POST /api/step – zustandslose Physik
 game-server/      Tick-Loop, WebSocket /ws, Admin-API, Frontend (src/main/resources/static)
 enemy-ai/         POST /api/decide – LLM über LiteLLM, sonst regelbasiert
-leaderboard/      POST /api/scores, GET /api/scores/top – Postgres über JDBC
+leaderboard/      POST /api/scores, GET /api/scores/top – H2-Datei-DB über JDBC
 player-swarm/     Lastgenerator mit echten WebSocket-Clients
 deploy/           LiteLLM-Konfiguration, Helm-Chart, Build-Skript
 arc-doc/          Architekturdokumentation nach arc42

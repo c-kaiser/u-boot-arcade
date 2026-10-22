@@ -57,11 +57,9 @@ services:
     environment:
       <<: *otel-env
       OTEL_SERVICE_NAME: leaderboard
-      DB_URL: jdbc:postgresql://postgres:5432/leaderboard
-      DB_USER: uboot
-      DB_PASSWORD: uboot
-    depends_on:
-      postgres: { condition: service_healthy }
+      DB_URL: jdbc:h2:file:/data/leaderboard
+    volumes:
+      - leaderboard-data:/data
 
   enemy-ai:
     <<: *java-service
@@ -86,20 +84,6 @@ services:
       GAME_WS_URL: ws://game-server:8080/ws
       SWARM_PLAYERS: ${SWARM_PLAYERS:-10}
     depends_on: [game-server]
-
-  postgres:
-    image: postgres:17-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: leaderboard
-      POSTGRES_USER: uboot
-      POSTGRES_PASSWORD: uboot
-    volumes:
-      - pg-data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U uboot -d leaderboard"]
-      interval: 3s
-      retries: 20
 
   # ---------- Profil "llm": Gegner-KI mit echtem Modell ----------
   litellm:
@@ -138,5 +122,5 @@ services:
     restart: "no"
 
 volumes:
-  pg-data:
+  leaderboard-data:
   ollama-models:

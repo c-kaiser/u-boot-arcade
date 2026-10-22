@@ -52,6 +52,7 @@ physics:
     limits: { memory: 512Mi }
 
 leaderboard:
+  # Muss 1 bleiben: jede Replica hätte ihre eigene H2-Datei
   replicas: 1
   resources:
     requests: { cpu: 100m, memory: 256Mi }
@@ -70,18 +71,6 @@ playerSwarm:
   resources:
     requests: { cpu: 100m, memory: 192Mi }
     limits: { memory: 384Mi }
-
-postgres:
-  # false = externe Datenbank über externalUrl
-  enabled: true
-  image: postgres:17-alpine
-  database: leaderboard
-  user: uboot
-  password: uboot
-  externalUrl: ""
-  resources:
-    requests: { cpu: 100m, memory: 128Mi }
-    limits: { memory: 256Mi }
 
 ingress:
   enabled: false

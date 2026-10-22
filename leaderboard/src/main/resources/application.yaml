@@ -4,13 +4,12 @@ spring:
   application:
     name: leaderboard
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/leaderboard}
-    username: ${DB_USER:uboot}
-    password: ${DB_PASSWORD:uboot}
+    # Eingebettete H2-Datei-DB; im Container per DB_URL auf ein Volume gelegt
+    url: ${DB_URL:jdbc:h2:file:./data/leaderboard}
+    username: ${DB_USER:sa}
+    password: ${DB_PASSWORD:}
     hikari:
       maximum-pool-size: 5
-      # Postgres ist beim Start evtl. noch nicht bereit – nicht sofort abbrechen
-      initialization-fail-timeout: 60000
   sql:
     init:
       mode: always

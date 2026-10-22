@@ -16,7 +16,7 @@ Standardwert aus `application.yaml` (`${VAR:default}`), gebunden an `@Configurat
 | Ports | `PORT` (game-server 8080, physics 8081, leaderboard 8082, enemy-ai 8083) |
 | Game-Server | `PHYSICS_URL`, `ENEMY_AI_URL`, `LEADERBOARD_URL`, `GAME_TICK_MILLIS` (50), `GAME_BOTS` (3), `GAME_ENEMIES` (2), `GAME_LLM_ENABLED` (false), `GAME_ENEMY_DECISION_EVERY_TICKS` (20) |
 | LLM | `LLM_BASE_URL` (`http://litellm:4000/v1`), `LLM_MODEL` (`enemy-brain`), `LLM_API_KEY`, `LLM_TIMEOUT_MS` (4000), `LLM_MAX_TOKENS` (60), `LLM_PRICE_INPUT_PER_MTOK` (3.0), `LLM_PRICE_OUTPUT_PER_MTOK` (15.0) |
-| Leaderboard | `DB_URL`, `DB_USER`, `DB_PASSWORD` (Postgres) |
+| Leaderboard | `DB_URL` (`jdbc:h2:file:./data/leaderboard`), `DB_USER` (`sa`), `DB_PASSWORD` (leer) |
 | Schwarm | `GAME_WS_URL`, `SWARM_PLAYERS`, `SWARM_RAMP_UP_MS`, `SWARM_INPUT_INTERVAL_MS`, `SWARM_NAME_PREFIX` |
 | Telemetrie | `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_EXPORTER_OTLP_HEADERS`, `OTEL_SERVICE_NAME`, `OTEL_RESOURCE_ATTRIBUTES`, `OTEL_METRIC_EXPORT_INTERVAL`, `OTEL_TRACES_SAMPLER(_ARG)` |
 

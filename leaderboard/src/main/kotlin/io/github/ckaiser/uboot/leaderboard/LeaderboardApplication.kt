@@ -53,9 +53,9 @@ class ScoreController(private val jdbc: JdbcClient) {
         @RequestBody entry: ScoreEntry,
         @RequestHeader(name = "X-Chaos-Slow-Ms", required = false) slowMs: Int?,
     ) {
-        // Chaos: langsame Datenbank – sieht man schön als DB-Span im Trace
+        // Chaos: langsame Datenbank – verzögert jeden Insert, im Trace als langer Request-Span sichtbar
         if (slowMs != null && slowMs > 0) {
-            jdbc.sql("SELECT pg_sleep(:seconds)").param("seconds", slowMs / 1000.0).query().singleRow()
+            Thread.sleep(slowMs.toLong())
         }
         jdbc.sql("INSERT INTO scores (name, kind, score, kills, cause) VALUES (:name, :kind, :score, :kills, :cause)")
             .param("name", entry.name.take(64))
