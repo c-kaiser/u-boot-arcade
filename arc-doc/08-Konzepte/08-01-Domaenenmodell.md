@@ -1,6 +1,6 @@
 # Domänenmodell
 
-<!-- ABGELEITET: Aus Code erkannt (game-core/src/main/kotlin/de/innoq/uboot/core/Model.kt), bitte verifizieren -->
+<!-- ABGELEITET: Aus Code erkannt (game-core/src/main/kotlin/io/github/ckaiser/uboot/core/Model.kt), bitte verifizieren -->
 
 ## Übersicht
 

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Baut alle Images und pusht sie in eine Registry, damit der Cluster sie ziehen kann.
-#   deploy/build-images.sh ghcr.io/innoq 1.0.0          bauen + pushen
+#   deploy/build-images.sh ghcr.io/c-kaiser 1.0.0          bauen + pushen
 #   PUSH=false deploy/build-images.sh local 1.0.0       nur bauen (z. B. für kind load docker-image)
 set -euo pipefail
-REGISTRY="${1:?Registry angeben, z. B. ghcr.io/innoq}"
+REGISTRY="${1:?Registry angeben, z. B. ghcr.io/c-kaiser}"
 TAG="${2:-1.0.0}"
 PUSH="${PUSH:-true}"
 PLATFORM="${PLATFORM:-linux/amd64}"

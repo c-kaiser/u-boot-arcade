@@ -3,7 +3,7 @@
 ## Kurzbeschreibung
 
 U-Boot Arcade ist ein Multiplayer-Arcade-Spiel im Browser: Spieler, Bots und KI-Gegner steuern U-Boote durch ein
-2D-Meer und beschießen sich mit Torpedos. Das Spiel ist die „eigene App“ für einen INNOQ-Observability-Workshop
+2D-Meer und beschießen sich mit Torpedos. Das Spiel ist die „eigene App“ für einen Observability-Workshop
 (OpenTelemetry, SigNoz, Langfuse). Es soll technische und fachliche Telemetrie erzeugen und sich gezielt stören lassen,
 damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 

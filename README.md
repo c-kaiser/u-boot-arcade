@@ -1,6 +1,6 @@
 # U-Boot Arcade
 
-Ein kleines Multiplayer-Arcade-Spiel mit U-Booten. Gebaut als „eigene App“ für einen INNOQ-Workshop zu Observability
+Ein kleines Multiplayer-Arcade-Spiel mit U-Booten. Gebaut als „eigene App“ für einen Workshop zu Observability
 mit OpenTelemetry, SigNoz und Langfuse: Es erzeugt technische Telemetrie (Latenzen, Fehler, JVM, DB) und fachliche
 Telemetrie (Tiefe, Dampfdruck, Treffer), und es lässt sich gezielt stören, um die Folgen in SigNoz und Langfuse wiederzufinden.
 

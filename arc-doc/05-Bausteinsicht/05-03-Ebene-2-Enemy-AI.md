@@ -1,6 +1,6 @@
 # Bausteinsicht — Ebene 2: enemy-ai
 
-<!-- ABGELEITET: Aus Code erkannt (enemy-ai/src/main/kotlin/de/innoq/uboot/enemy/*.kt, application.yaml, deploy/litellm-config.yaml), bitte verifizieren -->
+<!-- ABGELEITET: Aus Code erkannt (enemy-ai/src/main/kotlin/io/github/ckaiser/uboot/enemy/*.kt, application.yaml, deploy/litellm-config.yaml), bitte verifizieren -->
 
 ## Whitebox enemy-ai
 

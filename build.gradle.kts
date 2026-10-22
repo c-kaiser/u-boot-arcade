@@ -9,7 +9,7 @@ plugins {
 val otelApiVersion = "1.66.0"
 
 subprojects {
-    group = "de.innoq.uboot"
+    group = "io.github.ckaiser.uboot"
     version = "1.0.0"
 
     repositories { mavenCentral() }

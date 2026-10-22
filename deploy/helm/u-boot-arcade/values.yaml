@@ -1,4 +1,4 @@
-# Images: <registry>/<prefix>-<komponente>:<tag>, z. B. ghcr.io/innoq/u-boot-arcade-game-server:1.0.0
+# Images: <registry>/<prefix>-<komponente>:<tag>, z. B. ghcr.io/c-kaiser/u-boot-arcade-game-server:1.0.0
 # Bauen und pushen: deploy/build-images.sh <registry> <tag>
 image:
   registry: ghcr.io/CHANGE-ME

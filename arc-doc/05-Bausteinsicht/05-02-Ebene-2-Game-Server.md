@@ -1,6 +1,6 @@
 # Bausteinsicht — Ebene 2: game-server
 
-<!-- ABGELEITET: Aus Code erkannt (game-server/src/main/kotlin/de/innoq/uboot/game/*.kt, static/*), bitte verifizieren -->
+<!-- ABGELEITET: Aus Code erkannt (game-server/src/main/kotlin/io/github/ckaiser/uboot/game/*.kt, static/*), bitte verifizieren -->
 
 ## Whitebox game-server
 
