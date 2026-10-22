@@ -34,6 +34,7 @@ damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 | F11 | Start ohne Docker | `run-local.sh`/`stop-local.sh`, Konfiguration über `.env` | geplant |
 
 <!-- ABGELEITET: Aus Code erkannt, bitte verifizieren -->
+<!-- TODO: Anforderungen nach Erreichen des Initialstands erneut prüfen. Initialstand = grundsätzliches Review erfolgt und ein erster Durchstich funktional und abgenommen -->
 
 ## Status der Umsetzung
 
