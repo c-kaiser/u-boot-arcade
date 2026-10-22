@@ -13,7 +13,7 @@ flowchart LR
             GS["game-server<br/>8088→8080"]
             PH["physics"]
             LB["leaderboard"]
-            PG[("postgres:17-alpine<br/>Volume pg-data")]
+            LBV[("Volume leaderboard-data<br/>H2-Datei")]
             AI["enemy-ai"]
             SW["player-swarm<br/>Profil swarm"]
             LL["litellm :4000<br/>Profil llm"]
@@ -23,7 +23,7 @@ flowchart LR
     Browser -- ":8088" --> GS
     SW -- "ws://game-server:8080/ws" --> GS
     GS --> PH & AI & LB
-    LB --> PG
+    LB --> LBV
     AI -- "http://litellm:4000/v1" --> LL
     LL --> OL
     LL -. "Modell enemy-brain-cloud" .-> ANT["Anthropic API"]
@@ -35,7 +35,7 @@ flowchart LR
 
 | Aufruf | Gestartete Container |
 |--------|---------------------|
-| `docker compose up --build` | game-server, physics, leaderboard, postgres, enemy-ai (3 Bots, 2 regelbasierte Gegner) |
+| `docker compose up --build` | game-server, physics, leaderboard, enemy-ai (3 Bots, 2 regelbasierte Gegner) |
 | `--profile swarm` | zusätzlich player-swarm (`SWARM_PLAYERS`, Standard 10) |
 | `--profile llm` | zusätzlich litellm, ollama, ollama-pull (`qwen2.5:3b`) |
 
@@ -45,7 +45,8 @@ flowchart LR
   `host.docker.internal` → Host-Gateway.
 - OTLP-Ziel `OTEL_EXPORTER_OTLP_ENDPOINT` (Standard `http://host.docker.internal:4317`, gRPC),
   `OTEL_METRIC_EXPORT_INTERVAL` 10 s, Resource `service.namespace=u-boot-arcade`, `deployment.environment.name=${DEPLOY_ENV:-local}`.
-- `leaderboard` wartet auf den Healthcheck von Postgres (`pg_isready`).
+- `leaderboard` schreibt seine H2-Datei nach `/data` (`DB_URL=jdbc:h2:file:/data/leaderboard`) auf das Volume
+  `leaderboard-data`; das Image legt `/data` für den Benutzer 10001 an.
 - LiteLLM exportiert eigene Spans per OTLP/HTTP (`LITELLM_OTEL_ENDPOINT`, Standard `:4318`); Modellwahl über Alias
   `enemy-brain` (Ollama) bzw. `enemy-brain-cloud` (Anthropic `claude-haiku-4-5`, `ANTHROPIC_API_KEY`).
 - Images `litellm:main-stable` und `ollama:latest` sind nicht versioniert gepinnt. <!-- TODO: Bitte ergänzen – bewusst? -->

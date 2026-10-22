@@ -1,7 +1,7 @@
 # Verteilungssicht — Lokal als JVM-Prozesse ohne Docker (geplant)
 
-> **Status: geplant.** `run-local.sh`, `stop-local.sh`, das Leaderboard-Profil `local` (H2) und die lokale
-> Collector-Konfiguration existieren noch nicht. Bis dahin: Docker Compose ([07-03](07-03-Docker-Compose.md)).
+> **Status: geplant.** `run-local.sh`, `stop-local.sh` und die lokale Collector-Konfiguration existieren noch nicht.
+> Das Leaderboard braucht keine externe Datenbank mehr (H2-Datei-DB, ADR-07). Bis dahin: Docker Compose ([07-03](07-03-Docker-Compose.md)).
 
 <!-- ABGELEITET: Aus README.md und der früheren Projektbeschreibung (offene Aufgaben 2, 3, 5, 7), bitte verifizieren -->
 
@@ -52,7 +52,7 @@ flowchart LR
   Langfuse erreichbar sind. Ob dafür eine eigene Konfiguration nötig ist (z. B. `OTEL_TRACES_EXPORTER=none`,
   `OTEL_METRICS_EXPORTER=none`, `OTEL_LOGS_EXPORTER=none` oder ohne `-javaagent`), ist noch zu prüfen.
 - **Portkonflikt:** SigNoz-UI und Game-Server nutzen beide 8080 → Game-Server mit `PORT=8088` starten.
-- **Kein Postgres:** Leaderboard mit H2 (Datei-DB); Schema (`BIGSERIAL`, `TIMESTAMPTZ`) und `pg_sleep`-Chaos anpassen.
+- **Keine externe Datenbank:** Das Leaderboard legt seine H2-Datei unter `./data/` im Arbeitsverzeichnis an (umgesetzt).
 - **LLM-Kosten:** Echte Cloud-Modelle kosten Geld – Entscheidungsintervall auf 5–10 s, Runaway deckeln, LiteLLM `max_budget`.
 - **Lokal mit Docker für die Backends:** Läuft der Entwickler-Rechner mit Docker, können SigNoz und Langfuse dort in
   Containern laufen und die JVM-Prozesse exportieren dorthin (z. B. SigNoz aus dem `o11y-playground`).

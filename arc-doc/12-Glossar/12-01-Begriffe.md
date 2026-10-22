@@ -64,5 +64,5 @@
 | LLM | Large Language Model |
 | RTT | Round-Trip-Time (`game.client.rtt`) |
 | WS | WebSocket |
-| H2 | Eingebettete Java-Datenbank, **geplant** für das Leaderboard ohne Postgres |
+| H2 | Eingebettete Java-Datenbank; das Leaderboard nutzt sie als Datei-DB in allen Betriebsarten (ADR-07) |
 | ADR | Architecture Decision Record |

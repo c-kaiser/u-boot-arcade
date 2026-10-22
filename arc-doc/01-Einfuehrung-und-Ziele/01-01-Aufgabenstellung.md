@@ -24,7 +24,7 @@ damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 | F1 | Multiplayer-Spiel | Spieler steuern ein U-Boot im Browser (← → Fahrt, ↑ ↓ Tauchen, Leertaste Torpedo), Echtzeit-Updates per WebSocket, 20 Ticks/s | umgesetzt |
 | F2 | Bots und Gegner | Regelbasierte Bots (`BOT`) und Gegner (`ENEMY`); Gegner optional per LLM gesteuert, mit regelbasiertem Fallback | umgesetzt |
 | F3 | Physik | Bewegung, Kessel (Dampfdruck, Temperatur), Rumpf, Tauchtiefe, Torpedotreffer in einem zustandslosen Physik-Service | umgesetzt |
-| F4 | Leaderboard | Ergebnis jeder Runde (ein Leben) speichern, Bestenliste anzeigen | umgesetzt (Postgres); H2-Profil geplant |
+| F4 | Leaderboard | Ergebnis jeder Runde (ein Leben) speichern, Bestenliste anzeigen | umgesetzt (eingebettete H2-Datei-DB) |
 | F5 | Admin-Panel | Anzahl Bots/Gegner, LLM an/aus und Chaos-Schalter zur Laufzeit ändern (`admin.html`) | umgesetzt |
 | F6 | Chaos-Schalter | Globale Störungen: Physik-Latenz/-Fehlerrate, langsame Leaderboard-DB, KI-Latenz, KI-Endlosschleife, Memory Leak, Kesselkühlung, Leck, Strömung | umgesetzt |
 | F7 | Chaos pro U-Boot | In der UI pro U-Boot eine Störung auf einer Skala einstellen, die gezieltes Chaos (z. B. Latenz) auslöst | geplant, Umsetzung offen |

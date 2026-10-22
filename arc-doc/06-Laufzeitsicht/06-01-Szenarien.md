@@ -159,7 +159,7 @@ sequenceDiagram
     participant T as GameLoop
     participant Q as Leaderboard-Executor (2 Threads, Queue 200)
     participant S as ScoreController
-    participant DB as Postgres
+    participant DB as H2 (eingebettet)
     participant B as Browser
 
     T->>T: DESTROYED-Ereignis → Log „… zerstört durch … – Runde endet“
@@ -169,7 +169,7 @@ sequenceDiagram
     else angenommen
         Q->>S: POST /api/scores, Header X-Chaos-Slow-Ms
         opt Chaos leaderboardSlowMs > 0
-            S->>DB: SELECT pg_sleep(…)
+            S->>S: Thread.sleep(…)
         end
         S->>DB: INSERT INTO scores
         S-->>Q: 201 Created (Fehler → game.leaderboard.dropped, error)
@@ -186,7 +186,8 @@ sequenceDiagram
 ### Besonderheiten
 
 - Betrifft alle Bootstypen (Spieler, Bots, Gegner); jedes Leben ist eine Runde.
-- **Geplant:** lokal H2 statt Postgres; das `pg_sleep`-Chaos braucht dann ein Äquivalent (z. B. `Thread.sleep`).
+- Die Chaos-Verzögerung liegt im Leaderboard-Prozess vor dem Insert: Im Trace wird der HTTP-Span `POST /api/scores`
+  lang, nicht der DB-Span. Variante mit echtem DB-Span siehe [IDEEN.md](../../IDEEN.md).
 
 ---
 

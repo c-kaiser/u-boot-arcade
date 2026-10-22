@@ -24,13 +24,11 @@ flowchart LR
         GS["game-server ×1"]
         PH["physics ×n"]
         AI["enemy-ai"]
-        LB["leaderboard"]
+        LB["leaderboard ×1<br/>mit H2-Datei-DB"]
         SW["player-swarm ×n"]
-        DB[("Postgres")]
     end
     SW --> GS
     GS --> PH & AI & LB
-    LB --> DB
     AI --> LL["LiteLLM"] --> M["Modell: Ollama / Anthropic / Heribert"]
     Knoten -. OTLP .-> O["SigNoz (gehostet oder lokal in Docker)"]
 ```
@@ -49,7 +47,8 @@ flowchart LR
 - **Skalierung:** `physics-service` ist zustandslos und horizontal skalierbar (Helm Standard 2 Replicas). `player-swarm`
   skaliert die Last über Replicas. `enemy-ai` ist zustandslos (Helm: 1 Replica).
 - **Keine Redundanz des Game-Servers:** genau 1 Instanz, da der Spielstand im Speicher liegt; Neustart = Spielstand weg.
-- **Persistenz:** nur das Leaderboard. In Compose auf Volume `pg-data`, im Helm-Chart bewusst `emptyDir` (flüchtig).
+- **Persistenz:** nur das Leaderboard, als eingebettete H2-Datei-DB. Ohne Docker unter `./data/`, in Compose auf Volume
+  `leaderboard-data`, im Helm-Chart bewusst `emptyDir` (flüchtig). Deshalb genau 1 Leaderboard-Instanz.
 - **Verfügbarkeit:** Für einen Workshop ausgelegt, keine Hochverfügbarkeit. <!-- TODO: Bitte ergänzen – Anforderungen an Betrieb während des Workshops -->
 
 ### Mapping Software → Infrastruktur
@@ -58,7 +57,7 @@ flowchart LR
 |------------------|------|------------------------------|----------------|-------------------|
 | `game-server` | 8080 | JVM-Prozess, `PORT=8088` empfohlen (Konflikt mit SigNoz-UI auf 8080) | Container, Host-Port `GAME_PORT` (8088) | Deployment 1 Replica, Strategie `Recreate`, Service Port 80, optional Ingress |
 | `physics-service` | 8081 | JVM-Prozess | Container `physics` | Deployment, 2 Replicas |
-| `leaderboard` | 8082 | JVM-Prozess, Profil `local` mit H2 (geplant) | Container + `postgres:17-alpine` | Deployment 1 Replica + Postgres-Deployment (`emptyDir`) oder externe DB |
+| `leaderboard` | 8082 | JVM-Prozess, H2-Datei unter `./data/` | Container, H2-Datei auf Volume `leaderboard-data` | Deployment 1 Replica, H2-Datei in `emptyDir` |
 | `enemy-ai` | 8083 | JVM-Prozess | Container | Deployment 1 Replica, API-Key aus Secret |
 | `player-swarm` | – | JVM-Prozess (optional) | Container, Profil `swarm` (10 Spieler) | Deployment, `playersPerPod` 10 |
 | LiteLLM | 4000 | `pip install 'litellm[proxy]'` (geplant) | Container, Profil `llm` | nicht im Chart, `llm.baseUrl` zeigt auf externe Instanz |

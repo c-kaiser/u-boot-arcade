@@ -21,7 +21,9 @@ FROM eclipse-temurin:21-jre
 ARG OTEL_AGENT_VERSION=2.32.0
 ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v${OTEL_AGENT_VERSION}/opentelemetry-javaagent.jar /otel/opentelemetry-javaagent.jar
 COPY --from=build /app.jar /app/app.jar
-RUN chmod 644 /otel/opentelemetry-javaagent.jar && useradd --system --uid 10001 app
+# /data: beschreibbares Verzeichnis für die H2-Datei des Leaderboards (Volume)
+RUN chmod 644 /otel/opentelemetry-javaagent.jar && useradd --system --uid 10001 app \
+ && mkdir -p /data && chown 10001 /data
 USER 10001
 # Zero-Code-Instrumentierung: der Agent erzeugt HTTP-, JDBC- und JVM-Telemetrie automatisch
 # und exportiert zusätzlich alles, was der Code über die OTel-API selbst meldet.

@@ -50,7 +50,7 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 
 **Stimulus:** Entwickler/in oder Teilnehmende/r startet lokal, in GitHub Codespaces oder im Browser-VS-Code mit vorhandenem JDK ≥ 21, ohne Docker.
 **Reaktion:** Ein Skript baut die Services, lädt den OTel-Agent, startet 5 Services mit Logs unter `logs/`.
-**Metrik:** Lauffähig in < <!-- TODO: Bitte ergänzen (N Minuten, inkl. erstem Gradle-/JDK-Download) -->. Skript und H2-Profil sind noch nicht umgesetzt.
+**Metrik:** Lauffähig in < <!-- TODO: Bitte ergänzen (N Minuten, inkl. erstem Gradle-/JDK-Download) -->. Das Skript ist noch nicht umgesetzt.
 
 ## QS-09: Telemetrie-Ziel wechseln
 

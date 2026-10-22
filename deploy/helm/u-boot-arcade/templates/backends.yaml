@@ -39,14 +39,7 @@ spec:
             {{- include "uboot.otelEnv" (list $ $c.name) | nindent 12 }}
             {{- if eq $c.name "leaderboard" }}
             - name: DB_URL
-              value: {{ $.Values.postgres.externalUrl | default (printf "jdbc:postgresql://%s:5432/%s" (include "uboot.svc" (list $ "postgres")) $.Values.postgres.database) | quote }}
-            - name: DB_USER
-              value: {{ $.Values.postgres.user | quote }}
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: {{ include "uboot.svc" (list $ "postgres") }}
-                  key: password
+              value: "jdbc:h2:file:/data/leaderboard"
             {{- end }}
             {{- if eq $c.name "enemy-ai" }}
             - name: LLM_BASE_URL
@@ -68,6 +61,15 @@ spec:
           {{- include "uboot.probes" $ | nindent 10 }}
           resources:
             {{- toYaml $c.values.resources | nindent 12 }}
+          {{- if eq $c.name "leaderboard" }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      # Bewusst einfach: die H2-Datei liegt in einem emptyDir und ist nach einem Pod-Neustart weg.
+      volumes:
+        - name: data
+          emptyDir: {}
+          {{- end }}
 ---
 apiVersion: v1
 kind: Service
