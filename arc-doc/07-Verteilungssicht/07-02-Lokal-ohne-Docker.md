@@ -8,6 +8,7 @@
 ## Zielumgebungen
 
 Workshop-VS-Code im Browser (pro Person, **kein Docker**), GitHub Codespaces, Sandbox, lokaler Rechner.
+Der Start ohne Docker muss mindestens **lokal** und **in GitHub Codespaces** funktionieren.
 Voraussetzung ist nur ein JDK ≥ 21; der Gradle Wrapper lädt Gradle nach.
 Netzzugriff auf `services.gradle.org`, `plugins.gradle.org` und Maven Central ist für den ersten Build nötig.
 
@@ -47,6 +48,9 @@ flowchart LR
 
 ## Besonderheiten
 
+- **Ohne Telemetrie-Backend:** Die Services müssen auch starten und laufen, wenn weder SigNoz noch Collector oder
+  Langfuse erreichbar sind. Ob dafür eine eigene Konfiguration nötig ist (z. B. `OTEL_TRACES_EXPORTER=none`,
+  `OTEL_METRICS_EXPORTER=none`, `OTEL_LOGS_EXPORTER=none` oder ohne `-javaagent`), ist noch zu prüfen.
 - **Portkonflikt:** SigNoz-UI und Game-Server nutzen beide 8080 → Game-Server mit `PORT=8088` starten.
 - **Kein Postgres:** Leaderboard mit H2 (Datei-DB); Schema (`BIGSERIAL`, `TIMESTAMPTZ`) und `pg_sleep`-Chaos anpassen.
 - **LLM-Kosten:** Echte Cloud-Modelle kosten Geld – Entscheidungsintervall auf 5–10 s, Runaway deckeln, LiteLLM `max_budget`.

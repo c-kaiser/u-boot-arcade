@@ -48,7 +48,7 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 
 ## QS-08: Start ohne Docker
 
-**Stimulus:** Teilnehmende/r startet im Browser-VS-Code mit vorhandenem JDK ≥ 21.
+**Stimulus:** Entwickler/in oder Teilnehmende/r startet lokal, in GitHub Codespaces oder im Browser-VS-Code mit vorhandenem JDK ≥ 21, ohne Docker.
 **Reaktion:** Ein Skript baut die Services, lädt den OTel-Agent, startet 5 Services mit Logs unter `logs/`.
 **Metrik:** Lauffähig in < <!-- TODO: Bitte ergänzen (N Minuten, inkl. erstem Gradle-/JDK-Download) -->. Skript und H2-Profil sind noch nicht umgesetzt.
 
@@ -69,3 +69,10 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 **Stimulus:** Änderung an Physik oder Bot-KI.
 **Reaktion:** `./gradlew :game-core:test` prüft ohne Spring, Netz oder Datenbank.
 **Metrik:** Tests laufen lokal ohne Infrastruktur (heute 16 Tests). Laufzeit: <!-- TODO: Bitte ergänzen -->
+
+## QS-12: Betrieb ohne Telemetrie-Backend (geplant)
+
+**Stimulus:** Die Services werden gestartet, ohne dass SigNoz, ein Collector oder Langfuse läuft bzw. erreichbar ist.
+**Umgebung:** Start ohne Docker, lokal oder in GitHub Codespaces; ggf. mit einer eigenen Konfiguration, die den Export abschaltet.
+**Reaktion:** Alle Services starten, das Spiel ist spielbar; fehlgeschlagene Exporte führen höchstens zu Warn-Logs.
+**Metrik:** Kein Absturz, kein Hänger beim Start, Tick-Dauer wie im Normalbetrieb (QS-04). <!-- TODO: Bitte ergänzen – noch nicht geprüft, welche Konfiguration nötig ist -->
