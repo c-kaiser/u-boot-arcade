@@ -31,8 +31,8 @@ damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 | F8 | Telemetrie | Traces, Metriken, Logs per OTLP; eigene fachliche Metriken und GenAI-Spans | umgesetzt |
 | F9 | Lastgenerator | `player-swarm` mit echten WebSocket-Clients für Last und Client-Metriken | umgesetzt |
 | F10 | Export an SigNoz und Langfuse | Lokaler OTel Collector als Verteiler: alles an SigNoz, nur GenAI-Spans an Langfuse | geplant |
-| F11 | Start ohne Docker | Die Anwendung startet lokal und in GitHub Codespaces als JVM-Prozesse ohne Docker (`run-local.sh`/`stop-local.sh`, Konfiguration über `.env`) | geplant |
-| F12 | Betrieb ohne Telemetrie-Backend | Die Anwendung läuft auch, wenn kein Telemetrie-Ziel (SigNoz, Collector, Langfuse) gestartet oder erreichbar ist – ggf. mit einer eigenen Konfiguration, die den Export abschaltet | geplant, ungeprüft |
+| F11 | Start ohne Docker | Die Anwendung startet lokal und in GitHub Codespaces als JVM-Prozesse ohne Docker (`run-local.sh`/`stop-local.sh`, Konfiguration über `.env`) | umgesetzt (#3), Codespaces noch nicht erprobt |
+| F12 | Betrieb ohne Telemetrie-Backend | Die Anwendung läuft auch, wenn kein Telemetrie-Ziel (SigNoz, Collector, Langfuse) gestartet oder erreichbar ist – Standard ist die Telemetrie-Betriebsart „ohne Telemetrie“ (`OTEL_*_EXPORTER=none`, ADR-10) | umgesetzt (#3), Codespaces noch nicht erprobt |
 
 <!-- ABGELEITET: Aus Code erkannt, bitte verifizieren -->
 <!-- TODO: Anforderungen nach Erreichen des Initialstands erneut prüfen. Initialstand = grundsätzliches Review erfolgt und ein erster Durchstich funktional und abgenommen -->
@@ -40,7 +40,8 @@ damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 ## Status der Umsetzung
 
 - `game-core` kompiliert, Tests grün. Frontend gegen Mock-Server getestet.
-- Alle Module kompilieren (`./gradlew build`); die Spring-Services wurden bisher aber nie gestartet (Stand README).
+- Alle Module kompilieren (`./gradlew build`). Die Spring-Services laufen per `run-local.sh` (Spiel, Leaderboard, Schwarm,
+  OTLP-Export geprüft); Helm und der LLM-Pfad sind noch nicht gestartet (R1).
 - Weitere geplante Punkte: Kostenbremse für echte LLMs, Langfuse-Attribute (Prompt/Completion, Session-ID),
   Anthropic- und Heribert-Anbindung in LiteLLM, optional Jev als dritte Gegner-KI-Variante.
   Details in [Kapitel 11](../11-Risiken/) bzw. als GitHub Issues.

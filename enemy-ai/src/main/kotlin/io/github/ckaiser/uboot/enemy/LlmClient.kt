@@ -17,7 +17,7 @@ import java.time.Duration
 
 @ConfigurationProperties("llm")
 data class LlmProperties(
-    val baseUrl: String = "http://litellm:4000/v1",
+    val baseUrl: String = "http://localhost:4000/v1",
     val model: String = "enemy-brain",
     val apiKey: String = "sk-local",
     val timeoutMs: Long = 4000,

@@ -1,6 +1,6 @@
 # ADR-05: LiteLLM als Gateway für die Gegner-KI
 
-**Status:** accepted (umgesetzt in Compose/Helm-Konfiguration; Workshop-Modelle offen)
+**Status:** accepted (umgesetzt in `deploy/litellm-config.yaml` und den Helm-Werten; Workshop-Modelle offen)
 
 **Datum:** 2026-10-22 <!-- ABGELEITET: Datum des Commits, in dem die Entscheidung im Code sichtbar wird -->
 
@@ -22,6 +22,6 @@ Modell dahinter steckt, legt `deploy/litellm-config.yaml` fest (heute `ollama_ch
 - Spätere Budgetgrenze zentral möglich (`max_budget`, geplant).
 
 ### Negativ
-- Zusätzlicher Prozess; ohne Docker per `pip install 'litellm[proxy]'` (geplant, nicht erprobt).
+- Zusätzlicher Prozess; seit ADR-11 kein Compose-Profil mehr, ohne Docker per `pip install 'litellm[proxy]'` (geplant, nicht erprobt).
 - Alternativ ist enemy-ai direkt gegen einen OpenAI-kompatiblen Endpunkt nutzbar – dann fehlen LiteLLM-Spans/-Budget.
 - Heribert noch nicht eingetragen. <!-- TODO: Bitte ergänzen, sobald API-Art bekannt -->

@@ -35,8 +35,8 @@ mindmap
 | #efficient | Langsame Clients beeinflussen Tick nicht | Mittel | QS-05 | umgesetzt |
 | #efficient (Kosten) | LLM-Kosten pro Workshop begrenzt | Hoch | QS-06 | teilweise |
 | #reliable | Ausfall von physics/enemy-ai/leaderboard beendet das Spiel nicht | Hoch | QS-07 | umgesetzt |
-| #reliable | Spiel läuft ohne gestartetes Telemetrie-Backend | Hoch | QS-12 | geplant, ungeprüft |
-| #operable | Start ohne Docker lokal, in Codespaces und im Workshop-VS-Code | Hoch | QS-08 | geplant |
+| #reliable | Spiel läuft ohne gestartetes Telemetrie-Backend | Hoch | QS-12 | umgesetzt (ADR-10), Codespaces nicht erprobt |
+| #operable | Start ohne Docker lokal, in Codespaces und im Workshop-VS-Code | Hoch | QS-08 | umgesetzt, Codespaces/Workshop nicht erprobt |
 | #operable | Telemetrie-Ziele ohne Codeänderung umstellbar | Hoch | QS-09 | umgesetzt |
 | #flexible | LLM-Modell ohne Codeänderung wechseln | Mittel | QS-10 | umgesetzt |
 | #testable | Spiellogik ohne Spring/Netz testbar | Mittel | QS-11 | umgesetzt |

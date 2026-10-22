@@ -11,7 +11,7 @@ management:
 
 # OpenAI-kompatibler Endpunkt, typischerweise LiteLLM
 llm:
-  base-url: ${LLM_BASE_URL:http://litellm:4000/v1}
+  base-url: ${LLM_BASE_URL:http://localhost:4000/v1}
   model: ${LLM_MODEL:enemy-brain}
   api-key: ${LLM_API_KEY:sk-local}
   timeout-ms: ${LLM_TIMEOUT_MS:4000}

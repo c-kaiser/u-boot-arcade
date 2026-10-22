@@ -25,7 +25,7 @@ Marker im Text:
 | 4 | [Lösungsstrategie](../04-Loesungsstrategie/) | Technologien, Zerlegung, Ansätze für die Qualitätsziele |
 | 5 | [Bausteinsicht](../05-Bausteinsicht/) | Services und Module |
 | 6 | [Laufzeitsicht](../06-Laufzeitsicht/) | Wichtige Abläufe (Tick, Gegner-KI, Leaderboard, Chaos) |
-| 7 | [Verteilungssicht](../07-Verteilungssicht/) | Betrieb lokal, Docker Compose, Kubernetes, Workshop |
+| 7 | [Verteilungssicht](../07-Verteilungssicht/) | Betrieb ohne Docker (lokal, Codespaces), Kubernetes, Telemetrie-Fluss |
 | 8 | [Querschnittliche Konzepte](../08-Konzepte/) | Telemetrie, Chaos, Konfiguration u. a. |
 | 9 | [Architekturentscheidungen](../09-Entscheidungen/) | Wichtige Entscheidungen |
 | 10 | [Qualitätsanforderungen](../10-Qualitaetsanforderungen/) | Qualitätsbaum und -szenarien |

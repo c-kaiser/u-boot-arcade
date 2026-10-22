@@ -13,7 +13,7 @@ Die Gegner-KI fragt dagegen regelmäßig, und das Chaos `aiRunaway` vervielfacht
 - **Takt**: Entscheidung alle `GAME_ENEMY_DECISION_EVERY_TICKS`=20 Ticks (≈ 1 s bei 50 ms) pro Gegner.
 - **Messen**: `gen_ai.client.token.usage`, `enemy_ai.llm.cost` (aus Tokens × `LLM_PRICE_*_PER_MTOK`),
   `enemy_ai.llm.calls_per_decision`; LiteLLM rechnet zusätzlich selbst (Preise in `litellm-config.yaml`).
-- **Lokal kostenlos**: Compose-Profil `llm` mit Ollama (`qwen2.5:3b`); fiktive Preise, damit Dashboards etwas zeigen.
+- **Lokal kostenlos**: Ollama (`qwen2.5:3b`) hinter LiteLLM, Alias `enemy-brain` in `deploy/litellm-config.yaml`; fiktive Preise, damit Dashboards etwas zeigen.
 - **Leitplanke für Agenten** (AGENTS.md): keine Schleifen/Lasttests/Runaway gegen Cloud-Modelle ohne Rückfrage.
 
 ## Geplant

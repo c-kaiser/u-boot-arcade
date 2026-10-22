@@ -10,11 +10,11 @@ Die Architektur ist in [arc-doc/](arc-doc/00-Ueberblick/00-00-Overview.md) nach 
 
 - [Technischer Kontext](arc-doc/03-Kontextabgrenzung/03-02-Technischer-Kontext.md) – Services, Kanäle, Telemetrie-Ziele
 - [Bausteinsicht Ebene 1](arc-doc/05-Bausteinsicht/05-01-Ebene-1.md) – Services und Module im Überblick
-- [Verteilungssicht](arc-doc/07-Verteilungssicht/) – Betrieb lokal, mit Docker Compose und in Kubernetes
+- [Verteilungssicht](arc-doc/07-Verteilungssicht/) – Betrieb ohne Docker (lokal, Codespaces) und in Kubernetes
 
 ## Voraussetzungen und Toolchain
 
-Benötigt wird nur **ein JDK ab Version 21** auf dem `PATH`. Der **Gradle Wrapper** (`./gradlew`) lädt die passende
+Benötigt wird nur **ein JDK ab Version 21** auf dem `PATH` (und `curl` für den Start ohne Docker). Der **Gradle Wrapper** (`./gradlew`) lädt die passende
 Gradle-Version selbst. Kompiliert wird immer für Java 21 – auch mit einem neueren JDK.
 
 | Umgebung | Einrichtung |
@@ -33,23 +33,27 @@ Gradle-Version selbst. Kompiliert wird immer für Java 21 – auch mit einem neu
 
 ## Starten
 
-### Ohne Docker (Workshop-Umgebung) – geplant
+### Lokal und in Codespaces (ohne Docker)
 
-Im Workshop gibt es kein Docker; die Services laufen direkt als JVM-Prozesse mit dem OTel-Java-Agent.
-Dafür entstehen `run-local.sh`/`stop-local.sh` (Konfiguration über `.env`, Logs nach `logs/`). Das Leaderboard braucht
-keine externe Datenbank (eingebettete H2-Datei-DB unter `data/`). Bis dahin: Docker Compose.
-
-### Mit Docker Compose
+Die Services laufen direkt als JVM-Prozesse mit dem OTel-Java-Agent – ohne Docker und ohne weitere Infrastruktur.
 
 ```bash
-cp .env.example .env
-docker compose up --build                  # Spiel, 3 Bots, 2 regelbasierte Gegner
-docker compose --profile swarm up --build  # + 10 Schwarm-Spieler (WebSocket-Last)
-docker compose --profile llm up --build    # + LiteLLM und Ollama (qwen2.5:3b) für die Gegner-KI
+cp .env.example .env     # Standard: ohne Telemetrie, regelbasierte Gegner
+./run-local.sh           # baut, startet physics, leaderboard, enemy-ai, game-server
+./run-local.sh --swarm   # zusätzlich Schwarm-Spieler (WebSocket-Last)
+./stop-local.sh          # beendet alle Services
 ```
 
-- Spiel: http://localhost:8088 (← → Fahrt, ↑ ↓ Tauchen, Leertaste Torpedo)
+- Spiel: http://localhost:8088 (← → Fahrt, ↑ ↓ Tauchen, Leertaste Torpedo), in Codespaces über die Port-Weiterleitung
 - Admin: http://localhost:8088/admin.html (dort auch „LLM für Gegner verwenden“ einschalten)
+- Logs unter `logs/<service>.log`, PID-Dateien unter `.run/`, Leaderboard-Datenbank (H2) unter `data/`
+- Der OTel-Java-Agent wird beim ersten Start nach `.otel/` geladen (braucht Zugriff auf GitHub-Releases)
+- Speicher pro JVM über `JAVA_OPTS` (Standard `-Xmx256m`), andere Konfigurationsdatei per `ENV_FILE=… ./run-local.sh`
+- Gegner-KI mit LLM: eine LiteLLM-Instanz mit [deploy/litellm-config.yaml](deploy/litellm-config.yaml) starten
+  (z. B. `pip install 'litellm[proxy]'`, `litellm --config deploy/litellm-config.yaml --port 4000`) und `LLM_*` in `.env`
+  setzen. Echte Cloud-Modelle kosten Geld.
+
+Ein Docker Compose für die Anwendung gibt es bewusst nicht (ADR-11).
 
 ### Im Kubernetes-Cluster (Helm)
 
@@ -66,16 +70,23 @@ Physik skalieren: `--set physics.replicas=4`. Der Game-Server bleibt bei einer R
 
 ## Telemetrie-Ziele konfigurieren
 
-Wohin die Telemetrie geht, wird nur über Umgebungsvariablen (`.env`) festgelegt – der Code kennt keine Adressen.
-Zwei Betriebsarten sind vorgesehen:
+Wohin die Telemetrie geht, wird nur über Umgebungsvariablen (`.env`) festgelegt – weder Code noch Startskripte kennen
+Adressen. Das Spiel läuft auch ganz ohne Telemetrie-Backend. `.env.example` enthält für jede Betriebsart einen Block;
+genau einer ist aktiv:
 
-| Betriebsart | SigNoz / OTLP | Langfuse | LLM |
-| --- | --- | --- | --- |
-| **Workshop** | gehostetes SigNoz des Veranstalters | gehostetes Langfuse | Anthropic oder Heribert über LiteLLM |
-| **Lokal** | SigNoz in Docker, z. B. aus dem `o11y-playground` | Langfuse in Docker | lokales Modell (Ollama) oder Anthropic |
+| Betriebsart | Ziel | Einstellungen |
+| --- | --- | --- |
+| **Ohne Telemetrie** (Standard) | kein Export – der Agent instrumentiert, sendet aber nichts | `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER` = `none` |
+| **Lokal** | SigNoz oder Collector auf dem eigenen Rechner, z. B. aus dem `o11y-playground` | Exporter `otlp`, `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` |
+| **Bereitgestellt** | gehostetes SigNoz (z. B. im Workshop) | wie lokal, dazu Endpunkt des Anbieters und `OTEL_EXPORTER_OTLP_HEADERS` |
+
+Ist ein Ziel gesetzt, aber nicht erreichbar, läuft das Spiel weiter; der Agent loggt dann bei jedem Exportversuch einen Fehler.
+Ein eigenes Docker Compose für die lokalen Telemetrie-Services ist geplant (#5).
 
 | Variable | Bedeutung |
 | --- | --- |
+| `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER` | `none` (kein Export) oder `otlp` |
+| `OTEL_EXPORTER_OTLP_PROTOCOL` | `grpc` (Port 4317) oder `http/protobuf` (Port 4318, Standard des Agents) |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP-Ziel (SigNoz oder lokaler Collector), z. B. `http://localhost:4317` |
 | `OTEL_EXPORTER_OTLP_HEADERS` | Zugangsdaten für gehostete Ziele, z. B. `signoz-ingestion-key=…` |
 | `OTEL_TRACES_SAMPLER`, `OTEL_TRACES_SAMPLER_ARG` | Sampling – bei 20 Traces/s für gehostetes SigNoz empfohlen: `parentbased_traceidratio`, `0.1` |
@@ -83,9 +94,6 @@ Zwei Betriebsarten sind vorgesehen:
 
 Langfuse nimmt OTLP **nur per HTTP** an (`https://<host>/api/public/otel`, Basic-Auth mit Public/Secret Key).
 Geplant ist ein lokaler OpenTelemetry Collector als Verteiler: alles an SigNoz, nur die GenAI-Spans an Langfuse.
-
-Achtung beim lokalen Start ohne Docker: Der Game-Server nutzt standardmäßig Port 8080 – genau wie die SigNoz-UI.
-Einen der beiden umlegen (`PORT=8088` für den Game-Server).
 
 ## Was man beobachten kann
 
@@ -135,6 +143,7 @@ enemy-ai/         POST /api/decide – LLM über LiteLLM, sonst regelbasiert
 leaderboard/      POST /api/scores, GET /api/scores/top – H2-Datei-DB über JDBC
 player-swarm/     Lastgenerator mit echten WebSocket-Clients
 deploy/           LiteLLM-Konfiguration, Helm-Chart, Build-Skript
+run-local.sh      Start ohne Docker (JVM-Prozesse), stop-local.sh beendet sie
 arc-doc/          Architekturdokumentation nach arc42
 IDEEN.md          Ideen: Störungen (Chaos), Ideen für Teams
 .agents/          arc42agentic: Agenten und Skills zum Schreiben und Reviewen der arc42-Doku
@@ -151,5 +160,6 @@ IDEEN.md          Ideen: Störungen (Chaos), Ideen für Teams
 
 - `./gradlew build` läuft durch: alle Module kompilieren, 16 Tests in `game-core` grün.
 - Frontend (`index.html`, `admin.html`, `game.js`) gegen einen Mock-Server im Headless-Browser getestet.
-- Die Spring-Services wurden bisher **nie gestartet**.
+- Die Spring-Services laufen per `run-local.sh` (Spiel, Leaderboard, Schwarm, OTLP-Export geprüft).
+  Helm und der LLM-Pfad sind noch nicht gestartet worden.
 - Helm-Chart nur mit eigenem Renderer geprüft, nicht mit `helm lint`.
