@@ -6,14 +6,14 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 
 | ID | Risiko | Wahrsch. | Auswirkung | Maßnahme |
 |---|---|---|---|---|
-| R1 | **Spring-Services nie gebaut/gestartet** – Kompilier-, Konfigurations- oder Laufzeitfehler tauchen erst spät auf | hoch | hoch | `./gradlew build` (läuft), danach alle Services mit Agent starten und Smoke-Test (Spiel, Admin, Traces) |
+| R1 | **Spring-Services nie gestartet** – sie kompilieren (`./gradlew build` grün), Konfigurations- oder Laufzeitfehler tauchen aber erst spät auf | hoch | hoch | Alle Services mit Agent starten und Smoke-Test (Spiel, Admin, Traces) |
 | R2 | **Unbekannte Workshop-Endpunkte** (OTLP SigNoz, Langfuse, Zugangsdaten) – Export-Konfiguration nicht vorab testbar | hoch | hoch | Beim Veranstalter anfragen; alles über `.env`; lokal mit SigNoz/Langfuse in Docker proben |
 | R3 | **LLM-Kosten** – Entscheidung ≈ 1/s pro Gegner, Runaway × 8 mit wachsendem Kontext, kein Budget-Limit | mittel | hoch | Intervall 5–10 s bei LLM, Runaway deckeln, LiteLLM `max_budget`; Default `GAME_LLM_ENABLED=false` (umgesetzt) |
 | R4 | **Kein Start ohne Docker** – `run-local.sh`, H2-Profil, Collector-Binary fehlen | hoch | hoch | Offene Aufgaben TD1–TD3 vor dem Workshop umsetzen und im Browser-VS-Code proben |
 | R5 | **Telemetrie-Volumen** – 20 Root-Traces/s pro Instanz × Teilnehmende bei gehostetem SigNoz; Default `parentbased_always_on` | mittel | mittel | `parentbased_traceidratio` 0.1 empfehlen/vorbelegen; Metriken bleiben vollständig |
 | R6 | **Heribert-API unklar** (OpenAI-kompatibel?) | mittel | mittel | Klären; sonst nur Anthropic/lokal; enemy-ai fällt bei Fehlern auf `BotBrain` zurück |
 | R7 | **Portkonflikt 8080** zwischen Game-Server-Default und SigNoz-UI beim Start ohne Docker | hoch | niedrig | `PORT=8088` im Start-Skript/`.env` setzen |
-| R8 | **Netzwerkzugriff im Workshop** auf `services.gradle.org`, Maven Central, `api.foojay.io`, GitHub (Agent-Download), PyPI (LiteLLM) | mittel | hoch | Vorab im Workshop-VS-Code testen; ggf. Artefakte vorab bereitstellen <!-- TODO: Bitte ergänzen --> |
+| R8 | **Netzwerkzugriff im Workshop** auf `services.gradle.org`, `plugins.gradle.org`, Maven Central, GitHub (Agent-Download), PyPI (LiteLLM) | mittel | hoch | Vorab im Workshop-VS-Code testen; ggf. Artefakte vorab bereitstellen <!-- TODO: Bitte ergänzen --> |
 | R9 | **Agent-/API-Versionsdrift** – andere Agent-Version als 2.32.0 passt nicht zu API 1.66.0 | niedrig | mittel | Version im Start-Skript fest pinnen, nur gemeinsam ändern |
 | R10 | **Helm-Chart nie mit `helm lint`/echtem Cluster geprüft** | mittel | niedrig (Workshop ohne Cluster) | `helm lint` / `helm template` in CI |
 | R11 | **Game-Server Single Point of Failure**, Zustand nur im Speicher (ADR-03) | niedrig | mittel | Akzeptiert; Neustart = neue Runde |

@@ -4,12 +4,12 @@
 
 | Technologie | Entscheidung | Begründung |
 |------------|-------------|-----------|
-| Programmiersprache | Kotlin 2.2.21 auf JDK 21 (Gradle-Toolchain, foojay-Resolver) | Kompakter Code, Data Classes für das Spielmodell; JDK 21 für virtuelle Threads. <!-- ABGELEITET: Aus Code erkannt, bitte verifizieren --> |
+| Programmiersprache | Kotlin 2.2.21, Bytecode Java 21 (`jvmTarget 21`, siehe ADR-08) | Kompakter Code, Data Classes für das Spielmodell; JDK 21 für virtuelle Threads. <!-- ABGELEITET: Aus Code erkannt, bitte verifizieren --> |
 | Framework | Spring Boot 3.5.16 (Web, WebSocket, RestClient, JDBC) | Vom OTel-Java-Agent vollständig instrumentiert, bekannter Stack. <!-- ABGELEITET --> |
 | Telemetrie | OTel-Java-Agent 2.32.0 (Zero-Code) + `opentelemetry-api` 1.66.0 über `GlobalOpenTelemetry` | HTTP, JDBC, Logs, JVM ohne Codeänderung; eigener Code nur für fachliche Spans/Metriken und GenAI-Telemetrie |
 | LLM-Anbindung | OpenAI-kompatible API, LiteLLM als Gateway (Modellalias `enemy-brain`) | Modell wechseln ohne Codeänderung (Ollama lokal, Anthropic, Heribert); LiteLLM liefert eigene Spans und Kosten |
 | Datenbank | Postgres über JDBC (lokal H2 **geplant**) | Echte DB-Spans und DB-Chaos (`pg_sleep`); H2, weil im Workshop kein Docker |
-| Build | Gradle Wrapper 9.6.0, Multi-Projekt | Läuft in allen Zielumgebungen mit JDK ≥ 17, ohne Installation |
+| Build | Gradle Wrapper 9.6.0, Multi-Projekt | Läuft in allen Zielumgebungen mit JDK ≥ 21, ohne weitere Installation |
 | Betrieb | Docker Compose (lokal), Helm-Chart (Kubernetes); JVM-Prozesse ohne Docker **geplant** (`run-local.sh`) | Workshop-Umgebung ohne Docker; lokal SigNoz/Langfuse in Docker |
 
 ## Top-Level-Zerlegung
@@ -41,7 +41,7 @@ Details: [Kapitel 5](../05-Bausteinsicht/), Entscheidungen in [Kapitel 9](../09-
 | Beobachtbarkeit (Langfuse) | Lokaler OTel Collector als Fan-out (alles an SigNoz, nur GenAI-Spans an Langfuse); Prompt/Completion, `langfuse.session.id`, `gen_ai.usage.cost` | **geplant** |
 | Störbarkeit | `Chaos`-Objekt im Game-Server, über Admin-Panel änderbar, mit jedem Aufruf an die Services durchgereicht; Werte begrenzt (z. B. Physik-Latenz ≤ 1500 ms unter 2-s-Timeout) | umgesetzt (global) |
 | Störbarkeit pro U-Boot | Störung pro Boot auf einer Skala in der UI | **geplant**, Umsetzung offen |
-| Einfache Inbetriebnahme | Wrapper + Toolchain-Resolver; Konfiguration nur über Umgebungsvariablen; Dev Container für Codespaces | umgesetzt |
+| Einfache Inbetriebnahme | Gradle Wrapper, nur JDK ≥ 21 nötig; Konfiguration nur über Umgebungsvariablen; Dev Container für Codespaces | umgesetzt |
 | Einfache Inbetriebnahme ohne Docker | `run-local.sh`/`stop-local.sh` mit OTel-Agent, `.env`, Logs nach `logs/`; Leaderboard-Profil `local` mit H2; LiteLLM per `pip` | **geplant** |
 | Kostenkontrolle LLM | Regelbasierter Fallback, LLM per Schalter (Default aus), `max_tokens` 60, Kostenmetrik `enemy_ai.llm.cost`, LiteLLM als zentrale Stelle | umgesetzt |
 | Kostenkontrolle LLM (Bremse) | Entscheidungsintervall 5–10 s bei LLM, Runaway-Chaos bei Cloud-Modellen deckeln, LiteLLM `max_budget` | **geplant** |

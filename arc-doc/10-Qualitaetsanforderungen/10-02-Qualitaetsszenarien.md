@@ -48,7 +48,7 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 
 ## QS-08: Start ohne Docker
 
-**Stimulus:** Teilnehmende/r startet im Browser-VS-Code mit vorhandenem JDK ≥ 17.
+**Stimulus:** Teilnehmende/r startet im Browser-VS-Code mit vorhandenem JDK ≥ 21.
 **Reaktion:** Ein Skript baut die Services, lädt den OTel-Agent, startet 5 Services mit Logs unter `logs/`.
 **Metrik:** Lauffähig in < <!-- TODO: Bitte ergänzen (N Minuten, inkl. erstem Gradle-/JDK-Download) -->. Skript und H2-Profil sind noch nicht umgesetzt.
 

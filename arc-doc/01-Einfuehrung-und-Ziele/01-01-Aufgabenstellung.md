@@ -38,7 +38,7 @@ damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 ## Status der Umsetzung
 
 - `game-core` kompiliert, Tests grün. Frontend gegen Mock-Server getestet.
-- Die Spring-Services wurden bisher nie gestartet (Stand README).
+- Alle Module kompilieren (`./gradlew build`); die Spring-Services wurden bisher aber nie gestartet (Stand README).
 - Weitere geplante Punkte: Kostenbremse für echte LLMs, Langfuse-Attribute (Prompt/Completion, Session-ID),
   Anthropic- und Heribert-Anbindung in LiteLLM, optional Jev als dritte Gegner-KI-Variante.
   Details in [Kapitel 11](../11-Risiken/) bzw. als GitHub Issues.

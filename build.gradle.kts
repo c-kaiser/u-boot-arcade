@@ -16,10 +16,18 @@ subprojects {
 
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
+    // Bytecode und API-Stand Java 21 – kompilieren geht mit jedem JDK ab 21, ohne Toolchain-Download
     extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension> {
-        jvmToolchain(21)
-        compilerOptions { freeCompilerArgs.add("-Xjsr305=strict") }
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            freeCompilerArgs.addAll("-Xjsr305=strict", "-Xjdk-release=21")
+        }
     }
+    extensions.configure<JavaPluginExtension> {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+    tasks.withType<JavaCompile> { options.release.set(21) }
 
     tasks.withType<Test> { useJUnitPlatform() }
 

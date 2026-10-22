@@ -19,19 +19,17 @@ Die Architektur ist in [arc-doc/](arc-doc/) nach arc42 beschrieben.
 
 ## Voraussetzungen und Toolchain
 
-Benötigt wird nur **ein JDK ab Version 17** auf dem `PATH`. Alles andere lädt der Build selbst:
-
-- Der **Gradle Wrapper** (`./gradlew`) lädt die passende Gradle-Version.
-- Der **foojay-Toolchain-Resolver** lädt bei Bedarf das JDK 21, mit dem die Services kompiliert werden.
-  Ein bereits installiertes JDK 21 wird bevorzugt.
+Benötigt wird nur **ein JDK ab Version 21** auf dem `PATH`. Der **Gradle Wrapper** (`./gradlew`) lädt die passende
+Gradle-Version selbst. Kompiliert wird immer für Java 21 – auch mit einem neueren JDK.
 
 | Umgebung | Einrichtung |
 | --- | --- |
 | GitHub Codespaces / Dev Container | Nichts zu tun – [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) bringt JDK 21 und Docker mit |
-| Workshop-VS-Code, Sandbox | Vorhandenes JDK genügt (`java -version` ≥ 17) |
+| Workshop-VS-Code, Sandbox | Vorhandenes JDK genügt (`java -version` ≥ 21) |
 | Lokal (macOS/Linux) | z. B. [SDKMAN!](https://sdkman.io/): `sdk install java 21-tem` – oder ein JDK aus dem Paketmanager |
 
-Netzwerkzugriff auf `services.gradle.org`, Maven Central und `api.foojay.io` ist für den ersten Build nötig.
+Für den ersten Build nötig: Netzwerkzugriff auf `services.gradle.org` (leitet auf `release-assets.githubusercontent.com`
+weiter), `plugins.gradle.org` und Maven Central.
 
 ## Bauen und Testen
 
@@ -131,22 +129,9 @@ Spielereignisse als strukturierte Logs mit Trace-ID, zum Beispiel „Kessel von 
 
 ## Störungen (Chaos)
 
-**Zielbild:** In der UI lässt sich für jedes U-Boot eine Störung auf einer Skala einstellen. Je nach Stärke löst sie
-gezieltes Chaos aus, etwa zusätzliche Latenz. Wie die Störungen technisch umgesetzt werden, ist noch offen.
-
-**Heute** gibt es globale Schalter im Admin-Panel (`admin.html`), die für alle Boote gelten:
-
-| Schalter | Wirkung | Woran man es erkennt |
-| --- | --- | --- |
-| Physik-Latenz | Jeder Step wird verzögert | `game.tick.duration` steigt, Overruns, Spiel ruckelt |
-| Physik-Fehlerrate | Steps scheitern mit 503 | Fehler-Spans, `game.physics.failures`, Welt friert ein |
-| Leaderboard-DB langsam | Künstliche Verzögerung vor jedem Insert (`pg_sleep`) | Langer DB-Span, Warteschlange läuft voll |
-| Gegner-KI-Latenz | Gegner reagieren träge | `game.enemy.decision.latency` |
-| Gegner-KI-Endlosschleife | 8 LLM-Aufrufe pro Entscheidung, Kontext wächst | Tokens und Kosten explodieren, lange Traces |
-| Memory Leak | Heap wächst um ~1,3 MB/s | JVM-Heap-Metriken, Garbage Collection, irgendwann OOM-Kill |
-| Kesselkühlung defekt | Dampfdruck über 9,5 bar | `sub.boiler.pressure`, OVERHEAT-Events |
-| Leck im Rumpf | Boote sinken | `sub.depth` steigt, `sub.hull` fällt |
-| Meeresströmung | Boote treiben ab | `sub.speed` |
+Im Admin-Panel (`admin.html`) lassen sich Störungen global einschalten, etwa Physik-Latenz, Fehlerraten, eine langsame
+Leaderboard-DB oder eine KI-Endlosschleife. Die Schalter mit ihren Auswirkungen und das Zielbild „Störung pro U-Boot“
+stehen in [IDEEN.md](IDEEN.md).
 
 ## Projektstruktur
 
@@ -159,6 +144,7 @@ leaderboard/      POST /api/scores, GET /api/scores/top – Postgres über JDBC
 player-swarm/     Lastgenerator mit echten WebSocket-Clients
 deploy/           LiteLLM-Konfiguration, Helm-Chart, Build-Skript
 arc-doc/          Architekturdokumentation nach arc42
+IDEEN.md          Ideen: Störungen (Chaos), Ideen für Teams
 .agents/          arc42agentic: Agenten und Skills zum Schreiben und Reviewen der arc42-Doku
 ```
 
@@ -171,7 +157,7 @@ arc-doc/          Architekturdokumentation nach arc42
 
 ## Status
 
-- `game-core` kompiliert, 16 Tests grün.
+- `./gradlew build` läuft durch: alle Module kompilieren, 16 Tests in `game-core` grün.
 - Frontend (`index.html`, `admin.html`, `game.js`) gegen einen Mock-Server im Headless-Browser getestet.
-- Die Spring-Services wurden bisher **nie gestartet**; ob sie fehlerfrei kompilieren, wird gerade geprüft.
+- Die Spring-Services wurden bisher **nie gestartet**.
 - Helm-Chart nur mit eigenem Renderer geprüft, nicht mit `helm lint`.

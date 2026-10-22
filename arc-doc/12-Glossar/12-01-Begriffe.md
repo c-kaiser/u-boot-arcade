@@ -55,7 +55,6 @@
 | Overrun | Tick dauert länger als 50 ms (`game.tick.overruns`) | Zeichen für Überlast/Chaos |
 | Frame verworfen | Ein Zustandsupdate, das ein langsamer Client nicht abgenommen hat, wird zugunsten des neuesten verworfen (`game.websocket.frames_dropped`) | Broadcast im Game-Server |
 | Virtuelle Threads | Leichtgewichtige Threads ab JDK 21 | Broadcast pro Client |
-| foojay-Resolver | Gradle-Plugin, das die benötigte JDK-Toolchain automatisch lädt | Build |
 
 ## Abkürzungen
 

@@ -1,5 +1,5 @@
 {
-  // Für GitHub Codespaces und VS Code Dev Containers: JDK 21 (für Gradle und Toolchain)
+  // Für GitHub Codespaces und VS Code Dev Containers: JDK 21 (Build und Laufzeit)
   // und Docker, um SigNoz/Langfuse lokal oder per docker compose zu starten.
   "name": "U-Boot Arcade",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",

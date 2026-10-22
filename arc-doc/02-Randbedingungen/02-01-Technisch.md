@@ -8,9 +8,9 @@
 | LLM-Zugang | Anthropic und „Heribert“ (Endpunkt-Art unklar, vermutlich OpenAI-kompatibel <!-- TODO: Bitte ergänzen -->) | Vom Veranstalter bereitgestellt. Folge: Gegner-KI spricht OpenAI-kompatible API, LiteLLM übersetzt | teilweise |
 | Programmiersprache: Kotlin | 2.2.21, `-Xjsr305=strict` | Gewählt vom Entwickler <!-- ABGELEITET: Aus Code erkannt, bitte verifizieren --> | ja |
 | Framework: Spring Boot | 3.5.16 für alle Services außer `game-core` | Gewählt vom Entwickler | ja |
-| Laufzeitumgebung: JDK 21 | Per Gradle-Toolchain (`jvmToolchain(21)`), bei Bedarf über foojay-Resolver geladen; zum Starten von Gradle genügt JDK ≥ 17 | Virtuelle Threads (JDK 21); Workshop-Umgebung hat evtl. anderes JDK | ja |
+| Laufzeitumgebung: JDK 21 | Kompiliert mit `jvmTarget 21` und jedem installierten JDK ≥ 21 (ADR-08) | Virtuelle Threads (JDK 21); Workshop-Umgebung hat evtl. anderes JDK | ja |
 | Build: Gradle Wrapper 9.6.0 | Multi-Projekt-Build, Wrapper lädt Gradle selbst | Keine lokale Gradle-Installation nötig | ja |
-| Netzwerkzugriff beim ersten Build | `services.gradle.org`, Maven Central, `api.foojay.io` | Wrapper, Abhängigkeiten, JDK-Download | nein |
+| Netzwerkzugriff beim ersten Build | `services.gradle.org`, `plugins.gradle.org`, Maven Central | Wrapper, Gradle-Plugins, Abhängigkeiten | nein |
 | OpenTelemetry | Java-Agent 2.32.0 zur Laufzeit; im Code nur `opentelemetry-api` 1.66.0 über `GlobalOpenTelemetry` | API-Version muss zur Agent-Version passen, nur gemeinsam ändern (AGENTS.md) | nein |
 | Datenbank | Postgres (Docker Compose: 17-alpine) für das Leaderboard, Schema mit `BIGSERIAL`/`TIMESTAMPTZ`, Chaos per `pg_sleep` | Lokal ohne Docker: H2-Profil **geplant**, dafür Schema und `pg_sleep`-Chaos anpassen | ja |
 | Ports | game-server 8080, physics 8081, leaderboard 8082, enemy-ai 8083 (je `PORT`) | SigNoz-UI nutzt ebenfalls 8080: lokal Game-Server auf `PORT=8088` legen | ja |

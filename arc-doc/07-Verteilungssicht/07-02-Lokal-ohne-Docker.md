@@ -8,8 +8,8 @@
 ## Zielumgebungen
 
 Workshop-VS-Code im Browser (pro Person, **kein Docker**), GitHub Codespaces, Sandbox, lokaler Rechner.
-Voraussetzung ist nur ein JDK ≥ 17; Gradle Wrapper und foojay-Resolver laden Gradle und JDK 21 nach.
-Netzzugriff auf `services.gradle.org`, Maven Central und `api.foojay.io` ist für den ersten Build nötig.
+Voraussetzung ist nur ein JDK ≥ 21; der Gradle Wrapper lädt Gradle nach.
+Netzzugriff auf `services.gradle.org`, `plugins.gradle.org` und Maven Central ist für den ersten Build nötig.
 
 ## Übersichtsdiagramm (Zielbild)
 
