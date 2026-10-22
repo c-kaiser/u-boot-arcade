@@ -9,7 +9,7 @@ mit eingebetteter H2-Datei-DB) und optional LiteLLM. Sie wird in drei Varianten 
 
 | Variante | Status | Zielumgebung | Details |
 |----------|--------|--------------|---------|
-| Lokal als JVM-Prozesse, ohne Docker | **geplant** | Workshop-VS-Code (Browser), Sandbox, Codespaces | [07-02](07-02-Lokal-ohne-Docker.md) |
+| Lokal als JVM-Prozesse, ohne Docker (`run-local.sh`) | **umgesetzt** (Codespaces/Workshop noch nicht erprobt) | Workshop-VS-Code (Browser), Sandbox, Codespaces | [07-02](07-02-Lokal-ohne-Docker.md) |
 | Docker Compose | **umgesetzt** | Lokal (Laptop), Codespaces/Dev Container | [07-03](07-03-Docker-Compose.md) |
 | Kubernetes per Helm | **umgesetzt** (nur mit eigenem Renderer geprüft, nicht mit `helm lint`) | Cluster neben SigNoz | [07-04](07-04-Kubernetes-Helm.md) |
 
@@ -38,7 +38,8 @@ flowchart LR
 - **Konfiguration nur über Umgebungsvariablen:** Der Code kennt keine Zieladressen (Downstream-URLs, DB, LLM, OTLP).
   So laufen dieselben Artefakte in allen Varianten.
 - **Instrumentierung zur Laufzeit:** Der OTel-Java-Agent 2.32.0 wird per `-javaagent` geladen (im Image über
-  `JAVA_TOOL_OPTIONS`), nicht in die JARs eingebaut.
+  `JAVA_TOOL_OPTIONS`, ohne Docker durch `run-local.sh`), nicht in die JARs eingebaut. Ob und wohin exportiert wird,
+  ist reine Konfiguration (ADR-10).
 - **Workshop ohne Docker:** Im Workshop gibt es nur einen Browser-VS-Code pro Person; deshalb ist der Start als
   JVM-Prozesse die eigentliche Zielvariante. Docker Compose und Helm dienen lokal bzw. für einen gemeinsamen Cluster.
 
@@ -53,17 +54,17 @@ flowchart LR
 
 ### Mapping Software → Infrastruktur
 
-| Software-Baustein | Port | Lokal ohne Docker (geplant) | Docker Compose | Kubernetes (Helm) |
-|------------------|------|------------------------------|----------------|-------------------|
-| `game-server` | 8080 | JVM-Prozess, `PORT=8088` empfohlen (Konflikt mit SigNoz-UI auf 8080) | Container, Host-Port `GAME_PORT` (8088) | Deployment 1 Replica, Strategie `Recreate`, Service Port 80, optional Ingress |
+| Software-Baustein | Port | Lokal ohne Docker (`run-local.sh`) | Docker Compose | Kubernetes (Helm) |
+|------------------|------|-----------------------------------|----------------|-------------------|
+| `game-server` | 8080 | JVM-Prozess auf `GAME_PORT` (8088, vermeidet Konflikt mit SigNoz-UI auf 8080) | Container, Host-Port `GAME_PORT` (8088) | Deployment 1 Replica, Strategie `Recreate`, Service Port 80, optional Ingress |
 | `physics-service` | 8081 | JVM-Prozess | Container `physics` | Deployment, 2 Replicas |
 | `leaderboard` | 8082 | JVM-Prozess, H2-Datei unter `./data/` | Container, H2-Datei auf Volume `leaderboard-data` | Deployment 1 Replica, H2-Datei in `emptyDir` |
 | `enemy-ai` | 8083 | JVM-Prozess | Container | Deployment 1 Replica, API-Key aus Secret |
-| `player-swarm` | – | JVM-Prozess (optional) | Container, Profil `swarm` (10 Spieler) | Deployment, `playersPerPod` 10 |
+| `player-swarm` | – | JVM-Prozess (optional, `--swarm`) | Container, Profil `swarm` (10 Spieler) | Deployment, `playersPerPod` 10 |
 | LiteLLM | 4000 | `pip install 'litellm[proxy]'` (geplant) | Container, Profil `llm` | nicht im Chart, `llm.baseUrl` zeigt auf externe Instanz |
 | Modell | – | Anthropic / Heribert (Cloud) | Ollama-Container `qwen2.5:3b` (Profil `llm`) oder Anthropic | extern |
 | OTel Collector | 4317/4318 | `otelcol-contrib`-Binary (geplant) | – | – (SigNoz-Collector im Cluster) |
-| OTel-Java-Agent | – | einmal heruntergeladen, per `-javaagent` (geplant) | im Image `/otel/opentelemetry-javaagent.jar` | im Image |
+| OTel-Java-Agent | – | einmal nach `.otel/` heruntergeladen, per `-javaagent` | im Image `/otel/opentelemetry-javaagent.jar` | im Image |
 
 ### Knoten-Beschreibungen
 

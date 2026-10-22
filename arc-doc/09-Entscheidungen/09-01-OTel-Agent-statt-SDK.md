@@ -24,7 +24,7 @@ kein SDK, keine Exporter im Code. Export und Sampling konfiguriert ausschließli
 ### Negativ
 - API-Version muss zur Agent-Version passen; nur gemeinsam ändern (`otelApiVersion` in `build.gradle.kts`).
 - Ohne Agent (z. B. `./gradlew bootRun` ohne `-javaagent`) bleibt alles stumm (No-op).
-- Der Start ohne Docker muss den Agent selbst laden (geplant in `run-local.sh`).
+- Der Start ohne Docker muss den Agent selbst laden (`run-local.sh` lädt ihn einmalig nach `.otel/`; Version dort ebenfalls pflegen).
 
 ### Neutral
 - Weitere Begründung (z. B. Abwägung gegen Spring-Boot-OTel-Starter/Micrometer): <!-- TODO: Bitte ergänzen -->

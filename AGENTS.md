@@ -14,10 +14,13 @@ Die Architektur ist in **[arc-doc/](arc-doc/)** nach arc42 dokumentiert.
 - Vor dem Abschluss einer Änderung `./gradlew build` ausführen und das Ergebnis ehrlich berichten.
 - Echte LLM-Modelle (Anthropic, Heribert) kosten Geld: keine Schleifen, Lasttests oder Chaos-Runaway gegen Cloud-Modelle
   laufen lassen, ohne vorher zu fragen. Für Tests den regelbasierten Gegner (`GAME_LLM_ENABLED=false`) nutzen.
-- `opentelemetry-api` in `build.gradle.kts` muss zur Version des OTel-Java-Agents passen – nur gemeinsam ändern.
+- `opentelemetry-api` in `build.gradle.kts` muss zur Version des OTel-Java-Agents passen. Die Agent-Version steht im
+  `Dockerfile` und in `run-local.sh` – alle drei nur gemeinsam ändern.
+- Zum Ausprobieren `./run-local.sh` mit der Standard-`.env` (ohne Telemetrie, `GAME_LLM_ENABLED=false`), danach `./stop-local.sh`.
 - `game-core` bleibt frei von Frameworks (kein Spring, keine OTel-Abhängigkeit).
 - In Sandboxen mit Netzwerk-Firewall braucht der erste Build Zugriff auf `services.gradle.org`
-  (leitet auf `release-assets.githubusercontent.com` weiter), `plugins.gradle.org` und Maven Central.
+  (leitet auf `release-assets.githubusercontent.com` weiter), `plugins.gradle.org` und Maven Central; `run-local.sh`
+  lädt den OTel-Agent zusätzlich von `github.com` (Releases).
 
 ## arc42-Dokumentation
 

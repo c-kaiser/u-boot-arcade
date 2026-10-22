@@ -4,6 +4,7 @@
 #   docker compose --profile llm up --build   zusätzlich LiteLLM + Ollama für die Gegner-KI
 #
 # Telemetrie geht per OTLP an OTEL_EXPORTER_OTLP_ENDPOINT (Standard: SigNoz auf dem Host, Port 4317).
+# Mit OTEL_*_EXPORTER=none (Standard in .env.example) wird nichts exportiert.
 
 name: u-boot-arcade
 
@@ -18,7 +19,11 @@ x-java-service: &java-service
 
 x-otel-env: &otel-env
   OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-http://host.docker.internal:4317}
-  OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+  OTEL_EXPORTER_OTLP_PROTOCOL: ${OTEL_EXPORTER_OTLP_PROTOCOL:-grpc}
+  OTEL_EXPORTER_OTLP_HEADERS: ${OTEL_EXPORTER_OTLP_HEADERS:-}
+  OTEL_TRACES_EXPORTER: ${OTEL_TRACES_EXPORTER:-otlp}
+  OTEL_METRICS_EXPORTER: ${OTEL_METRICS_EXPORTER:-otlp}
+  OTEL_LOGS_EXPORTER: ${OTEL_LOGS_EXPORTER:-otlp}
   OTEL_RESOURCE_ATTRIBUTES: service.namespace=u-boot-arcade,deployment.environment.name=${DEPLOY_ENV:-local}
   OTEL_METRIC_EXPORT_INTERVAL: ${OTEL_METRIC_EXPORT_INTERVAL:-10000}
   OTEL_TRACES_SAMPLER: ${OTEL_TRACES_SAMPLER:-parentbased_always_on}

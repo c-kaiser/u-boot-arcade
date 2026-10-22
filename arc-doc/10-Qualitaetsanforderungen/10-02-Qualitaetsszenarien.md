@@ -49,8 +49,8 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 ## QS-08: Start ohne Docker
 
 **Stimulus:** Entwickler/in oder Teilnehmende/r startet lokal, in GitHub Codespaces oder im Browser-VS-Code mit vorhandenem JDK ≥ 21, ohne Docker.
-**Reaktion:** Ein Skript baut die Services, lädt den OTel-Agent, startet 5 Services mit Logs unter `logs/`.
-**Metrik:** Lauffähig in < <!-- TODO: Bitte ergänzen (N Minuten, inkl. erstem Gradle-/JDK-Download) -->. Das Skript ist noch nicht umgesetzt.
+**Reaktion:** `run-local.sh` baut die Services, lädt einmalig den OTel-Agent, startet 4 Services (mit `--swarm` 5) mit Logs unter `logs/` und meldet die Spiel-URL.
+**Metrik:** Spielbar unter `http://localhost:8088`; in der Sandbox mit warmem Gradle-Cache nach rund 1–1,5 Minuten. Erster Start inkl. Gradle-Download: <!-- TODO: Bitte ergänzen (in Codespaces messen) -->
 
 ## QS-09: Telemetrie-Ziel wechseln
 
@@ -70,9 +70,9 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 **Reaktion:** `./gradlew :game-core:test` prüft ohne Spring, Netz oder Datenbank.
 **Metrik:** Tests laufen lokal ohne Infrastruktur (heute 16 Tests). Laufzeit: <!-- TODO: Bitte ergänzen -->
 
-## QS-12: Betrieb ohne Telemetrie-Backend (geplant)
+## QS-12: Betrieb ohne Telemetrie-Backend
 
 **Stimulus:** Die Services werden gestartet, ohne dass SigNoz, ein Collector oder Langfuse läuft bzw. erreichbar ist.
-**Umgebung:** Start ohne Docker, lokal oder in GitHub Codespaces; ggf. mit einer eigenen Konfiguration, die den Export abschaltet.
-**Reaktion:** Alle Services starten, das Spiel ist spielbar; fehlgeschlagene Exporte führen höchstens zu Warn-Logs.
-**Metrik:** Kein Absturz, kein Hänger beim Start, Tick-Dauer wie im Normalbetrieb (QS-04). <!-- TODO: Bitte ergänzen – noch nicht geprüft, welche Konfiguration nötig ist -->
+**Umgebung:** Start ohne Docker, lokal oder in GitHub Codespaces; Betriebsart „ohne Telemetrie“ (`OTEL_*_EXPORTER=none`, Standard) oder ein konfiguriertes, aber nicht erreichbares OTLP-Ziel.
+**Reaktion:** Alle Services starten, das Spiel ist spielbar. Ohne Telemetrie keine Export-Logs; bei nicht erreichbarem Ziel Fehler-Logs des Agents je Exportversuch (ADR-10).
+**Metrik:** Kein Absturz, kein Hänger beim Start (in der Sandbox gleiche Startzeit wie mit Ziel), Tick-Dauer wie im Normalbetrieb (QS-04).

@@ -18,6 +18,7 @@ zu beenden – sonst gäbe es im Workshop nichts mehr zu beobachten.
 | Leaderboard beim Lesen nicht erreichbar | `GET /api/leaderboard` liefert 502 mit leerer Liste | HTTP-Span (Agent) |
 | Langsamer WebSocket-Client | nur der neueste Frame wird gesendet, ältere verworfen; Senden über virtuelle Threads, `ConcurrentWebSocketSessionDecorator` (2 s Sendelimit, 1 MB Puffer) | `game.websocket.frames_dropped` |
 | H2-Datei nicht beschreibbar oder gesperrt (z. B. zweite Instanz auf derselben Datei) | Leaderboard startet nicht; Game-Server verwirft Einträge, Bestenliste liefert 502 mit leerer Liste | `game.leaderboard.dropped{reason=error}`, Start-Log des Leaderboards |
+| Telemetrie-Ziel nicht erreichbar (OTLP-Exporter aktiv) | Services starten und laufen normal; der Agent verwirft die Daten | Agent-Log `ERROR … Failed to export …` je Exportversuch; mit `OTEL_*_EXPORTER=none` gar kein Export (ADR-10) |
 | Schwarm-Verbindung bricht ab | Schwarm-Client verbindet sich neu (`reconnectLater`) | `swarm.connects` |
 
 <!-- ABGELEITET: Aus Code erkannt (GameLoop.kt, GameWebSocketHandler.kt, GameServerApplication.kt, EnemyAiApplication.kt, LlmClient.kt), bitte verifizieren -->

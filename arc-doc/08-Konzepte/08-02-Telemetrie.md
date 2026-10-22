@@ -79,10 +79,14 @@ Einzelfehler (z. B. Senden an einen Client).
 
 ## Export-Ziele
 
+Die Telemetrie-Betriebsart wird nur in `.env` gewählt (Blöcke in `.env.example`); Code und Startskripte kennen keine
+Adressen (ADR-10).
+
 | Betriebsart | Ziel | Status |
 |---|---|---|
-| Lokal | SigNoz in Docker (`OTEL_EXPORTER_OTLP_ENDPOINT`, z. B. `http://host.docker.internal:4317`) | umgesetzt |
-| Workshop | gehostetes SigNoz, Zugang über `OTEL_EXPORTER_OTLP_HEADERS` | Endpunkte unbekannt |
+| Ohne Telemetrie (Standard) | kein Export: `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER` = `none`; Agent instrumentiert weiter | umgesetzt |
+| Lokal | SigNoz oder Collector auf dem eigenen Rechner: Exporter `otlp`, `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` (aus Compose `host.docker.internal`); eigenes Compose für die Services geplant (#5) | umgesetzt |
+| Bereitgestellt (z. B. Workshop) | gehostetes SigNoz, Zugang über `OTEL_EXPORTER_OTLP_HEADERS` | umgesetzt, Endpunkte unbekannt |
 | Langfuse | lokaler OTel Collector (otelcol-contrib) als Fan-out: alles an SigNoz, GenAI-Spans (enemy-ai/litellm) per **OTLP/HTTP** an `https://<host>/api/public/otel` (Basic-Auth, `x-langfuse-ingestion-version=4`) | geplant, [ADR-09](../09-Entscheidungen/09-09-Collector-Fan-out.md) |
 
 ## Geltungsbereich

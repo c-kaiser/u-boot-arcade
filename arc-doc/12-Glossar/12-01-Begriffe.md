@@ -36,6 +36,7 @@
 | Jev | „System One“-Modell von TypeSafe mit eigener, nicht OpenAI-kompatibler API; optionale dritte Gegner-KI-Variante (**geplant**, nur mit Zugang). |
 | `enemy-brain` | Modellalias in LiteLLM, den die Gegner-KI aufruft; welches echte Modell dahinter steckt, entscheidet nur die LiteLLM-Konfiguration. |
 | Workshop-Umgebung | Browser-VS-Code pro Person, ohne Docker, mit gehostetem SigNoz, OTel Demo und Langfuse. |
+| Telemetrie-Betriebsart | Wohin die Telemetrie geht, gewählt nur in `.env`: *ohne Telemetrie* (Standard, `OTEL_*_EXPORTER=none`), *lokal* (SigNoz/Collector auf dem eigenen Rechner) oder *bereitgestellt* (gehostete Ziele mit Zugangsdaten), siehe ADR-10. |
 | o11y-playground | Begleitprojekt, aus dem SigNoz lokal in Docker gestartet werden kann. <!-- TODO: Bitte ergänzen (Link) --> |
 
 ## Technische Begriffe
@@ -44,6 +45,7 @@
 |---------|-----------|---------|
 | OpenTelemetry (OTel) | Herstellerneutraler Standard für Traces, Metriken und Logs | Agent + API in allen Services |
 | OTel-Java-Agent | Zur Laufzeit per `-javaagent` geladene Zero-Code-Instrumentierung (HTTP, JDBC, Logs, JVM) | Version 2.32.0 |
+| `run-local.sh` / `stop-local.sh` | Startet bzw. beendet die Services ohne Docker als JVM-Prozesse mit OTel-Agent (Logs `logs/`, PIDs `.run/`) | Verteilungssicht 7.2 |
 | OTLP | OpenTelemetry Protocol (gRPC oder HTTP) zum Export der Telemetrie | Ziel per `OTEL_EXPORTER_OTLP_ENDPOINT` |
 | OTel Collector | Eigenständiger Prozess, der Telemetrie empfängt, filtert und weiterleitet | **geplant** als Fan-out SigNoz/Langfuse |
 | SigNoz | Observability-Plattform für Traces, Metriken und Logs | Lokal in Docker oder gehostet |

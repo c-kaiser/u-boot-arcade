@@ -31,8 +31,8 @@ damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 | F8 | Telemetrie | Traces, Metriken, Logs per OTLP; eigene fachliche Metriken und GenAI-Spans | umgesetzt |
 | F9 | Lastgenerator | `player-swarm` mit echten WebSocket-Clients für Last und Client-Metriken | umgesetzt |
 | F10 | Export an SigNoz und Langfuse | Lokaler OTel Collector als Verteiler: alles an SigNoz, nur GenAI-Spans an Langfuse | geplant |
-| F11 | Start ohne Docker | Die Anwendung startet lokal und in GitHub Codespaces als JVM-Prozesse ohne Docker (`run-local.sh`/`stop-local.sh`, Konfiguration über `.env`) | geplant |
-| F12 | Betrieb ohne Telemetrie-Backend | Die Anwendung läuft auch, wenn kein Telemetrie-Ziel (SigNoz, Collector, Langfuse) gestartet oder erreichbar ist – ggf. mit einer eigenen Konfiguration, die den Export abschaltet | geplant, ungeprüft |
+| F11 | Start ohne Docker | Die Anwendung startet lokal und in GitHub Codespaces als JVM-Prozesse ohne Docker (`run-local.sh`/`stop-local.sh`, Konfiguration über `.env`) | umgesetzt (#3), Codespaces noch nicht erprobt |
+| F12 | Betrieb ohne Telemetrie-Backend | Die Anwendung läuft auch, wenn kein Telemetrie-Ziel (SigNoz, Collector, Langfuse) gestartet oder erreichbar ist – Standard ist die Telemetrie-Betriebsart „ohne Telemetrie“ (`OTEL_*_EXPORTER=none`, ADR-10) | umgesetzt (#3) |
 
 <!-- ABGELEITET: Aus Code erkannt, bitte verifizieren -->
 <!-- TODO: Anforderungen nach Erreichen des Initialstands erneut prüfen. Initialstand = grundsätzliches Review erfolgt und ein erster Durchstich funktional und abgenommen -->
