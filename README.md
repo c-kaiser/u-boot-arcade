@@ -4,18 +4,13 @@ Ein kleines Multiplayer-Arcade-Spiel mit U-Booten. Gebaut als „eigene App“ f
 mit OpenTelemetry, SigNoz und Langfuse: Es erzeugt technische Telemetrie (Latenzen, Fehler, JVM, DB) und fachliche
 Telemetrie (Tiefe, Dampfdruck, Treffer), und es lässt sich gezielt stören, um die Folgen in SigNoz und Langfuse wiederzufinden.
 
-```
- Browser ──WebSocket──► game-server ──HTTP──► physics (zustandslos, skalierbar)
- player-swarm ──WS──►   │  20 Ticks/s
-                        ├──HTTP──► enemy-ai ──HTTP──► LiteLLM ──► Anthropic / Heribert / lokales Modell
-                        │                    (Fallback: regelbasierte Gegner-KI)
-                        └──HTTP──► leaderboard ──JDBC──► Postgres (lokal: H2, geplant)
-                 alle ──OTLP──► SigNoz (Traces, Metriken, Logs) · GenAI-Spans zusätzlich an Langfuse
-```
+## Architektur
 
-Alle Services sind Kotlin/Spring Boot. Den Großteil der Telemetrie liefert der OpenTelemetry-Java-Agent ohne Codeänderung
-(HTTP-Server/-Clients, JDBC, Logs, JVM-Metriken). Dazu kommen eigene Spans und Metriken über die OTel-API.
-Die Architektur ist in [arc-doc/](arc-doc/) nach arc42 beschrieben.
+Die Architektur ist in [arc-doc/](arc-doc/00-Ueberblick/00-00-Overview.md) nach arc42 beschrieben. Guter Einstieg:
+
+- [Technischer Kontext](arc-doc/03-Kontextabgrenzung/03-02-Technischer-Kontext.md) – Services, Kanäle, Telemetrie-Ziele
+- [Bausteinsicht Ebene 1](arc-doc/05-Bausteinsicht/05-01-Ebene-1.md) – Services und Module im Überblick
+- [Verteilungssicht](arc-doc/07-Verteilungssicht/) – Betrieb lokal, mit Docker Compose und in Kubernetes
 
 ## Voraussetzungen und Toolchain
 
