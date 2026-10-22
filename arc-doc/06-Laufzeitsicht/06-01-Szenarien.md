@@ -140,7 +140,7 @@ sequenceDiagram
 
 - Ist `enemy-ai` nicht erreichbar, behält der Gegner seine letzte Steuerung (`outcome=unreachable` im Game-Server).
 - Trace-Kontext wird vom `game.tick` in den Executor übernommen (`Context.wrap`); `traceparent` geht bis LiteLLM.
-- Timeouts: LLM `LLM_TIMEOUT_MS` (4 s, Compose/Helm 8 s) je Aufruf, Game-Server → enemy-ai 90 s.
+- Timeouts: LLM `LLM_TIMEOUT_MS` (4 s, Helm 8 s) je Aufruf, Game-Server → enemy-ai 90 s.
 - **Geplant:** längeres Entscheidungsintervall (5–10 s) bei echten LLMs, Deckelung des Runaway-Chaos, Langfuse-Attribute (Prompt/Completion, Session-ID).
 
 ---

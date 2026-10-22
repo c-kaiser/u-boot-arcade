@@ -35,9 +35,9 @@
 | Heribert | Vom Veranstalter bereitgestellter LLM-Zugang; Art des Endpunkts unklar, vermutlich OpenAI-kompatibel. <!-- TODO: Bitte ergänzen --> |
 | Jev | „System One“-Modell von TypeSafe mit eigener, nicht OpenAI-kompatibler API; optionale dritte Gegner-KI-Variante (**geplant**, nur mit Zugang). |
 | `enemy-brain` | Modellalias in LiteLLM, den die Gegner-KI aufruft; welches echte Modell dahinter steckt, entscheidet nur die LiteLLM-Konfiguration. |
-| Workshop-Umgebung | Browser-VS-Code pro Person, ohne Docker, mit gehostetem SigNoz, OTel Demo und Langfuse. |
+| Workshop-Umgebung | Codespace bzw. Browser-VS-Code pro Person (Anwendung ohne Docker per `run-local.sh`), ggf. ein Kubernetes-Cluster; dazu gehostetes SigNoz, OTel Demo und Langfuse. |
 | Telemetrie-Betriebsart | Wohin die Telemetrie geht, gewählt nur in `.env`: *ohne Telemetrie* (Standard, `OTEL_*_EXPORTER=none`), *lokal* (SigNoz/Collector auf dem eigenen Rechner) oder *bereitgestellt* (gehostete Ziele mit Zugangsdaten), siehe ADR-10. Nicht zu verwechseln mit der Verteilungsvariante. |
-| Verteilungsvariante | Wie die Services betrieben werden: ohne Docker (`run-local.sh`), Docker Compose oder Kubernetes (Helm), siehe Kapitel 7. Unabhängig von der Telemetrie-Betriebsart. |
+| Verteilungsvariante | Wie die Services betrieben werden: ohne Docker (`run-local.sh`, lokal oder in Codespaces) oder Kubernetes (Helm), siehe Kapitel 7. Unabhängig von der Telemetrie-Betriebsart. |
 | o11y-playground | Begleitprojekt, aus dem SigNoz lokal in Docker gestartet werden kann. <!-- TODO: Bitte ergänzen (Link) --> |
 
 ## Technische Begriffe
@@ -52,7 +52,7 @@
 | SigNoz | Observability-Plattform für Traces, Metriken und Logs | Lokal in Docker oder gehostet |
 | Langfuse | LLM-Observability-Plattform (Prompts, Completions, Kosten, Sessions); OTLP nur per HTTP | **geplant** |
 | LiteLLM | Proxy mit OpenAI-kompatibler API vor verschiedenen LLM-Anbietern, mit Kosten-Tracking und Budget | Gateway der Gegner-KI |
-| Ollama | Laufzeit für lokale Modelle (hier `qwen2.5:3b`) | Docker-Compose-Profil `llm` |
+| Ollama | Laufzeit für lokale Modelle (hier `qwen2.5:3b`) | nativ neben LiteLLM, Alias `enemy-brain` |
 | GenAI-Semantic-Conventions | OTel-Namenskonventionen für LLM-Telemetrie (`gen_ai.*`) | Span `chat <model>`, `gen_ai.client.token.usage` |
 | Sampling | Nur ein Teil der Traces wird exportiert (`parentbased_traceidratio`) | Gegen 20 Traces/s bei gehostetem SigNoz |
 | Overrun | Tick dauert länger als 50 ms (`game.tick.overruns`) | Zeichen für Überlast/Chaos |

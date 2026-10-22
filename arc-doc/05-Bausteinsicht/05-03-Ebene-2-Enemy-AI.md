@@ -41,7 +41,7 @@ flowchart LR
 |-------------|-------------------|
 | `DecideController` | Findet das eigene Boot in der Welt, setzt Span-Attribute (`enemy.id`, `enemy.name`, `enemy.llm_enabled`), wendet Chaos `aiLatencyMs` (Sleep) und `aiRunaway` (8 statt 1 LLM-Runde mit wachsendem Kontext) an. Ergebnis: `DecideResponse` mit `source` (`llm`/`fallback`) und `outcome` (`ok`, `disabled`, `timeout`, `connection_error`, `http_<code>`, `invalid_response`, `parse_error`, `unknown_enemy`). Metriken `enemy_ai.decisions`, `enemy_ai.llm.calls_per_decision`. |
 | `LlmClient` | Minimaler HTTP-Client (JDK `HttpClient`, Connect 2 s, Request-Timeout `LLM_TIMEOUT_MS`). Span `chat <model>` (Kind CLIENT) mit `gen_ai.operation.name`, `gen_ai.provider.name=openai`, `gen_ai.request.model`, `gen_ai.response.model`, `gen_ai.usage.input_tokens/output_tokens`, `gen_ai.response.finish_reasons`, `enemy_ai.llm.cost_usd`. Metriken `gen_ai.client.token.usage`, `gen_ai.client.operation.duration`, `enemy_ai.llm.cost` (aus konfigurierten Preisen). Fehler werden als `LlmException(errorType)` gemeldet. |
-| `LlmProperties` | `llm.base-url`, `model`, `api-key`, `timeout-ms` (4000, Compose/Helm 8000), `max-tokens` (60), `price-input/output-per-mtok` (3.0 / 15.0 USD). |
+| `LlmProperties` | `llm.base-url`, `model`, `api-key`, `timeout-ms` (4000, Helm 8000), `max-tokens` (60), `price-input/output-per-mtok` (3.0 / 15.0 USD). |
 | `BotBrain` (aus `game-core`) | Regelbasierte Fallback-Entscheidung. |
 | `LlmProtocol` (aus `game-core`) | System-Prompt (Spielregeln, Antwort nur als JSON `throttle`/`dive`/`fire`), User-Prompt aus Lage, toleranter Parser. |
 

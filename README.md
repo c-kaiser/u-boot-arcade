@@ -10,7 +10,7 @@ Die Architektur ist in [arc-doc/](arc-doc/00-Ueberblick/00-00-Overview.md) nach 
 
 - [Technischer Kontext](arc-doc/03-Kontextabgrenzung/03-02-Technischer-Kontext.md) – Services, Kanäle, Telemetrie-Ziele
 - [Bausteinsicht Ebene 1](arc-doc/05-Bausteinsicht/05-01-Ebene-1.md) – Services und Module im Überblick
-- [Verteilungssicht](arc-doc/07-Verteilungssicht/) – Betrieb lokal, mit Docker Compose und in Kubernetes
+- [Verteilungssicht](arc-doc/07-Verteilungssicht/) – Betrieb ohne Docker (lokal, Codespaces) und in Kubernetes
 
 ## Voraussetzungen und Toolchain
 
@@ -33,7 +33,7 @@ Gradle-Version selbst. Kompiliert wird immer für Java 21 – auch mit einem neu
 
 ## Starten
 
-### Ohne Docker (lokal, Codespaces, Workshop)
+### Lokal und in Codespaces (ohne Docker)
 
 Die Services laufen direkt als JVM-Prozesse mit dem OTel-Java-Agent – ohne Docker und ohne weitere Infrastruktur.
 
@@ -44,22 +44,16 @@ cp .env.example .env     # Standard: ohne Telemetrie, regelbasierte Gegner
 ./stop-local.sh          # beendet alle Services
 ```
 
-- Spiel: http://localhost:8088, Admin: http://localhost:8088/admin.html (in Codespaces über die Port-Weiterleitung)
+- Spiel: http://localhost:8088 (← → Fahrt, ↑ ↓ Tauchen, Leertaste Torpedo), in Codespaces über die Port-Weiterleitung
+- Admin: http://localhost:8088/admin.html (dort auch „LLM für Gegner verwenden“ einschalten)
 - Logs unter `logs/<service>.log`, PID-Dateien unter `.run/`, Leaderboard-Datenbank (H2) unter `data/`
 - Der OTel-Java-Agent wird beim ersten Start nach `.otel/` geladen (braucht Zugriff auf GitHub-Releases)
 - Speicher pro JVM über `JAVA_OPTS` (Standard `-Xmx256m`), andere Konfigurationsdatei per `ENV_FILE=… ./run-local.sh`
+- Gegner-KI mit LLM: eine LiteLLM-Instanz mit [deploy/litellm-config.yaml](deploy/litellm-config.yaml) starten
+  (z. B. `pip install 'litellm[proxy]'`, `litellm --config deploy/litellm-config.yaml --port 4000`) und `LLM_*` in `.env`
+  setzen. Echte Cloud-Modelle kosten Geld.
 
-### Mit Docker Compose
-
-```bash
-cp .env.example .env
-docker compose up --build                  # Spiel, 3 Bots, 2 regelbasierte Gegner
-docker compose --profile swarm up --build  # + 10 Schwarm-Spieler (WebSocket-Last)
-docker compose --profile llm up --build    # + LiteLLM und Ollama (qwen2.5:3b) für die Gegner-KI
-```
-
-- Spiel: http://localhost:8088 (← → Fahrt, ↑ ↓ Tauchen, Leertaste Torpedo)
-- Admin: http://localhost:8088/admin.html (dort auch „LLM für Gegner verwenden“ einschalten)
+Ein Docker Compose für die Anwendung gibt es bewusst nicht (ADR-11).
 
 ### Im Kubernetes-Cluster (Helm)
 
@@ -86,8 +80,7 @@ genau einer ist aktiv:
 | **Lokal** | SigNoz oder Collector auf dem eigenen Rechner, z. B. aus dem `o11y-playground` | Exporter `otlp`, `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` |
 | **Bereitgestellt** | gehostetes SigNoz (z. B. im Workshop) | wie lokal, dazu Endpunkt des Anbieters und `OTEL_EXPORTER_OTLP_HEADERS` |
 
-Aus Docker Compose heraus heißt der eigene Rechner `host.docker.internal` statt `localhost`. Ist ein Ziel gesetzt, aber
-nicht erreichbar, läuft das Spiel weiter; der Agent loggt dann bei jedem Exportversuch einen Fehler.
+Ist ein Ziel gesetzt, aber nicht erreichbar, läuft das Spiel weiter; der Agent loggt dann bei jedem Exportversuch einen Fehler.
 Ein eigenes Docker Compose für die lokalen Telemetrie-Services ist geplant (#5).
 
 | Variable | Bedeutung |
@@ -168,5 +161,5 @@ IDEEN.md          Ideen: Störungen (Chaos), Ideen für Teams
 - `./gradlew build` läuft durch: alle Module kompilieren, 16 Tests in `game-core` grün.
 - Frontend (`index.html`, `admin.html`, `game.js`) gegen einen Mock-Server im Headless-Browser getestet.
 - Die Spring-Services laufen per `run-local.sh` (Spiel, Leaderboard, Schwarm, OTLP-Export geprüft).
-  Docker Compose, Helm und der LLM-Pfad sind noch nicht gestartet worden.
+  Helm und der LLM-Pfad sind noch nicht gestartet worden.
 - Helm-Chart nur mit eigenem Renderer geprüft, nicht mit `helm lint`.

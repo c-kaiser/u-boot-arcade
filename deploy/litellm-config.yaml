@@ -4,7 +4,7 @@ model_list:
   - model_name: enemy-brain
     litellm_params:
       model: ollama_chat/qwen2.5:3b
-      api_base: http://ollama:11434
+      api_base: http://localhost:11434   # Ollama auf demselben Rechner
       # Lokale Modelle kosten nichts – fiktive Preise, damit die Kosten-Dashboards etwas zeigen
       input_cost_per_token: 0.000003
       output_cost_per_token: 0.000015

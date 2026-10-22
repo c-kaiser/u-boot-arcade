@@ -12,14 +12,14 @@ auffindbar sein.
 |---|---|---|
 | HTTP-Server/-Client, JDBC, Logs, JVM-Metriken, Kontext-Propagation (`traceparent`) | OTel-Java-Agent 2.32.0 (`-javaagent`, zur Laufzeit) | umgesetzt |
 | Eigene Spans und Metriken | nur `opentelemetry-api` 1.66.0 über `GlobalOpenTelemetry` | umgesetzt |
-| Export | Agent per OTLP (Compose: gRPC an `OTEL_EXPORTER_OTLP_ENDPOINT`) | umgesetzt |
+| Export | Agent per OTLP (gRPC an `OTEL_EXPORTER_OTLP_ENDPOINT`) oder gar nicht, je nach Telemetrie-Betriebsart (ADR-10) | umgesetzt |
 
 - Ohne Agent liefert `GlobalOpenTelemetry` eine No-op-Implementierung – der Code läuft, meldet aber nichts.
 - Die API-Version ist in `build.gradle.kts` zentral festgelegt (`otelApiVersion`) und muss zur Agent-Version passen
   (Agent 2.32.0 bündelt API 1.66.0). Nur gemeinsam ändern (AGENTS.md).
 - Instrumentation-Scopes: `u-boot-arcade.<service>` (z. B. `u-boot-arcade.game-server`).
 - Ressourcen-Attribute über Umgebung: `OTEL_SERVICE_NAME` pro Service, `service.namespace=u-boot-arcade`,
-  `deployment.environment.name` (docker-compose.yaml).
+  `deployment.environment.name` (`run-local.sh`, Helm).
 
 ## Eigene Spans
 
@@ -72,7 +72,7 @@ Einzelfehler (z. B. Senden an einen Client).
 ## Sampling und Volumen
 
 - 20 Ticks/s ⇒ mindestens 20 Root-Traces/s, plus Physik-, Gegner- und Leaderboard-Spans.
-- Standard in Compose und Helm: `parentbased_always_on`. Für gehostetes SigNoz empfohlen (README):
+- Standard (Agent und Helm): `parentbased_always_on`. Für gehostetes SigNoz empfohlen (README):
   `OTEL_TRACES_SAMPLER=parentbased_traceidratio`, `OTEL_TRACES_SAMPLER_ARG=0.1`.
 - Metriken sind vom Trace-Sampling unabhängig; Tick-Dauer und Fehlerzahlen bleiben vollständig.
 - Head-Sampling kann seltene Fehler-Traces verwerfen. <!-- TODO: Bitte ergänzen – Tail-Sampling im geplanten Collector? -->
@@ -80,12 +80,12 @@ Einzelfehler (z. B. Senden an einen Client).
 ## Export-Ziele
 
 Die Telemetrie-Betriebsart wird nur in `.env` gewählt (Blöcke in `.env.example`); Code und Startskripte kennen keine
-Adressen (ADR-10). Das gilt für `run-local.sh` und Docker Compose; das Helm-Chart exportiert immer per OTLP an `otel.endpoint`.
+Adressen (ADR-10). Das gilt für `run-local.sh`; das Helm-Chart exportiert immer per OTLP an `otel.endpoint`.
 
 | Telemetrie-Betriebsart | Ziel | Status |
 |---|---|---|
 | Ohne Telemetrie (Standard) | kein Export: `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER` = `none`; Agent instrumentiert weiter | umgesetzt |
-| Lokal | SigNoz oder Collector auf dem eigenen Rechner: Exporter `otlp`, `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` (aus Compose `host.docker.internal`); eigenes Compose für die Telemetrie-Services geplant (#5) | umgesetzt |
+| Lokal | SigNoz oder Collector auf dem eigenen Rechner: Exporter `otlp`, `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317`; eigenes Compose für die Telemetrie-Services geplant (#5) | umgesetzt |
 | Bereitgestellt (z. B. Workshop) | gehostetes SigNoz, Zugang über `OTEL_EXPORTER_OTLP_HEADERS` | umgesetzt, Endpunkte unbekannt |
 | Langfuse | lokaler OTel Collector (otelcol-contrib) als Fan-out: alles an SigNoz, GenAI-Spans (enemy-ai/litellm) per **OTLP/HTTP** an `https://<host>/api/public/otel` (Basic-Auth, `x-langfuse-ingestion-version=4`) | geplant, [ADR-09](../09-Entscheidungen/09-09-Collector-Fan-out.md) |
 

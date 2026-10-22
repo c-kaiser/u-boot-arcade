@@ -1,6 +1,6 @@
 # ADR-10: Trennung von Anwendung und Telemetrie, „ohne Telemetrie“ per Exporter `none`
 
-**Status:** accepted (umgesetzt für `run-local.sh` und Docker Compose; eigenes Compose für die Telemetrie-Services offen, #5)
+**Status:** accepted (umgesetzt für `run-local.sh`; eigenes Compose für die Telemetrie-Services offen, #5)
 
 **Datum:** 2026-10-22
 
@@ -18,12 +18,12 @@ Agent normal und blockiert nicht, verwirft die Daten aber und loggt bei jedem Ex
 ## Entscheidung
 
 - **Telemetrie-Ziele sind reine Konfiguration** in `.env` (`OTEL_*`-Variablen des Agents, aufbauend auf ADR-01). Weder
-  Code noch `run-local.sh`/`stop-local.sh` noch `docker-compose.yaml` enthalten Telemetrie-Adressen.
+  Code noch `run-local.sh`/`stop-local.sh` enthalten Telemetrie-Adressen.
 - **Drei Telemetrie-Betriebsarten**, als Blöcke in `.env.example`: *ohne Telemetrie*, *lokal*, *bereitgestellt*.
 - **„Ohne Telemetrie“** = `OTEL_TRACES_EXPORTER=none`, `OTEL_METRICS_EXPORTER=none`, `OTEL_LOGS_EXPORTER=none`.
   Der Agent bleibt geladen und instrumentiert weiter, exportiert aber nichts. Das ist der Standard in `.env.example`.
-- Die lokalen Telemetrie-Services bekommen ein eigenes Docker Compose, getrennt vom Compose der Anwendung (#5, offen).
-- **Geltungsbereich:** `run-local.sh` und Docker Compose. Das Helm-Chart (`uboot.otelEnv`) setzt weder Exporter-Schalter
+- Die lokalen Telemetrie-Services bekommen ein eigenes Docker Compose, getrennt von der Anwendung (#5, offen); ein Compose für die Anwendung gibt es nicht (ADR-11).
+- **Geltungsbereich:** `run-local.sh`. Das Helm-Chart (`uboot.otelEnv`) setzt weder Exporter-Schalter
   noch Header und exportiert immer per OTLP an `otel.endpoint`; „ohne Telemetrie“ ist dort nicht vorgesehen.
 
 ### Betrachtete Alternativen
@@ -42,9 +42,6 @@ Agent normal und blockiert nicht, verwirft die Daten aber und loggt bei jedem Ex
 ### Negativ
 - Auch ohne Export muss der Agent einmal heruntergeladen werden (GitHub-Releases).
 - Ist ein Ziel konfiguriert, aber nicht erreichbar, entstehen Fehler-Logs (nicht nur Warnungen) – das Spiel läuft weiter.
-- Dieselbe `.env` dient `run-local.sh` und Docker Compose: Für ein lokales Ziel heißt der Host ohne Docker `localhost`,
-  aus Compose heraus `host.docker.internal`.
 
 ### Neutral
-- Auch `docker-compose.yaml` hat keine Telemetrie-Adresse als Standard mehr; Exporter-Standard ist `none`. Compose
-  exportiert also mit und ohne `.env` nichts, bis eine andere Telemetrie-Betriebsart gewählt wird.
+- Im Helm-Chart gelten die Telemetrie-Betriebsarten noch nicht (siehe Geltungsbereich).
