@@ -1,0 +1,27 @@
+# ADR-05: LiteLLM als Gateway für die Gegner-KI
+
+**Status:** accepted (umgesetzt in Compose/Helm-Konfiguration; Workshop-Modelle offen)
+
+**Datum:** 2026-10-22 <!-- ABGELEITET: Datum des Commits, in dem die Entscheidung im Code sichtbar wird -->
+
+## Kontext
+
+Die Gegner-KI soll mit lokalen Modellen (Ollama), Anthropic und „Heribert“ (Art des Endpunkts unklar, vermutlich
+OpenAI-kompatibel) laufen. Der Veranstalter wünscht gezieltes Experimentieren mit Modellen.
+
+## Entscheidung
+
+enemy-ai spricht nur das OpenAI-kompatible Chat-API (`LLM_BASE_URL`, Modellalias `enemy-brain`). Welches echte
+Modell dahinter steckt, legt `deploy/litellm-config.yaml` fest (heute `ollama_chat/qwen2.5:3b` und
+`enemy-brain-cloud` → `anthropic/claude-haiku-4-5`). LiteLLM exportiert eigene OTel-Spans.
+
+## Konsequenzen
+
+### Positiv
+- Modellwechsel ohne Codeänderung; einheitliche Token-/Kosten-Telemetrie.
+- Spätere Budgetgrenze zentral möglich (`max_budget`, geplant).
+
+### Negativ
+- Zusätzlicher Prozess; ohne Docker per `pip install 'litellm[proxy]'` (geplant, nicht erprobt).
+- Alternativ ist enemy-ai direkt gegen einen OpenAI-kompatiblen Endpunkt nutzbar – dann fehlen LiteLLM-Spans/-Budget.
+- Heribert noch nicht eingetragen. <!-- TODO: Bitte ergänzen, sobald API-Art bekannt -->

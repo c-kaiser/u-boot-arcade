@@ -9,17 +9,25 @@ plugins {
 val otelApiVersion = "1.66.0"
 
 subprojects {
-    group = "de.innoq.uboot"
+    group = "io.github.ckaiser.uboot"
     version = "1.0.0"
 
     repositories { mavenCentral() }
 
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
+    // Bytecode und API-Stand Java 21 – kompilieren geht mit jedem JDK ab 21, ohne Toolchain-Download
     extensions.configure<org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension> {
-        jvmToolchain(21)
-        compilerOptions { freeCompilerArgs.add("-Xjsr305=strict") }
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            freeCompilerArgs.addAll("-Xjsr305=strict", "-Xjdk-release=21")
+        }
     }
+    extensions.configure<JavaPluginExtension> {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
+    }
+    tasks.withType<JavaCompile> { options.release.set(21) }
 
     tasks.withType<Test> { useJUnitPlatform() }
 

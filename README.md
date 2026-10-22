@@ -1,24 +1,45 @@
 # U-Boot Arcade
 
-Ein kleines Multiplayer-Arcade-Spiel mit U-Booten. Gebaut als Spielwiese für den Observability-Workshop:
-Es erzeugt technische Telemetrie (Latenzen, Fehler, JVM, DB) und fachliche Telemetrie (Tiefe, Dampfdruck, Treffer),
-und es lässt sich auf Knopfdruck kaputtmachen.
+Ein kleines Multiplayer-Arcade-Spiel mit U-Booten. Gebaut als „eigene App“ für einen Workshop zu Observability
+mit OpenTelemetry, SigNoz und Langfuse: Es erzeugt technische Telemetrie (Latenzen, Fehler, JVM, DB) und fachliche
+Telemetrie (Tiefe, Dampfdruck, Treffer), und es lässt sich gezielt stören, um die Folgen in SigNoz und Langfuse wiederzufinden.
 
+## Architektur
+
+Die Architektur ist in [arc-doc/](arc-doc/00-Ueberblick/00-00-Overview.md) nach arc42 beschrieben. Guter Einstieg:
+
+- [Technischer Kontext](arc-doc/03-Kontextabgrenzung/03-02-Technischer-Kontext.md) – Services, Kanäle, Telemetrie-Ziele
+- [Bausteinsicht Ebene 1](arc-doc/05-Bausteinsicht/05-01-Ebene-1.md) – Services und Module im Überblick
+- [Verteilungssicht](arc-doc/07-Verteilungssicht/) – Betrieb lokal, mit Docker Compose und in Kubernetes
+
+## Voraussetzungen und Toolchain
+
+Benötigt wird nur **ein JDK ab Version 21** auf dem `PATH`. Der **Gradle Wrapper** (`./gradlew`) lädt die passende
+Gradle-Version selbst. Kompiliert wird immer für Java 21 – auch mit einem neueren JDK.
+
+| Umgebung | Einrichtung |
+| --- | --- |
+| GitHub Codespaces / Dev Container | Nichts zu tun – [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) bringt JDK 21 und Docker mit |
+| Workshop-VS-Code | Vorhandenes JDK genügt (`java -version` ≥ 21) |
+| Lokal (macOS/Linux) | z. B. [SDKMAN!](https://sdkman.io/): `sdk install java 21-tem` – oder ein JDK aus dem Paketmanager |
+
+## Bauen und Testen
+
+```bash
+./gradlew build                 # alles kompilieren und testen
+./gradlew :game-core:test       # nur die Spiellogik
+./gradlew bootJar               # ausführbare JARs unter <modul>/build/libs/
 ```
- Browser ──WebSocket──► game-server ──HTTP──► physics (x2, zustandslos)
- player-swarm ──WS──►   │  20 Ticks/s
-                        ├──HTTP──► enemy-ai ──HTTP──► LiteLLM ──► Ollama / Cloud-LLM
-                        └──HTTP──► leaderboard ──JDBC──► Postgres
-                 alle ──OTLP──► SigNoz (Traces, Metriken, Logs)
-```
 
-Alle Services sind Kotlin/Spring Boot. Den Großteil der Telemetrie liefert der OpenTelemetry-Java-Agent ohne Codeänderung
-(HTTP-Server/-Clients, JDBC, Logs, JVM-Metriken). Dazu kommen eigene Spans und Metriken über die OTel-API.
+## Starten
 
-## Schnellstart (Laptop)
+### Ohne Docker (Workshop-Umgebung) – geplant
 
-Voraussetzungen: Docker mit Compose v2. Optional läuft SigNoz lokal und nimmt OTLP auf Port 4317 an,
-zum Beispiel aus dem `o11y-playground`.
+Im Workshop gibt es kein Docker; die Services laufen direkt als JVM-Prozesse mit dem OTel-Java-Agent.
+Dafür entstehen `run-local.sh`/`stop-local.sh` (Konfiguration über `.env`, Logs nach `logs/`) und ein Leaderboard-Profil
+mit H2 statt Postgres. Bis dahin: Docker Compose.
+
+### Mit Docker Compose
 
 ```bash
 cp .env.example .env
@@ -28,14 +49,9 @@ docker compose --profile llm up --build    # + LiteLLM und Ollama (qwen2.5:3b) f
 ```
 
 - Spiel: http://localhost:8088 (← → Fahrt, ↑ ↓ Tauchen, Leertaste Torpedo)
-- Admin & Chaos: http://localhost:8088/admin.html (dort auch „LLM für Gegner verwenden“ einschalten)
-- SigNoz: http://localhost:8080 (Services erscheinen unter `service.namespace=u-boot-arcade`)
+- Admin: http://localhost:8088/admin.html (dort auch „LLM für Gegner verwenden“ einschalten)
 
-Der erste Build dauert einige Minuten (Gradle lädt die Abhängigkeiten). Tests der Spiellogik:
-`gradle test` (Gradle 8.14+, JDK 21) oder ohne lokales Gradle
-`docker run --rm -v "$PWD":/src -w /src gradle:8.14-jdk21 gradle test`.
-
-## Im Workshop-Cluster (Helm)
+### Im Kubernetes-Cluster (Helm)
 
 ```bash
 deploy/build-images.sh ghcr.io/<org> 1.0.0     # baut und pusht 5 Images
@@ -47,16 +63,37 @@ kubectl -n u-boot port-forward svc/u-boot-game-server 8088:80
 
 Mehr Last: `kubectl -n u-boot scale deploy/u-boot-player-swarm --replicas=5`.
 Physik skalieren: `--set physics.replicas=4`. Der Game-Server bleibt bei einer Replica, weil der Spielstand im Speicher liegt.
-Für ein LLM im Cluster `llm.baseUrl` auf euren LiteLLM-Service setzen und `game.llmEnabled=true`.
+
+## Telemetrie-Ziele konfigurieren
+
+Wohin die Telemetrie geht, wird nur über Umgebungsvariablen (`.env`) festgelegt – der Code kennt keine Adressen.
+Zwei Betriebsarten sind vorgesehen:
+
+| Betriebsart | SigNoz / OTLP | Langfuse | LLM |
+| --- | --- | --- | --- |
+| **Workshop** | gehostetes SigNoz des Veranstalters | gehostetes Langfuse | Anthropic oder Heribert über LiteLLM |
+| **Lokal** | SigNoz in Docker, z. B. aus dem `o11y-playground` | Langfuse in Docker | lokales Modell (Ollama) oder Anthropic |
+
+| Variable | Bedeutung |
+| --- | --- |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP-Ziel (SigNoz oder lokaler Collector), z. B. `http://localhost:4317` |
+| `OTEL_EXPORTER_OTLP_HEADERS` | Zugangsdaten für gehostete Ziele, z. B. `signoz-ingestion-key=…` |
+| `OTEL_TRACES_SAMPLER`, `OTEL_TRACES_SAMPLER_ARG` | Sampling – bei 20 Traces/s für gehostetes SigNoz empfohlen: `parentbased_traceidratio`, `0.1` |
+| `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | OpenAI-kompatibler Endpunkt für die Gegner-KI (LiteLLM) |
+
+Langfuse nimmt OTLP **nur per HTTP** an (`https://<host>/api/public/otel`, Basic-Auth mit Public/Secret Key).
+Geplant ist ein lokaler OpenTelemetry Collector als Verteiler: alles an SigNoz, nur die GenAI-Spans an Langfuse.
+
+Achtung beim lokalen Start ohne Docker: Der Game-Server nutzt standardmäßig Port 8080 – genau wie die SigNoz-UI.
+Einen der beiden umlegen (`PORT=8088` für den Game-Server).
 
 ## Was man beobachten kann
 
 ### Traces
 - **`game.tick`** (20 pro Sekunde): Physik-Aufruf, `game.broadcast`, asynchron die Gegner-Entscheidungen
-  und Leaderboard-Einträge (`INSERT` und eventuell `pg_sleep` als DB-Span)
+  und Leaderboard-Einträge (`INSERT` und eventuell die künstliche DB-Verzögerung als DB-Span)
 - **`chat enemy-brain`** in `enemy-ai`: GenAI-Span mit `gen_ai.usage.input_tokens`/`output_tokens` und Kosten.
   Darunter der HTTP-Span zu LiteLLM und dessen eigene Spans, die Trace-ID wird durchgereicht.
-- Bei 20 Traces/s lohnt sich Sampling: `OTEL_TRACES_SAMPLER=parentbased_traceidratio`, `OTEL_TRACES_SAMPLER_ARG=0.1`
 
 ### Eigene Metriken (Auswahl)
 
@@ -67,6 +104,7 @@ Für ein LLM im Cluster `llm.baseUrl` auf euren LiteLLM-Service setzen und `game
 | `swarm.state.interval` | Abstand zwischen Updates beim Client (Ruckeln) |
 | `game.websocket.frames_dropped` | Updates, die ein langsamer Client nicht abgenommen hat |
 | `game.physics.failures` | Physik-Aufrufe, die fehlgeschlagen sind (Welt friert ein) |
+| `game.enemy.decision.latency` | Wie lange die Gegner-KI für eine Entscheidung braucht |
 | `sub.depth`, `sub.speed`, `sub.boiler.pressure`, `sub.boiler.temperature`, `sub.hull` | Fachliche Werte pro Boot (`sub.name`, `sub.kind`) |
 | `game.events` (`game.event.type`) | HIT, KILL, DESTROYED, OVERHEAT, CRUSH_DEPTH, ... |
 | `gen_ai.client.token.usage`, `gen_ai.client.operation.duration` | Token-Verbrauch und Dauer der LLM-Aufrufe (GenAI-Semantic-Conventions) |
@@ -81,28 +119,11 @@ Dazu kommen JVM-, HTTP- und DB-Pool-Metriken vom Agent.
 Spielereignisse als strukturierte Logs mit Trace-ID, zum Beispiel „Kessel von Kraken überhitzt“ oder
 „Christian (PLAYER) zerstört durch torpedo von Kraken“.
 
-## Chaos-Schalter (admin.html)
+## Störungen (Chaos)
 
-| Schalter | Wirkung | Woran man es erkennt |
-| --- | --- | --- |
-| Physik-Latenz | Jeder Step wird verzögert | `game.tick.duration` steigt, Overruns, Spiel ruckelt |
-| Physik-Fehlerrate | Steps scheitern mit 503 | Fehler-Spans, `game.physics.failures`, Welt friert ein |
-| Leaderboard-DB langsam | `pg_sleep` vor jedem Insert | Langer DB-Span, Warteschlange läuft voll |
-| Gegner-KI-Latenz | Gegner reagieren träge | `game.enemy.decision.latency` |
-| Gegner-KI-Endlosschleife | 8 LLM-Aufrufe pro Entscheidung, Kontext wächst | Tokens und Kosten explodieren, lange Traces |
-| Memory Leak | Heap wächst um ~1,3 MB/s | JVM-Heap-Metriken, Garbage Collection, irgendwann OOM-Kill |
-| Kesselkühlung defekt | Dampfdruck über 9,5 bar | `sub.boiler.pressure`, OVERHEAT-Events, Alerts |
-| Leck im Rumpf | Boote sinken | `sub.depth` steigt, `sub.hull` fällt |
-| Meeresströmung | Boote treiben ab | `sub.speed` |
-
-## Ideen für Teams
-
-- Dashboard „Brücke“: Tiefe, Druck und Rumpf je Boot, dazu Ereignisse als Zeitreihe
-- Alert auf `sub.boiler.pressure > 9.5` und auf p95 von `game.tick.duration > 50 ms`
-- SLO: 99 % der Ticks unter 50 ms. Welcher Chaos-Schalter reißt es?
-- Kosten pro Gegner und Stunde aus `enemy_ai.llm.cost`. Lokales Modell und Cloud-Modell vergleichen
-- Langfuse an LiteLLM hängen und die Qualität der Gegner-Entscheidungen bewerten
-- kAgent fragen: „Warum ruckelt das Spiel?“, während Physik-Latenz aktiv ist
+Im Admin-Panel (`admin.html`) lassen sich Störungen global einschalten, etwa Physik-Latenz, Fehlerraten, eine langsame
+Leaderboard-DB oder eine KI-Endlosschleife. Die Schalter mit ihren Auswirkungen und das Zielbild „Störung pro U-Boot“
+stehen in [IDEEN.md](IDEEN.md).
 
 ## Projektstruktur
 
@@ -114,4 +135,21 @@ enemy-ai/         POST /api/decide – LLM über LiteLLM, sonst regelbasiert
 leaderboard/      POST /api/scores, GET /api/scores/top – Postgres über JDBC
 player-swarm/     Lastgenerator mit echten WebSocket-Clients
 deploy/           LiteLLM-Konfiguration, Helm-Chart, Build-Skript
+arc-doc/          Architekturdokumentation nach arc42
+IDEEN.md          Ideen: Störungen (Chaos), Ideen für Teams
+.agents/          arc42agentic: Agenten und Skills zum Schreiben und Reviewen der arc42-Doku
 ```
+
+## Mitarbeit
+
+- **Sprache:** Deutsch für UI, Kommentare, Logs und Dokumentation. Code-Bezeichner auf Englisch.
+- **Branches:** Nicht direkt auf `main` arbeiten. Jede Änderung auf einem eigenen Branch, Zusammenführen per Pull Request.
+- **Aufgaben** werden als GitHub Issues geführt.
+- Anweisungen für Coding-Agenten stehen in [AGENTS.md](AGENTS.md).
+
+## Status
+
+- `./gradlew build` läuft durch: alle Module kompilieren, 16 Tests in `game-core` grün.
+- Frontend (`index.html`, `admin.html`, `game.js`) gegen einen Mock-Server im Headless-Browser getestet.
+- Die Spring-Services wurden bisher **nie gestartet**.
+- Helm-Chart nur mit eigenem Renderer geprüft, nicht mit `helm lint`.

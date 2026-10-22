@@ -1,18 +1,20 @@
 # syntax=docker/dockerfile:1.7
 # Ein Dockerfile für alle Services:  docker build --build-arg SERVICE=game-server -t u-boot-arcade/game-server .
 
-FROM gradle:8.14-jdk21 AS build
+FROM eclipse-temurin:21-jdk AS build
 ARG SERVICE
 WORKDIR /src
-COPY settings.gradle.kts build.gradle.kts gradle.properties ./
+# Gleiche Gradle-Version wie lokal: über den Wrapper
+COPY gradlew settings.gradle.kts build.gradle.kts gradle.properties ./
+COPY gradle gradle
 COPY game-core game-core
 COPY physics-service physics-service
 COPY game-server game-server
 COPY leaderboard leaderboard
 COPY enemy-ai enemy-ai
 COPY player-swarm player-swarm
-RUN --mount=type=cache,target=/home/gradle/.gradle,id=uboot-gradle \
-    gradle --no-daemon -q ":${SERVICE}:bootJar" -x test \
+RUN --mount=type=cache,target=/root/.gradle,id=uboot-gradle \
+    ./gradlew --no-daemon -q ":${SERVICE}:bootJar" -x test \
  && cp "${SERVICE}/build/libs/${SERVICE}-1.0.0.jar" /app.jar
 
 FROM eclipse-temurin:21-jre
