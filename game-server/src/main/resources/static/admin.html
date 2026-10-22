@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>U-Boot Arcade – Admin</title>
+  <title>Slop Arcade – Admin</title>
   <link rel="stylesheet" href="style.css">
   <style>
     main { grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
@@ -24,12 +24,12 @@
 </header>
 <main>
   <section class="panel">
-    <h3>Besatzung</h3>
-    <label><span>Server-Bots<small>Mehr Boote = mehr Last für die Physik</small></span>
+    <h3>Belegschaft</h3>
+    <label><span>Kolleg:innen (Server-Bots)<small>Mehr Figuren = mehr Last für die Physik</small></span>
       <input type="range" id="bots" min="0" max="60" step="1"><output for="bots"></output></label>
-    <label><span>Gegner (Gegner-KI)<small>Werden jede Sekunde über die Gegner-KI gesteuert</small></span>
+    <label><span>KI-Agenten (Gegner-KI)<small>Werden jede Sekunde über die Gegner-KI gesteuert</small></span>
       <input type="range" id="enemies" min="0" max="5" step="1"><output for="enemies"></output></label>
-    <label class="toggle"><span>LLM für Gegner verwenden<small>Über LiteLLM; sonst regelbasierter Fallback</small></span>
+    <label class="toggle"><span>LLM für Agenten verwenden<small>Über LiteLLM; sonst regelbasierter Fallback</small></span>
       <input type="checkbox" id="llmEnabled"></label>
   </section>
 
@@ -41,9 +41,9 @@
       <input type="range" id="physicsErrorRate" min="0" max="1" step="0.05"><output for="physicsErrorRate"></output></label>
     <label><span>Leaderboard langsam<small>Verzögerung pro Eintrag (ms)</small></span>
       <input type="range" id="leaderboardSlowMs" min="0" max="5000" step="100"><output for="leaderboardSlowMs"></output></label>
-    <label><span>Gegner-KI-Latenz<small>Gegner reagieren träge (ms)</small></span>
+    <label><span>Gegner-KI-Latenz<small>Agenten reagieren träge (ms)</small></span>
       <input type="range" id="aiLatencyMs" min="0" max="5000" step="100"><output for="aiLatencyMs"></output></label>
-    <label class="toggle"><span>Gegner-KI-Endlosschleife<small>LLM wird pro Entscheidung 8x gefragt – Tokens und Kosten steigen</small></span>
+    <label class="toggle"><span>Agent denkt nach (Endlosschleife)<small>LLM wird pro Entscheidung 8x gefragt – Tokens, Kosten und Slop steigen</small></span>
       <input type="checkbox" id="aiRunaway"></label>
     <label class="toggle"><span>Memory Leak im Game-Server<small>Heap wächst ~1,3 MB/s bis zum Abschalten</small></span>
       <input type="checkbox" id="gameServerMemoryLeak"></label>
@@ -51,11 +51,11 @@
 
   <section class="panel">
     <h3>Fachliches Chaos</h3>
-    <label class="toggle"><span>Kesselkühlung defekt<small>Dampfdruck steigt über 9,5 bar – Überhitzung</small></span>
+    <label class="toggle"><span>Kaffeemaschine kaputt<small>Denkdruck steigt über die Grenze – Köpfe rauchen</small></span>
       <input type="checkbox" id="boilerCoolingBroken"></label>
-    <label class="toggle"><span>Leck im Rumpf<small>Alle Boote sinken und verlieren Rumpf</small></span>
+    <label class="toggle"><span>Benachrichtigungsflut<small>Alle sinken in den Slop und verlieren Geduld</small></span>
       <input type="checkbox" id="hullLeak"></label>
-    <label><span>Meeresströmung<small>Treibt alle Boote zur Seite</small></span>
+    <label><span>Hype-Welle<small>Treibt alle zur Seite</small></span>
       <input type="range" id="current" min="-5" max="5" step="0.5"><output for="current"></output></label>
     <p id="saved"></p>
   </section>

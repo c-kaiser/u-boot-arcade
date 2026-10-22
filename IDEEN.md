@@ -35,3 +35,21 @@ wieder als langer DB-Span sichtbar.
 - Kosten pro Gegner und Stunde aus `enemy_ai.llm.cost`. Lokales Modell und Cloud-Modell vergleichen
 - Langfuse an LiteLLM hängen und die Qualität der Gegner-Entscheidungen bewerten
 - kAgent fragen: „Warum ruckelt das Spiel?“, während Physik-Latenz aktiv ist
+
+## Thema „Slop Arcade“ (Entwurf)
+
+**Zielbild:** Statt Krieg mit U-Booten ein spielerisches Setting: KI-Agenten werfen mit KI-Slop, Menschen werfen mit
+Verstand (Geistesblitze). Der Entwurf auf dem Branch `feature/slop-arcade-draft` ändert nur die Oberfläche, die
+Gegnernamen und den LLM-Prompt. Mechanik, Modell, Metriken und Logs sind noch die alten.
+
+| Heute (intern) | Im Spiel sichtbar |
+| --- | --- |
+| U-Boot (`Sub`) | Figur: Mensch (Spieler, Kolleg:innen-Bots) oder KI-Agent (Gegner) |
+| Tiefe, Zerstörungstiefe | Slop-Pegel, „Ab hier versinkt man im Slop“ |
+| Dampfdruck, Kessel überhitzt | Denkdruck, „Kopf raucht“ |
+| Rumpf | Geduld |
+| Torpedo | Geistesblitz (Mensch) bzw. Slop-Wurf (Agent) |
+| Kesselkühlung defekt / Leck im Rumpf / Meeresströmung | Kaffeemaschine kaputt / Benachrichtigungsflut / Hype-Welle |
+
+**Offen:** interne Begriffe und Metriknamen (`sub.*`, Paketname `uboot`), Log-Texte, arc42-Doku, Repo-Name; optional
+lässt das LLM den Slop-Text selbst erzeugen (sichtbar in Langfuse, kostet Tokens, daher standardmäßig aus).

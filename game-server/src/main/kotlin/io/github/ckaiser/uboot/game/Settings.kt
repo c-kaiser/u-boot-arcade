@@ -27,7 +27,7 @@ data class GameSettings(
 
     companion object {
         const val MAX_BOTS = 60
-        val ENEMY_NAMES = listOf("Kraken", "Leviathan", "Nautilus", "Moby", "Nessie")
+        val ENEMY_NAMES = listOf("SlopGPT", "Halluzinator", "Buzzwordinator", "Copypasta", "Promptimus")
     }
 }
 

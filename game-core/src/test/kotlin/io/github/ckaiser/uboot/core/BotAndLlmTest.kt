@@ -74,10 +74,10 @@ class BotAndLlmTest {
 
     @Test
     fun `Prompt enthaelt eigene Lage und Gegner`() {
-        val self = Sub("e", "Kraken", SubKind.ENEMY, x = 100.0, depth = 50.0)
+        val self = Sub("e", "SlopGPT", SubKind.ENEMY, x = 100.0, depth = 50.0)
         val other = Sub("p", "Christian", SubKind.PLAYER, x = 400.0, depth = 80.0)
         val prompt = LlmProtocol.userPrompt(self, World(subs = listOf(self, other)))
-        assertTrue(prompt.startsWith("Dein Boot: x=100, depth=50"))
+        assertTrue(prompt.startsWith("Du: x=100, depth=50"))
         assertTrue(prompt.contains("- Christian (player): x=400, depth=80"))
     }
 }

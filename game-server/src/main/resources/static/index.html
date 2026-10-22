@@ -3,40 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>U-Boot Arcade</title>
+  <title>Slop Arcade</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header>
-  <h1>U-Boot Arcade</h1>
+  <h1>Slop Arcade</h1>
+  <p class="tagline">KI-Agenten werfen mit Slop. Du wirfst mit Verstand.</p>
   <nav><a href="admin.html" target="_blank">Admin &amp; Chaos</a></nav>
 </header>
 
 <main>
   <section class="stage">
-    <canvas id="sea" width="1600" height="600" aria-label="Spielfeld"></canvas>
+    <canvas id="arena" width="1600" height="600" aria-label="Spielfeld"></canvas>
     <div id="join" class="overlay">
       <form id="join-form">
-        <h2>Bereit zum Tauchen?</h2>
+        <h2>Bereit, mitzudenken?</h2>
         <input id="name" maxlength="16" placeholder="Dein Name" autocomplete="off" required>
-        <button type="submit">Abtauchen!</button>
-        <p class="hint">← → Fahrt &nbsp;·&nbsp; ↑ ↓ Tauchen &nbsp;·&nbsp; Leertaste Torpedo</p>
+        <button type="submit">Los geht’s!</button>
+        <p class="hint">← → laufen &nbsp;·&nbsp; ↑ ↓ hoch/runter &nbsp;·&nbsp; Leertaste Geistesblitz werfen</p>
       </form>
     </div>
-    <div id="dead" class="overlay hidden"><p>Versenkt!<br><span id="respawn"></span></p></div>
+    <div id="dead" class="overlay hidden"><p>Im Slop versunken!<br><span id="respawn"></span></p></div>
     <div id="frozen" class="banner hidden">Physik-Service antwortet nicht – die Welt steht still</div>
   </section>
 
   <aside>
     <div class="panel">
-      <h3>Dein Boot</h3>
+      <h3>Dein Kopf</h3>
       <dl class="gauges">
-        <dt>Tiefe</dt><dd><span id="g-depth">–</span> m</dd>
-        <dt>Fahrt</dt><dd><span id="g-speed">–</span> kn</dd>
-        <dt>Dampfdruck</dt><dd><meter id="g-pressure" min="0" max="12" low="8" high="9.5" optimum="5"></meter> <span id="g-pressure-v">–</span> bar</dd>
-        <dt>Kessel</dt><dd><span id="g-temp">–</span> °C</dd>
-        <dt>Rumpf</dt><dd><meter id="g-hull" min="0" max="100" low="30" high="70" optimum="100"></meter> <span id="g-hull-v">–</span> %</dd>
-        <dt>Punkte</dt><dd><span id="g-score">0</span> · <span id="g-kills">0</span> Abschüsse</dd>
+        <dt>Slop-Pegel</dt><dd><span id="g-depth">–</span> %</dd>
+        <dt>Tempo</dt><dd><span id="g-speed">–</span> km/h</dd>
+        <dt>Denkdruck</dt><dd><meter id="g-pressure" min="0" max="12" low="8" high="9.5" optimum="5"></meter> <span id="g-pressure-v">–</span></dd>
+        <dt>Geduld</dt><dd><meter id="g-hull" min="0" max="100" low="30" high="70" optimum="100"></meter> <span id="g-hull-v">–</span> %</dd>
+        <dt>Punkte</dt><dd><span id="g-score">0</span> · <span id="g-kills">0</span> Treffer</dd>
       </dl>
     </div>
     <div class="panel">
@@ -49,7 +49,7 @@
       <ul id="chaos" class="chaos"></ul>
     </div>
     <div class="panel">
-      <h3>Funkspruch</h3>
+      <h3>Flurfunk</h3>
       <ul id="events" class="events"></ul>
     </div>
     <div class="panel">

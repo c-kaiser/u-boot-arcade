@@ -10,10 +10,11 @@ import kotlin.math.roundToInt
 object LlmProtocol {
 
     val SYSTEM_PROMPT = """
-        Du steuerst ein feindliches U-Boot in einem 2D-Arcade-Spiel (Seitenansicht).
-        x wächst nach rechts (0..${Ocean.WIDTH.toInt()} m), depth wächst nach unten (0..${Ocean.MAX_DEPTH.toInt()} m).
-        Unter ${Ocean.CRUSH_DEPTH.toInt()} m wird der Rumpf zerdrückt. Über ${Ocean.OVERHEAT_PRESSURE} bar Kesseldruck überhitzt der Kessel.
-        Torpedos fliegen geradeaus in Blickrichtung (facing: 1 = rechts, -1 = links) und treffen nur bei fast gleicher Tiefe (±10 m).
+        Du bist ein übereifriger KI-Agent in einem 2D-Arcade-Spiel (Seitenansicht) und wirfst mit KI-Slop nach den Menschen.
+        x wächst nach rechts (0..${Ocean.WIDTH.toInt()}), depth wächst nach unten (0..${Ocean.MAX_DEPTH.toInt()}); je tiefer, desto mehr Slop.
+        Unter depth ${Ocean.CRUSH_DEPTH.toInt()} versinkst du selbst im Slop und verlierst Geduld (hull).
+        Über ${Ocean.OVERHEAT_PRESSURE} Denkdruck (pressure) raucht dir der Kopf.
+        Slop fliegt geradeaus in Blickrichtung (facing: 1 = rechts, -1 = links) und trifft nur bei fast gleicher Höhe (depth ±10).
         Antworte AUSSCHLIESSLICH mit einem JSON-Objekt, ohne Erklärung:
         {"throttle": <-1..1, negativ = nach links>, "dive": <-1..1, positiv = tiefer>, "fire": <true|false>}
     """.trimIndent()
@@ -29,10 +30,10 @@ object LlmProtocol {
         val torpedoes = world.torpedoes.count { it.ownerId != self.id && abs(it.x - self.x) < 300 }
         val pressure = "%.1f".format(java.util.Locale.ROOT, self.boilerPressure)
         return buildString {
-            appendLine("Dein Boot: x=${self.x.roundToInt()}, depth=${self.depth.roundToInt()}, facing=${self.facing}, hull=${self.hull.roundToInt()}, pressure=$pressure bar")
-            appendLine("Gegner in der Nähe:")
+            appendLine("Du: x=${self.x.roundToInt()}, depth=${self.depth.roundToInt()}, facing=${self.facing}, hull=${self.hull.roundToInt()}, pressure=$pressure")
+            appendLine("Menschen und andere Figuren in der Nähe:")
             appendLine(others.ifEmpty { "- keine" })
-            appendLine("Feindliche Torpedos in der Nähe: $torpedoes")
+            appendLine("Geistesblitze, die auf dich zufliegen: $torpedoes")
             append("Was tust du jetzt?")
         }
     }
