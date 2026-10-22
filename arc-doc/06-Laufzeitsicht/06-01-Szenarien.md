@@ -210,6 +210,6 @@ Request an die Downstream-Services weitergereicht (im Body bzw. bei Leaderboard 
 
 ### Besonderheiten
 
-- Weitere Schalter wirken analog an anderer Stelle: KI-Latenz/Runaway in `enemy-ai`, DB langsam in `leaderboard`,
+- Weitere Schalter wirken analog an anderer Stelle: KI-Latenz/Runaway in `enemy-ai`, Leaderboard langsam in `leaderboard`,
   Memory Leak im `game-server` (64 KB je Tick bis zum Abschalten), Kessel/Leck/Strömung in der Physik.
 - **Zielbild (geplant):** Störung pro U-Boot auf einer Skala in der UI. Technische Umsetzung offen. <!-- TODO: Bitte ergänzen -->

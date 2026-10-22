@@ -14,7 +14,7 @@ gezieltes Chaos aus, etwa zusätzliche Latenz. Wie die Störungen technisch umge
 | --- | --- | --- |
 | Physik-Latenz | Jeder Step wird verzögert | `game.tick.duration` steigt, Overruns, Spiel ruckelt |
 | Physik-Fehlerrate | Steps scheitern mit 503 | Fehler-Spans, `game.physics.failures`, Welt friert ein |
-| Leaderboard-DB langsam | Künstliche Verzögerung vor jedem Insert (`Thread.sleep`) | Langer Request-Span am Leaderboard, Warteschlange läuft voll |
+| Leaderboard langsam | Künstliche Verzögerung vor jedem Insert (`Thread.sleep`) | Langer Request-Span am Leaderboard, Warteschlange läuft voll |
 | Gegner-KI-Latenz | Gegner reagieren träge | `game.enemy.decision.latency` |
 | Gegner-KI-Endlosschleife | 8 LLM-Aufrufe pro Entscheidung, Kontext wächst | Tokens und Kosten explodieren, lange Traces |
 | Memory Leak | Heap wächst um ~1,3 MB/s | JVM-Heap-Metriken, Garbage Collection, irgendwann OOM-Kill |

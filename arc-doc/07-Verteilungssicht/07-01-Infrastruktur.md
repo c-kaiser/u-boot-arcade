@@ -4,8 +4,8 @@
 
 ## Infrastruktur Ebene 1
 
-Die Anwendung besteht aus fünf Spring-Boot-Prozessen (JDK 21, je ein Fat-JAR aus `./gradlew bootJar`) plus Datenbank
-und optional LiteLLM. Sie wird in drei Varianten betrieben:
+Die Anwendung besteht aus fünf Spring-Boot-Prozessen (JDK 21, je ein Fat-JAR aus `./gradlew bootJar`) (das Leaderboard
+mit eingebetteter H2-Datei-DB) und optional LiteLLM. Sie wird in drei Varianten betrieben:
 
 | Variante | Status | Zielumgebung | Details |
 |----------|--------|--------------|---------|

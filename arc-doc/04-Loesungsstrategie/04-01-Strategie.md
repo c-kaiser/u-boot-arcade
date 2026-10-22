@@ -42,7 +42,7 @@ Details: [Kapitel 5](../05-Bausteinsicht/), Entscheidungen in [Kapitel 9](../09-
 | Störbarkeit | `Chaos`-Objekt im Game-Server, über Admin-Panel änderbar, mit jedem Aufruf an die Services durchgereicht; Werte begrenzt (z. B. Physik-Latenz ≤ 1500 ms unter 2-s-Timeout) | umgesetzt (global) |
 | Störbarkeit pro U-Boot | Störung pro Boot auf einer Skala in der UI | **geplant**, Umsetzung offen |
 | Einfache Inbetriebnahme | Gradle Wrapper, nur JDK ≥ 21 nötig; Konfiguration nur über Umgebungsvariablen; Dev Container für Codespaces | umgesetzt |
-| Einfache Inbetriebnahme ohne Docker | `run-local.sh`/`stop-local.sh` mit OTel-Agent, `.env`, Logs nach `logs/`; LiteLLM per `pip`; Leaderboard braucht dank H2 keine externe DB (umgesetzt) | **geplant** |
+| Einfache Inbetriebnahme ohne Docker | `run-local.sh`/`stop-local.sh` mit OTel-Agent, `.env`, Logs nach `logs/`; LiteLLM per `pip` | **geplant** |
 | Kostenkontrolle LLM | Regelbasierter Fallback, LLM per Schalter (Default aus), `max_tokens` 60, Kostenmetrik `enemy_ai.llm.cost`, LiteLLM als zentrale Stelle | umgesetzt |
 | Kostenkontrolle LLM (Bremse) | Entscheidungsintervall 5–10 s bei LLM, Runaway-Chaos bei Cloud-Modellen deckeln, LiteLLM `max_budget` | **geplant** |
 | Flüssiges Spiel | Fester Tick (50 ms) im eigenen Thread; Gegner-KI und Leaderboard asynchron; Broadcast pro Client über virtuelle Threads, alte Frames werden verworfen (`game.websocket.frames_dropped`); Timeouts an allen HTTP-Clients | umgesetzt |

@@ -4,6 +4,9 @@
   (dict "name" "leaderboard" "port" 8082 "values" .Values.leaderboard)
   (dict "name" "enemy-ai" "port" 8083 "values" .Values.enemyAi)
 }}
+{{- if gt (int .Values.leaderboard.replicas) 1 }}
+{{- fail "leaderboard.replicas muss 1 sein: jede Replica hätte ihre eigene H2-Datei" }}
+{{- end }}
 {{- range $c := $components }}
 ---
 apiVersion: apps/v1

@@ -18,13 +18,15 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 | R10 | **Helm-Chart nie mit `helm lint`/echtem Cluster geprüft** | mittel | niedrig (Workshop ohne Cluster) | `helm lint` / `helm template` in CI |
 | R11 | **Game-Server Single Point of Failure**, Zustand nur im Speicher (ADR-03) | niedrig | mittel | Akzeptiert; Neustart = neue Runde |
 | R12 | **Admin-API ohne Authentifizierung**, WebSocket erlaubt alle Origins | niedrig | niedrig | Akzeptabel bei Instanz pro Person; vor öffentlichem Betrieb absichern |
-| R13 | **Leaderboard nicht skalierbar, Daten im Helm-Chart flüchtig** – eingebettete H2-Datei pro Instanz (ADR-07) | niedrig | niedrig | Akzeptiert; `leaderboard.replicas` bleibt 1, bei Bedarf PersistentVolumeClaim statt `emptyDir` |
+| R13 | **Leaderboard nicht skalierbar, Daten im Helm-Chart flüchtig** – eingebettete H2-Datei pro Instanz (ADR-07) | niedrig | niedrig | Akzeptiert; `leaderboard.replicas` bleibt 1, bei Bedarf PersistentVolumeClaim statt `emptyDir`, dann mit Update-Strategie `Recreate` (sonst öffnen zwei Pods dieselbe H2-Datei) |
 
 ## Technische Schulden
 
 | ID | Schuld | Bereich | Aufwand | Priorität |
 |---|---|---|---|---|
 | TD1 | `run-local.sh`/`stop-local.sh` fehlen (Agent laden, bootJars, 5 Services, Logs, PIDs, `.env`) | Betrieb | <!-- TODO --> | hoch |
+| TD2 | ~~Leaderboard-Profil `local` mit H2 fehlt~~ – erledigt: H2 in allen Betriebsarten (ADR-07) | leaderboard | – | – |
+| TD3 | ~~`pg_sleep`-Chaos nicht H2-kompatibel~~ – erledigt: `Thread.sleep` (ADR-07) | leaderboard, Chaos | – | – |
 | TD4 | Kosten-Bremse fehlt (Intervall bei LLM, Runaway-Deckel, `max_budget`) | game-server, enemy-ai, LiteLLM | <!-- TODO --> | hoch |
 | TD5 | Collector-Fan-out SigNoz/Langfuse fehlt (ADR-09) | Betrieb/Telemetrie | <!-- TODO --> | hoch |
 | TD6 | Langfuse-Attribute fehlen (`gen_ai.prompt`/`completion` bzw. `langfuse.observation.*`, `langfuse.session.id`, `gen_ai.usage.cost`) | enemy-ai `LlmClient` | <!-- TODO --> | mittel |

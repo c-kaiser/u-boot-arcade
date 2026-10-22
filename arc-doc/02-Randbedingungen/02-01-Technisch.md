@@ -12,6 +12,5 @@
 | Build: Gradle Wrapper 9.6.0 | Multi-Projekt-Build, Wrapper lädt Gradle selbst | Keine lokale Gradle-Installation nötig | ja |
 | Netzwerkzugriff beim ersten Build | `services.gradle.org`, `plugins.gradle.org`, Maven Central | Wrapper, Gradle-Plugins, Abhängigkeiten | nein |
 | OpenTelemetry | Java-Agent 2.32.0 zur Laufzeit; im Code nur `opentelemetry-api` 1.66.0 über `GlobalOpenTelemetry` | API-Version muss zur Agent-Version passen, nur gemeinsam ändern (AGENTS.md) | nein |
-| Datenbank | H2 als eingebettete Datei-DB im Leaderboard, in allen Betriebsarten; Schema in Standard-SQL, Chaos per `Thread.sleep` | Kein Docker im Workshop, nur ein DB-Dialekt (ADR-07) | ja |
 | Ports | game-server 8080, physics 8081, leaderboard 8082, enemy-ai 8083 (je `PORT`) | SigNoz-UI nutzt ebenfalls 8080: lokal Game-Server auf `PORT=8088` legen | ja |
 | Zielumgebungen | Workshop-VS-Code, GitHub Codespaces (Dev Container mit JDK 21 + Docker-in-Docker), Sandbox, lokal (macOS/Linux) | Alle müssen mit derselben Konfiguration über Umgebungsvariablen auskommen | nein |

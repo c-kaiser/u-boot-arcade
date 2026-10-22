@@ -17,6 +17,9 @@ Zielkonflikte:
   (z. B. Physik-Latenz auf 1500 ms unter dem 2-s-Timeout gedeckelt).
 - **Beobachtbarkeit vs. Kosten:** 20 Traces/s und LLM-Telemetrie erzeugen Datenvolumen bzw. Kosten; Sampling und
   sparsamer LLM-Einsatz wirken dagegen.
+- **Einfache Inbetriebnahme vs. Beobachtbarkeit/Störbarkeit:** Die eingebettete H2-Datei-DB (ADR-07) braucht keine
+  DB-Infrastruktur, dafür verzögert der Chaos-Schalter „Leaderboard langsam“ den Request per `Thread.sleep` und nicht
+  die Datenbank: Im Trace erscheint ein langer HTTP-Span statt eines langen DB-Spans.
 
 > Ansätze zur Erreichung: [Kapitel 4](../04-Loesungsstrategie/04-01-Strategie.md).
 > Detaillierte Szenarien: [Kapitel 10](../10-Qualitaetsanforderungen/).

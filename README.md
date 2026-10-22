@@ -91,7 +91,7 @@ Einen der beiden umlegen (`PORT=8088` für den Game-Server).
 
 ### Traces
 - **`game.tick`** (20 pro Sekunde): Physik-Aufruf, `game.broadcast`, asynchron die Gegner-Entscheidungen
-  und Leaderboard-Einträge (`INSERT` und eventuell die künstliche DB-Verzögerung als DB-Span)
+  und Leaderboard-Einträge (`INSERT` als DB-Span; die Chaos-Verzögerung verlängert den HTTP-Span `POST /api/scores`)
 - **`chat enemy-brain`** in `enemy-ai`: GenAI-Span mit `gen_ai.usage.input_tokens`/`output_tokens` und Kosten.
   Darunter der HTTP-Span zu LiteLLM und dessen eigene Spans, die Trace-ID wird durchgereicht.
 

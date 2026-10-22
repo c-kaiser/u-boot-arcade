@@ -20,8 +20,8 @@ flowchart LR
         direction TB
         GS["game-server :8088"]
         PH["physics :8081"]
-        LB["leaderboard :8082<br/>Profil local"]
-        H2[("H2-Datei-DB")]
+        LB["leaderboard :8082"]
+        H2[("H2-Datei-DB<br/>./data/")]
         AI["enemy-ai :8083"]
         SW["player-swarm"]
         LL["LiteLLM :4000<br/>(pip)"]
