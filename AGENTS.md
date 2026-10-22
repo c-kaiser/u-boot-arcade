@@ -16,6 +16,8 @@ Die Architektur ist in **[arc-doc/](arc-doc/)** nach arc42 dokumentiert.
   laufen lassen, ohne vorher zu fragen. Für Tests den regelbasierten Gegner (`GAME_LLM_ENABLED=false`) nutzen.
 - `opentelemetry-api` in `build.gradle.kts` muss zur Version des OTel-Java-Agents passen – nur gemeinsam ändern.
 - `game-core` bleibt frei von Frameworks (kein Spring, keine OTel-Abhängigkeit).
+- In Sandboxen mit Netzwerk-Firewall braucht der erste Build Zugriff auf `services.gradle.org`
+  (leitet auf `release-assets.githubusercontent.com` weiter), `plugins.gradle.org` und Maven Central.
 
 ## arc42-Dokumentation
 

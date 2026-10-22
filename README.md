@@ -20,11 +20,8 @@ Gradle-Version selbst. Kompiliert wird immer für Java 21 – auch mit einem neu
 | Umgebung | Einrichtung |
 | --- | --- |
 | GitHub Codespaces / Dev Container | Nichts zu tun – [.devcontainer/devcontainer.json](.devcontainer/devcontainer.json) bringt JDK 21 und Docker mit |
-| Workshop-VS-Code, Sandbox | Vorhandenes JDK genügt (`java -version` ≥ 21) |
+| Workshop-VS-Code | Vorhandenes JDK genügt (`java -version` ≥ 21) |
 | Lokal (macOS/Linux) | z. B. [SDKMAN!](https://sdkman.io/): `sdk install java 21-tem` – oder ein JDK aus dem Paketmanager |
-
-Für den ersten Build nötig: Netzwerkzugriff auf `services.gradle.org` (leitet auf `release-assets.githubusercontent.com`
-weiter), `plugins.gradle.org` und Maven Central.
 
 ## Bauen und Testen
 
