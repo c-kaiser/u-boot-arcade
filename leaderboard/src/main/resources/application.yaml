@@ -1,0 +1,21 @@
+server:
+  port: ${PORT:8082}
+spring:
+  application:
+    name: leaderboard
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/leaderboard}
+    username: ${DB_USER:uboot}
+    password: ${DB_PASSWORD:uboot}
+    hikari:
+      maximum-pool-size: 5
+      # Postgres ist beim Start evtl. noch nicht bereit – nicht sofort abbrechen
+      initialization-fail-timeout: 60000
+  sql:
+    init:
+      mode: always
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

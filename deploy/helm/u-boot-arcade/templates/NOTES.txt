@@ -1,0 +1,12 @@
+U-Boot Arcade ist deployt.
+
+Spiel öffnen:
+{{- if .Values.ingress.enabled }}
+  http://{{ .Values.ingress.host }}/
+{{- else }}
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "uboot.svc" (list . "game-server") }} 8088:{{ .Values.gameServer.service.port }}
+  -> http://localhost:8088/   (Admin & Chaos: http://localhost:8088/admin.html)
+{{- end }}
+
+Telemetrie geht an: {{ .Values.otel.endpoint }}
+Mehr Last:  kubectl -n {{ .Release.Namespace }} scale deploy/{{ include "uboot.svc" (list . "player-swarm") }} --replicas=5

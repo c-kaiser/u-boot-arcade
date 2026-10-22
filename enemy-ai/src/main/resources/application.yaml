@@ -1,0 +1,21 @@
+server:
+  port: ${PORT:8083}
+spring:
+  application:
+    name: enemy-ai
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+# OpenAI-kompatibler Endpunkt, typischerweise LiteLLM
+llm:
+  base-url: ${LLM_BASE_URL:http://litellm:4000/v1}
+  model: ${LLM_MODEL:enemy-brain}
+  api-key: ${LLM_API_KEY:sk-local}
+  timeout-ms: ${LLM_TIMEOUT_MS:4000}
+  max-tokens: ${LLM_MAX_TOKENS:60}
+  # Für die Kostenmetrik (USD pro 1 Mio. Tokens). LiteLLM rechnet zusätzlich selbst.
+  price-input-per-mtok: ${LLM_PRICE_INPUT_PER_MTOK:3.0}
+  price-output-per-mtok: ${LLM_PRICE_OUTPUT_PER_MTOK:15.0}

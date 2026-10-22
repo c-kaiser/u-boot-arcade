@@ -1,0 +1,22 @@
+server:
+  port: ${PORT:8080}
+spring:
+  application:
+    name: game-server
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+game:
+  physics-url: ${PHYSICS_URL:http://localhost:8081}
+  enemy-ai-url: ${ENEMY_AI_URL:http://localhost:8083}
+  leaderboard-url: ${LEADERBOARD_URL:http://localhost:8082}
+  tick-millis: ${GAME_TICK_MILLIS:50}
+  # Startwerte – zur Laufzeit im Admin-Panel änderbar
+  bots: ${GAME_BOTS:3}
+  enemies: ${GAME_ENEMIES:2}
+  llm-enabled: ${GAME_LLM_ENABLED:false}
+  # Wie oft (in Ticks) die Gegner-KI gefragt wird
+  enemy-decision-every-ticks: ${GAME_ENEMY_DECISION_EVERY_TICKS:20}

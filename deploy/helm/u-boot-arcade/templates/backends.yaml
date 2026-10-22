@@ -1,0 +1,95 @@
+{{- /* Physik, Leaderboard und Gegner-KI: gleiches Muster, unterschiedliche Konfiguration */ -}}
+{{- $components := list
+  (dict "name" "physics" "port" 8081 "values" .Values.physics)
+  (dict "name" "leaderboard" "port" 8082 "values" .Values.leaderboard)
+  (dict "name" "enemy-ai" "port" 8083 "values" .Values.enemyAi)
+}}
+{{- range $c := $components }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "uboot.svc" (list $ $c.name) }}
+  labels:
+    {{- include "uboot.labels" $ | nindent 4 }}
+    {{- include "uboot.selector" (list $ $c.name) | nindent 4 }}
+spec:
+  replicas: {{ $c.values.replicas }}
+  selector:
+    matchLabels:
+      {{- include "uboot.selector" (list $ $c.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "uboot.labels" $ | nindent 8 }}
+        {{- include "uboot.selector" (list $ $c.name) | nindent 8 }}
+    spec:
+      {{- with $.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ $c.name }}
+          image: {{ include "uboot.image" (list $ $c.name) }}
+          imagePullPolicy: {{ $.Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ $c.port }}
+          env:
+            {{- include "uboot.otelEnv" (list $ $c.name) | nindent 12 }}
+            {{- if eq $c.name "leaderboard" }}
+            - name: DB_URL
+              value: {{ $.Values.postgres.externalUrl | default (printf "jdbc:postgresql://%s:5432/%s" (include "uboot.svc" (list $ "postgres")) $.Values.postgres.database) | quote }}
+            - name: DB_USER
+              value: {{ $.Values.postgres.user | quote }}
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "uboot.svc" (list $ "postgres") }}
+                  key: password
+            {{- end }}
+            {{- if eq $c.name "enemy-ai" }}
+            - name: LLM_BASE_URL
+              value: {{ $.Values.llm.baseUrl | quote }}
+            - name: LLM_MODEL
+              value: {{ $.Values.llm.model | quote }}
+            - name: LLM_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "uboot.svc" (list $ "llm") }}
+                  key: api-key
+            - name: LLM_TIMEOUT_MS
+              value: {{ $.Values.llm.timeoutMs | quote }}
+            - name: LLM_PRICE_INPUT_PER_MTOK
+              value: {{ $.Values.llm.priceInputPerMtok | quote }}
+            - name: LLM_PRICE_OUTPUT_PER_MTOK
+              value: {{ $.Values.llm.priceOutputPerMtok | quote }}
+            {{- end }}
+          {{- include "uboot.probes" $ | nindent 10 }}
+          resources:
+            {{- toYaml $c.values.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "uboot.svc" (list $ $c.name) }}
+  labels:
+    {{- include "uboot.labels" $ | nindent 4 }}
+spec:
+  selector:
+    {{- include "uboot.selector" (list $ $c.name) | nindent 4 }}
+  ports:
+    - name: http
+      port: {{ $c.port }}
+      targetPort: http
+{{- end }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "uboot.svc" (list . "llm") }}
+  labels:
+    {{- include "uboot.labels" . | nindent 4 }}
+type: Opaque
+stringData:
+  api-key: {{ .Values.llm.apiKey | quote }}

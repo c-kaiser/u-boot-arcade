@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: player-swarm
+  main:
+    web-application-type: none
+
+swarm:
+  url: ${GAME_WS_URL:ws://localhost:8080/ws}
+  players: ${SWARM_PLAYERS:5}
+  ramp-up-ms: ${SWARM_RAMP_UP_MS:500}
+  input-interval-ms: ${SWARM_INPUT_INTERVAL_MS:100}
+  name-prefix: ${SWARM_NAME_PREFIX:Schwarm}

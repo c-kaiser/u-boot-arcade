@@ -1,0 +1,94 @@
+# Images: <registry>/<prefix>-<komponente>:<tag>, z. B. ghcr.io/innoq/u-boot-arcade-game-server:1.0.0
+# Bauen und pushen: deploy/build-images.sh <registry> <tag>
+image:
+  registry: ghcr.io/CHANGE-ME
+  prefix: u-boot-arcade
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+
+# Wohin die Telemetrie geht. Für SigNoz im Cluster typischerweise der Service des SigNoz-Collectors/Ingesters
+# – Namen mit `kubectl get svc -A | grep -i otel` prüfen.
+otel:
+  endpoint: http://signoz-otel-collector.signoz.svc.cluster.local:4317
+  protocol: grpc
+  metricExportInterval: 10000
+  sampler: parentbased_always_on
+  samplerArg: "1.0"
+  environment: workshop
+  # Zusätzliche Resource-Attribute, z. B. "team=blau"
+  extraResourceAttributes: ""
+
+game:
+  bots: 5
+  enemies: 2
+  llmEnabled: false
+  tickMillis: 50
+
+llm:
+  # OpenAI-kompatibler Endpunkt (LiteLLM)
+  baseUrl: http://litellm:4000/v1
+  model: enemy-brain
+  apiKey: sk-local
+  timeoutMs: 8000
+  priceInputPerMtok: 3.0
+  priceOutputPerMtok: 15.0
+
+gameServer:
+  # Muss 1 bleiben: der Spielstand liegt im Speicher
+  replicas: 1
+  service:
+    type: ClusterIP
+    port: 80
+  resources:
+    requests: { cpu: 250m, memory: 384Mi }
+    limits: { memory: 768Mi }
+
+physics:
+  # Zustandslos – darf skaliert werden
+  replicas: 2
+  resources:
+    requests: { cpu: 200m, memory: 256Mi }
+    limits: { memory: 512Mi }
+
+leaderboard:
+  replicas: 1
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits: { memory: 512Mi }
+
+enemyAi:
+  replicas: 1
+  resources:
+    requests: { cpu: 100m, memory: 256Mi }
+    limits: { memory: 512Mi }
+
+playerSwarm:
+  enabled: true
+  replicas: 1
+  playersPerPod: 10
+  resources:
+    requests: { cpu: 100m, memory: 192Mi }
+    limits: { memory: 384Mi }
+
+postgres:
+  # false = externe Datenbank über externalUrl
+  enabled: true
+  image: postgres:17-alpine
+  database: leaderboard
+  user: uboot
+  password: uboot
+  externalUrl: ""
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { memory: 256Mi }
+
+ingress:
+  enabled: false
+  className: ""
+  host: u-boot.example.com
+  annotations:
+    # WebSocket-Verbindungen nicht nach 60 s kappen (ingress-nginx)
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+  tls: []

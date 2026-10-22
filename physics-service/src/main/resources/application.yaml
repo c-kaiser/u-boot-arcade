@@ -1,0 +1,10 @@
+server:
+  port: ${PORT:8081}
+spring:
+  application:
+    name: physics
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

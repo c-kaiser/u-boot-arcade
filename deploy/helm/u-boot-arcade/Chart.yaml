@@ -1,0 +1,6 @@
+apiVersion: v2
+name: u-boot-arcade
+description: U-Boot-Arcade-Spiel als Observability-Spielwiese (OpenTelemetry, SigNoz, LLM)
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

@@ -1,0 +1,41 @@
+{{- if .Values.playerSwarm.enabled }}
+{{- $name := "player-swarm" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "uboot.svc" (list . $name) }}
+  labels:
+    {{- include "uboot.labels" . | nindent 4 }}
+    {{- include "uboot.selector" (list . $name) | nindent 4 }}
+spec:
+  # Mehr Last: replicas hochdrehen, z. B. kubectl scale deploy/<release>-player-swarm --replicas=5
+  replicas: {{ .Values.playerSwarm.replicas }}
+  selector:
+    matchLabels:
+      {{- include "uboot.selector" (list . $name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "uboot.labels" . | nindent 8 }}
+        {{- include "uboot.selector" (list . $name) | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ $name }}
+          image: {{ include "uboot.image" (list . $name) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            {{- include "uboot.otelEnv" (list . $name) | nindent 12 }}
+            - name: GAME_WS_URL
+              value: "ws://{{ include "uboot.svc" (list . "game-server") }}:{{ .Values.gameServer.service.port }}/ws"
+            - name: SWARM_PLAYERS
+              value: {{ .Values.playerSwarm.playersPerPod | quote }}
+            # Pod-Name im Spielernamen, damit mehrere Replicas unterscheidbar sind
+            - name: SWARM_NAME_PREFIX
+              valueFrom: { fieldRef: { fieldPath: metadata.name } }
+          resources:
+            {{- toYaml .Values.playerSwarm.resources | nindent 12 }}
+{{- end }}

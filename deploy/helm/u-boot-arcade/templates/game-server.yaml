@@ -1,0 +1,67 @@
+{{- $name := "game-server" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "uboot.svc" (list . $name) }}
+  labels:
+    {{- include "uboot.labels" . | nindent 4 }}
+    {{- include "uboot.selector" (list . $name) | nindent 4 }}
+spec:
+  replicas: {{ .Values.gameServer.replicas }}
+  # Kein Rolling Update mit zwei Spielständen gleichzeitig
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      {{- include "uboot.selector" (list . $name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "uboot.labels" . | nindent 8 }}
+        {{- include "uboot.selector" (list . $name) | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: {{ $name }}
+          image: {{ include "uboot.image" (list . $name) }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 8080
+          env:
+            {{- include "uboot.otelEnv" (list . $name) | nindent 12 }}
+            - name: PHYSICS_URL
+              value: "http://{{ include "uboot.svc" (list . "physics") }}:8081"
+            - name: ENEMY_AI_URL
+              value: "http://{{ include "uboot.svc" (list . "enemy-ai") }}:8083"
+            - name: LEADERBOARD_URL
+              value: "http://{{ include "uboot.svc" (list . "leaderboard") }}:8082"
+            - name: GAME_BOTS
+              value: {{ .Values.game.bots | quote }}
+            - name: GAME_ENEMIES
+              value: {{ .Values.game.enemies | quote }}
+            - name: GAME_LLM_ENABLED
+              value: {{ .Values.game.llmEnabled | quote }}
+            - name: GAME_TICK_MILLIS
+              value: {{ .Values.game.tickMillis | quote }}
+          {{- include "uboot.probes" . | nindent 10 }}
+          resources:
+            {{- toYaml .Values.gameServer.resources | nindent 12 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "uboot.svc" (list . $name) }}
+  labels:
+    {{- include "uboot.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.gameServer.service.type }}
+  selector:
+    {{- include "uboot.selector" (list . $name) | nindent 4 }}
+  ports:
+    - name: http
+      port: {{ .Values.gameServer.service.port }}
+      targetPort: http
