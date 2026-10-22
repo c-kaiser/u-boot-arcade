@@ -33,8 +33,9 @@ flowchart LR
     GS --> PH & AI & LB
     LB --> H2
     AI -. "nur mit LLM" .-> LL --> CLOUD["Anthropic / Heribert"]
-    VS -. "OTLP, je nach Betriebsart" .-> COL
-    COL -- "alles" --> SZ["SigNoz (gehostet)"]
+    VS -. "OTLP direkt (lokal / bereitgestellt)" .-> SZ
+    VS -. "OTLP über Collector (geplant)" .-> COL
+    COL -- "alles" --> SZ["SigNoz / OTLP-Ziel<br/>(lokal oder gehostet)"]
     COL -- "nur GenAI-Spans, OTLP/HTTP" --> LF["Langfuse (gehostet)"]
 ```
 
@@ -60,7 +61,7 @@ Ohne Telemetrie-Backend und mit regelbasiertem Gegner (`GAME_LLM_ENABLED=false`)
 - **Ohne Telemetrie-Backend:** Standard in `.env.example` ist `OTEL_*_EXPORTER=none` – der Agent instrumentiert, exportiert
   aber nichts, keine Fehler-Logs (ADR-10). Ist ein OTLP-Ziel gesetzt, aber nicht erreichbar, starten alle Services
   trotzdem ohne Verzögerung; der Agent loggt dann je Exportversuch einen Fehler.
-- **Telemetrie-Ziel:** nur über `.env` (Betriebsarten siehe [08-02](../08-Konzepte/08-02-Telemetrie.md)). Achtung:
+- **Telemetrie-Ziel:** nur über `.env` (Telemetrie-Betriebsarten siehe [08-02](../08-Konzepte/08-02-Telemetrie.md)). Achtung:
   Der Agent nutzt ohne Angabe OTLP/HTTP auf 4318; für Port 4317 `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` setzen.
 - **Portkonflikt mit der SigNoz-UI (8080) gelöst:** Das Skript startet den Game-Server auf `GAME_PORT` (8088).
   Die übrigen Ports sind per `PHYSICS_PORT`, `LEADERBOARD_PORT`, `ENEMY_AI_PORT` änderbar.

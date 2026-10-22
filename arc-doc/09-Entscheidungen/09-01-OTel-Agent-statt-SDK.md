@@ -19,7 +19,8 @@ kein SDK, keine Exporter im Code. Export und Sampling konfiguriert ausschließli
 
 ### Positiv
 - HTTP-, JDBC-, Log- und JVM-Telemetrie sowie Kontext-Propagation ohne Code.
-- Telemetrie-Ziele sind reine Betriebskonfiguration (siehe [08-04](../08-Konzepte/08-04-Konfiguration.md)).
+- Telemetrie-Ziele sind reine Betriebskonfiguration (siehe [08-04](../08-Konzepte/08-04-Konfiguration.md)); Telemetrie-Betriebsarten
+  und „ohne Telemetrie“ in [ADR-10](09-10-Trennung-Anwendung-Telemetrie.md).
 
 ### Negativ
 - API-Version muss zur Agent-Version passen; nur gemeinsam ändern (`otelApiVersion` in `build.gradle.kts`).

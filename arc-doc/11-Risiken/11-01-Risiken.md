@@ -14,9 +14,10 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 | R6 | **Heribert-API unklar** (OpenAI-kompatibel?) | mittel | mittel | Klären; sonst nur Anthropic/lokal; enemy-ai fällt bei Fehlern auf `BotBrain` zurück |
 | R7 | ~~**Portkonflikt 8080** zwischen Game-Server-Default und SigNoz-UI beim Start ohne Docker~~ – erledigt: `run-local.sh` startet den Game-Server auf `GAME_PORT` (8088) | – | – | – |
 | R8 | **Netzwerkzugriff im Workshop** auf `services.gradle.org`, `plugins.gradle.org`, Maven Central, GitHub (Agent-Download), PyPI (LiteLLM) | mittel | hoch | Vorab im Workshop-VS-Code testen; ggf. Artefakte vorab bereitstellen <!-- TODO: Bitte ergänzen --> |
-| R9 | **Agent-/API-Versionsdrift** – andere Agent-Version als 2.32.0 passt nicht zu API 1.66.0 | niedrig | mittel | Version im Start-Skript fest pinnen, nur gemeinsam ändern |
+| R9 | **Agent-/API-Versionsdrift** – andere Agent-Version als 2.32.0 passt nicht zu API 1.66.0 | niedrig | mittel | Version in `Dockerfile` und `run-local.sh` gepinnt; mit `otelApiVersion` in `build.gradle.kts` nur gemeinsam ändern (AGENTS.md) |
 | R10 | **Helm-Chart nie mit `helm lint`/echtem Cluster geprüft** | mittel | niedrig (Workshop ohne Cluster) | `helm lint` / `helm template` in CI |
 | R11 | **Game-Server Single Point of Failure**, Zustand nur im Speicher (ADR-03) | niedrig | mittel | Akzeptiert; Neustart = neue Runde |
+| R14 | **Gemeinsame `.env` für `run-local.sh` und Compose** – ein lokales Telemetrie-Ziel heißt ohne Docker `localhost`, aus Compose heraus `host.docker.internal`; falscher Host führt zu Export-Fehlern im Log | mittel | niedrig | Hinweis in `.env.example`, README und ADR-10; Spiel läuft trotzdem weiter |
 | R12 | **Admin-API ohne Authentifizierung**, WebSocket erlaubt alle Origins | niedrig | niedrig | Akzeptabel bei Instanz pro Person; vor öffentlichem Betrieb absichern |
 | R13 | **Leaderboard nicht skalierbar, Daten im Helm-Chart flüchtig** – eingebettete H2-Datei pro Instanz (ADR-07) | niedrig | niedrig | Akzeptiert; `leaderboard.replicas` bleibt 1, bei Bedarf PersistentVolumeClaim statt `emptyDir`, dann mit Update-Strategie `Recreate` (sonst öffnen zwei Pods dieselbe H2-Datei) |
 
@@ -25,7 +26,7 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 | ID | Schuld | Bereich | Aufwand | Priorität |
 |---|---|---|---|---|
 | TD1 | ~~`run-local.sh`/`stop-local.sh` fehlen~~ – erledigt (#3, 07-02) | Betrieb | – | – |
-| TD2 | ~~Leaderboard-Profil `local` mit H2 fehlt~~ – erledigt: H2 in allen Betriebsarten (ADR-07) | leaderboard | – | – |
+| TD2 | ~~Leaderboard-Profil `local` mit H2 fehlt~~ – erledigt: H2 in allen Verteilungsvarianten (ADR-07) | leaderboard | – | – |
 | TD3 | ~~`pg_sleep`-Chaos nicht H2-kompatibel~~ – erledigt: `Thread.sleep` (ADR-07) | leaderboard, Chaos | – | – |
 | TD4 | Kosten-Bremse fehlt (Intervall bei LLM, Runaway-Deckel, `max_budget`) | game-server, enemy-ai, LiteLLM | <!-- TODO --> | hoch |
 | TD5 | Collector-Fan-out SigNoz/Langfuse fehlt (ADR-09) | Betrieb/Telemetrie | <!-- TODO --> | hoch |

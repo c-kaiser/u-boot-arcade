@@ -54,8 +54,8 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 
 ## QS-09: Telemetrie-Ziel wechseln
 
-**Stimulus:** Umstieg von lokalem SigNoz auf gehostetes SigNoz.
-**Reaktion:** Nur `.env` (`OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_EXPORTER_OTLP_HEADERS`) ändern, Neustart.
+**Stimulus:** Wechsel der Telemetrie-Betriebsart, z. B. von „ohne Telemetrie“ auf lokales SigNoz und weiter auf gehostetes SigNoz.
+**Reaktion:** Nur in `.env` einen anderen Block aktivieren (`OTEL_*_EXPORTER`, `OTEL_EXPORTER_OTLP_PROTOCOL`, `OTEL_EXPORTER_OTLP_ENDPOINT`, `OTEL_EXPORTER_OTLP_HEADERS`), Neustart (ADR-10).
 **Metrik:** Keine Code- oder Build-Änderung.
 
 ## QS-10: Modellwechsel
@@ -73,6 +73,6 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 ## QS-12: Betrieb ohne Telemetrie-Backend
 
 **Stimulus:** Die Services werden gestartet, ohne dass SigNoz, ein Collector oder Langfuse läuft bzw. erreichbar ist.
-**Umgebung:** Start ohne Docker, lokal oder in GitHub Codespaces; Betriebsart „ohne Telemetrie“ (`OTEL_*_EXPORTER=none`, Standard) oder ein konfiguriertes, aber nicht erreichbares OTLP-Ziel.
+**Umgebung:** Start ohne Docker, lokal oder in GitHub Codespaces; Telemetrie-Betriebsart „ohne Telemetrie“ (`OTEL_*_EXPORTER=none`, Standard) oder ein konfiguriertes, aber nicht erreichbares OTLP-Ziel.
 **Reaktion:** Alle Services starten, das Spiel ist spielbar. Ohne Telemetrie keine Export-Logs; bei nicht erreichbarem Ziel Fehler-Logs des Agents je Exportversuch (ADR-10).
 **Metrik:** Kein Absturz, kein Hänger beim Start (in der Sandbox gleiche Startzeit wie mit Ziel), Tick-Dauer wie im Normalbetrieb (QS-04).

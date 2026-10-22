@@ -10,7 +10,7 @@ mit eingebetteter H2-Datei-DB) und optional LiteLLM. Sie wird in drei Varianten 
 | Variante | Status | Zielumgebung | Details |
 |----------|--------|--------------|---------|
 | Lokal als JVM-Prozesse, ohne Docker (`run-local.sh`) | **umgesetzt** (Codespaces/Workshop noch nicht erprobt) | Workshop-VS-Code (Browser), Sandbox, Codespaces | [07-02](07-02-Lokal-ohne-Docker.md) |
-| Docker Compose | **umgesetzt** | Lokal (Laptop), Codespaces/Dev Container | [07-03](07-03-Docker-Compose.md) |
+| Docker Compose | **umgesetzt** (noch nicht gestartet, R1) | Lokal (Laptop), Codespaces/Dev Container | [07-03](07-03-Docker-Compose.md) |
 | Kubernetes per Helm | **umgesetzt** (nur mit eigenem Renderer geprüft, nicht mit `helm lint`) | Cluster neben SigNoz | [07-04](07-04-Kubernetes-Helm.md) |
 
 Der Telemetrie-Fluss (heute und geplant mit Collector-Fan-out) steht in [07-05](07-05-Telemetrie-Fluss.md).

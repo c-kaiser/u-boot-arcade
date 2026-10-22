@@ -8,7 +8,7 @@
 | Framework | Spring Boot 3.5.16 (Web, WebSocket, RestClient, JDBC) | Vom OTel-Java-Agent vollständig instrumentiert, bekannter Stack. <!-- ABGELEITET --> |
 | Telemetrie | OTel-Java-Agent 2.32.0 (Zero-Code) + `opentelemetry-api` 1.66.0 über `GlobalOpenTelemetry` | HTTP, JDBC, Logs, JVM ohne Codeänderung; eigener Code nur für fachliche Spans/Metriken und GenAI-Telemetrie |
 | LLM-Anbindung | OpenAI-kompatible API, LiteLLM als Gateway (Modellalias `enemy-brain`) | Modell wechseln ohne Codeänderung (Ollama lokal, Anthropic, Heribert); LiteLLM liefert eigene Spans und Kosten |
-| Datenbank | H2 als eingebettete Datei-DB über JDBC, in allen Betriebsarten (ADR-07) | JDBC-Spans durch den Agent; keine DB-Infrastruktur, weil im Workshop kein Docker; nur ein DB-Dialekt |
+| Datenbank | H2 als eingebettete Datei-DB über JDBC, in allen Verteilungsvarianten (ADR-07) | JDBC-Spans durch den Agent; keine DB-Infrastruktur, weil im Workshop kein Docker; nur ein DB-Dialekt |
 | Build | Gradle Wrapper 9.6.0, Multi-Projekt | Läuft in allen Zielumgebungen mit JDK ≥ 21, ohne weitere Installation |
 | Betrieb | JVM-Prozesse ohne Docker (`run-local.sh`), Docker Compose (lokal), Helm-Chart (Kubernetes); Telemetrie-Ziel nur per Konfiguration (ADR-10) | Workshop-Umgebung ohne Docker; lokal SigNoz/Langfuse in Docker |
 

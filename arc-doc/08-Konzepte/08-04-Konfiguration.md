@@ -2,7 +2,7 @@
 
 ## Problemstellung
 
-Dieselben Artefakte laufen lokal (Docker Compose, SigNoz/Langfuse in Docker), im Workshop (JVM-Prozesse ohne Docker,
+Dieselben Artefakte laufen lokal (`run-local.sh` oder Docker Compose, SigNoz/Langfuse in Docker), im Workshop (JVM-Prozesse ohne Docker,
 gehostete Ziele) und im Kubernetes-Cluster (Helm).
 
 ## Lösung
@@ -23,7 +23,8 @@ Standardwert aus `application.yaml` (`${VAR:default}`), gebunden an `@Configurat
 
 - Vorlage: `.env.example` → `.env` (Compose und `run-local.sh` lesen sie). Sie enthält je Telemetrie-Betriebsart
   einen Block; aktiv ist „ohne Telemetrie“ (siehe [08-02](08-02-Telemetrie.md), ADR-10).
-- Helm: entsprechende Werte in `values.yaml`, OTel-Umgebung über das Template `uboot.otelEnv`.
+- Helm: entsprechende Werte in `values.yaml`, OTel-Umgebung über das Template `uboot.otelEnv`. Die Telemetrie-Betriebsarten
+  (Exporter-Schalter, Header) gelten dort noch nicht; Helm exportiert immer per OTLP an `otel.endpoint`.
 - **Zwei Ebenen**: Startwerte aus der Umgebung; Bots, Gegner, LLM-Schalter und Chaos sind zur Laufzeit im
   Admin-Panel änderbar (nur im Speicher, siehe [08-03](08-03-Chaos-und-Stoerungen.md)).
 - Welches echte Modell hinter `enemy-brain` steckt, entscheidet nur `deploy/litellm-config.yaml`.

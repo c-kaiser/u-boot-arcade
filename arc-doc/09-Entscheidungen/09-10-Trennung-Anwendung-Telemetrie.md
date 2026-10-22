@@ -1,6 +1,6 @@
 # ADR-10: Trennung von Anwendung und Telemetrie, „ohne Telemetrie“ per Exporter `none`
 
-**Status:** accepted (umgesetzt)
+**Status:** accepted (umgesetzt für `run-local.sh` und Docker Compose; eigenes Compose für die Telemetrie-Services offen, #5)
 
 **Datum:** 2026-10-22
 
@@ -17,12 +17,14 @@ Agent normal und blockiert nicht, verwirft die Daten aber und loggt bei jedem Ex
 
 ## Entscheidung
 
-- **Telemetrie-Ziele sind reine Konfiguration** in `.env` (`OTEL_*`-Variablen des Agents). Weder Code noch
-  `run-local.sh`/`stop-local.sh` noch `docker-compose.yaml` enthalten Telemetrie-Adressen außer Standardwerten.
+- **Telemetrie-Ziele sind reine Konfiguration** in `.env` (`OTEL_*`-Variablen des Agents, aufbauend auf ADR-01). Weder
+  Code noch `run-local.sh`/`stop-local.sh` noch `docker-compose.yaml` enthalten Telemetrie-Adressen.
 - **Drei Telemetrie-Betriebsarten**, als Blöcke in `.env.example`: *ohne Telemetrie*, *lokal*, *bereitgestellt*.
 - **„Ohne Telemetrie“** = `OTEL_TRACES_EXPORTER=none`, `OTEL_METRICS_EXPORTER=none`, `OTEL_LOGS_EXPORTER=none`.
   Der Agent bleibt geladen und instrumentiert weiter, exportiert aber nichts. Das ist der Standard in `.env.example`.
-- Die lokalen Telemetrie-Services bekommen ein eigenes Docker Compose, getrennt vom Compose der Anwendung (#5).
+- Die lokalen Telemetrie-Services bekommen ein eigenes Docker Compose, getrennt vom Compose der Anwendung (#5, offen).
+- **Geltungsbereich:** `run-local.sh` und Docker Compose. Das Helm-Chart (`uboot.otelEnv`) setzt weder Exporter-Schalter
+  noch Header und exportiert immer per OTLP an `otel.endpoint`; „ohne Telemetrie“ ist dort nicht vorgesehen.
 
 ### Betrachtete Alternativen
 
@@ -34,7 +36,7 @@ Agent normal und blockiert nicht, verwirft die Daten aber und loggt bei jedem Ex
 ## Konsequenzen
 
 ### Positiv
-- Start ohne Backend ohne Fehler-Logs; Wechsel der Betriebsart nur über `.env` und Neustart (QS-09, QS-12).
+- Start ohne Backend ohne Fehler-Logs; Wechsel der Telemetrie-Betriebsart nur über `.env` und Neustart (QS-09, QS-12).
 - Gleiches Laufzeitverhalten mit und ohne Export: Die Instrumentierung bleibt aktiv.
 
 ### Negativ
@@ -44,4 +46,5 @@ Agent normal und blockiert nicht, verwirft die Daten aber und loggt bei jedem Ex
   aus Compose heraus `host.docker.internal`.
 
 ### Neutral
-- `docker compose up` exportiert mit einer `.env` aus der Vorlage ebenfalls nichts, bis eine andere Betriebsart gewählt wird.
+- Auch `docker-compose.yaml` hat keine Telemetrie-Adresse als Standard mehr; Exporter-Standard ist `none`. Compose
+  exportiert also mit und ohne `.env` nichts, bis eine andere Telemetrie-Betriebsart gewählt wird.

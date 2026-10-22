@@ -43,9 +43,9 @@ flowchart LR
 
 - Gemeinsame Einstellungen über YAML-Anker: `restart: unless-stopped`, Memory-Limit 768 MB je Java-Service,
   `host.docker.internal` → Host-Gateway.
-- Export-Schalter `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER` (ohne `.env` `otlp`; mit `.env` aus
-  `.env.example` `none`, also kein Export – ADR-10), Zugangsdaten über `OTEL_EXPORTER_OTLP_HEADERS`.
-- OTLP-Ziel `OTEL_EXPORTER_OTLP_ENDPOINT` (Standard `http://host.docker.internal:4317`, gRPC),
+- Telemetrie nur per `.env` (ADR-10): Export-Schalter `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER`
+  (Standard `none`, also kein Export), OTLP-Ziel `OTEL_EXPORTER_OTLP_ENDPOINT` ohne Standardwert (für den eigenen Rechner
+  `http://host.docker.internal:4317`), Protokoll gRPC, Zugangsdaten über `OTEL_EXPORTER_OTLP_HEADERS`;
   `OTEL_METRIC_EXPORT_INTERVAL` 10 s, Resource `service.namespace=u-boot-arcade`, `deployment.environment.name=${DEPLOY_ENV:-local}`.
 - `leaderboard` schreibt seine H2-Datei nach `/data` (`DB_URL=jdbc:h2:file:/data/leaderboard`) auf das Volume
   `leaderboard-data`; das Image legt `/data` für den Benutzer 10001 an.

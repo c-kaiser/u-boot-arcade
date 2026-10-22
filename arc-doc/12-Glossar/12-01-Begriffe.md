@@ -36,7 +36,8 @@
 | Jev | „System One“-Modell von TypeSafe mit eigener, nicht OpenAI-kompatibler API; optionale dritte Gegner-KI-Variante (**geplant**, nur mit Zugang). |
 | `enemy-brain` | Modellalias in LiteLLM, den die Gegner-KI aufruft; welches echte Modell dahinter steckt, entscheidet nur die LiteLLM-Konfiguration. |
 | Workshop-Umgebung | Browser-VS-Code pro Person, ohne Docker, mit gehostetem SigNoz, OTel Demo und Langfuse. |
-| Telemetrie-Betriebsart | Wohin die Telemetrie geht, gewählt nur in `.env`: *ohne Telemetrie* (Standard, `OTEL_*_EXPORTER=none`), *lokal* (SigNoz/Collector auf dem eigenen Rechner) oder *bereitgestellt* (gehostete Ziele mit Zugangsdaten), siehe ADR-10. |
+| Telemetrie-Betriebsart | Wohin die Telemetrie geht, gewählt nur in `.env`: *ohne Telemetrie* (Standard, `OTEL_*_EXPORTER=none`), *lokal* (SigNoz/Collector auf dem eigenen Rechner) oder *bereitgestellt* (gehostete Ziele mit Zugangsdaten), siehe ADR-10. Nicht zu verwechseln mit der Verteilungsvariante. |
+| Verteilungsvariante | Wie die Services betrieben werden: ohne Docker (`run-local.sh`), Docker Compose oder Kubernetes (Helm), siehe Kapitel 7. Unabhängig von der Telemetrie-Betriebsart. |
 | o11y-playground | Begleitprojekt, aus dem SigNoz lokal in Docker gestartet werden kann. <!-- TODO: Bitte ergänzen (Link) --> |
 
 ## Technische Begriffe
@@ -66,5 +67,5 @@
 | LLM | Large Language Model |
 | RTT | Round-Trip-Time (`game.client.rtt`) |
 | WS | WebSocket |
-| H2 | Eingebettete Java-Datenbank; das Leaderboard nutzt sie als Datei-DB in allen Betriebsarten (ADR-07) |
+| H2 | Eingebettete Java-Datenbank; das Leaderboard nutzt sie als Datei-DB in allen Verteilungsvarianten (ADR-07) |
 | ADR | Architecture Decision Record |

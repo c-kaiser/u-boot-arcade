@@ -10,7 +10,7 @@
 | Framework: Spring Boot | 3.5.16 für alle Services außer `game-core` | Gewählt vom Entwickler | ja |
 | Laufzeitumgebung: JDK 21 | Kompiliert mit `jvmTarget 21` und jedem installierten JDK ≥ 21 (ADR-08) | Virtuelle Threads (JDK 21); Workshop-Umgebung hat evtl. anderes JDK | ja |
 | Build: Gradle Wrapper 9.6.0 | Multi-Projekt-Build, Wrapper lädt Gradle selbst | Keine lokale Gradle-Installation nötig | ja |
-| Netzwerkzugriff beim ersten Build | `services.gradle.org`, `plugins.gradle.org`, Maven Central | Wrapper, Gradle-Plugins, Abhängigkeiten | nein |
-| OpenTelemetry | Java-Agent 2.32.0 zur Laufzeit; im Code nur `opentelemetry-api` 1.66.0 über `GlobalOpenTelemetry` | API-Version muss zur Agent-Version passen, nur gemeinsam ändern (AGENTS.md) | nein |
+| Netzwerkzugriff beim ersten Build/Start | `services.gradle.org`, `plugins.gradle.org`, Maven Central; ohne Docker zusätzlich `github.com` (Releases) | Wrapper, Gradle-Plugins, Abhängigkeiten; OTel-Agent-Download durch `run-local.sh` | nein |
+| OpenTelemetry | Java-Agent 2.32.0 zur Laufzeit; im Code nur `opentelemetry-api` 1.66.0 über `GlobalOpenTelemetry` | API-Version muss zur Agent-Version passen; `build.gradle.kts`, `Dockerfile` und `run-local.sh` nur gemeinsam ändern (AGENTS.md) | nein |
 | Ports | game-server 8080, physics 8081, leaderboard 8082, enemy-ai 8083 (je `PORT`) | SigNoz-UI nutzt ebenfalls 8080: Compose und `run-local.sh` legen den Game-Server auf `GAME_PORT` (8088) | ja |
 | Zielumgebungen | Workshop-VS-Code, GitHub Codespaces (Dev Container mit JDK 21 + Docker-in-Docker), Sandbox, lokal (macOS/Linux) | Alle müssen mit derselben Konfiguration über Umgebungsvariablen auskommen | nein |

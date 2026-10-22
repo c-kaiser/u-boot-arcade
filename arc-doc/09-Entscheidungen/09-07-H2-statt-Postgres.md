@@ -1,4 +1,4 @@
-# ADR-07: Leaderboard mit H2 statt Postgres in allen Betriebsarten
+# ADR-07: Leaderboard mit H2 statt Postgres in allen Verteilungsvarianten
 
 **Status:** accepted (umgesetzt)
 
@@ -19,7 +19,7 @@ die beide gepflegt und getestet werden müssten.
 
 ## Entscheidung
 
-Das Leaderboard nutzt in **allen Betriebsarten** (ohne Docker, Docker Compose, Helm) H2 als eingebettete Datei-DB.
+Das Leaderboard nutzt in **allen Verteilungsvarianten** (ohne Docker, Docker Compose, Helm) H2 als eingebettete Datei-DB.
 Postgres entfällt.
 
 - Standard `DB_URL=jdbc:h2:file:./data/leaderboard`; in Compose und Helm `jdbc:h2:file:/data/leaderboard` auf einem
