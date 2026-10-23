@@ -47,6 +47,9 @@ cp .env.example .env     # Standard: ohne Telemetrie, regelbasierte Gegner
 - Spiel: http://localhost:8088 (← → Fahrt, ↑ ↓ Tauchen, Leertaste Torpedo), in Codespaces über die Port-Weiterleitung
 - Admin: http://localhost:8088/admin.html (dort auch „LLM für Gegner verwenden“ einschalten)
 - Logs unter `logs/<service>.log`, PID-Dateien unter `.run/`, Leaderboard-Datenbank (H2) unter `data/`
+- `run-local.sh` bricht ab, wenn noch Services laufen oder ein Port belegt ist; `./stop-local.sh` beendet auch
+  verwaiste Services ohne PID-Datei. Hält eine ältere Instanz Port oder H2-Datei („The file is locked“), findet
+  man sie z. B. mit `lsof -i :8082`
 - Der OTel-Java-Agent wird beim ersten Start nach `.otel/` geladen (braucht Zugriff auf GitHub-Releases)
 - Speicher pro JVM über `JAVA_OPTS` (Standard `-Xmx256m`), andere Konfigurationsdatei per `ENV_FILE=… ./run-local.sh`
 - Gegner-KI mit LLM: eine LiteLLM-Instanz mit [deploy/litellm-config.yaml](deploy/litellm-config.yaml) starten

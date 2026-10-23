@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Beendet die von ./run-local.sh gestarteten Services anhand der PID-Dateien unter .run/.
+# Beendet die von ./run-local.sh gestarteten Services anhand der PID-Dateien unter .run/
+# und zusätzlich verwaiste Services dieses Verzeichnisses, deren PID-Datei fehlt.
 
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -18,6 +19,14 @@ for pid_file in .run/*.pid; do
     running="$running $pid"
   fi
   rm -f "$pid_file"
+done
+
+# Verwaiste Services ohne PID-Datei, erkennbar am absoluten JAR-Pfad aus run-local.sh
+for pid in $(pgrep -f -- "-jar $PWD/" || true); do
+  case " $running " in *" $pid "*) continue ;; esac
+  echo "Beende verwaisten Service (PID $pid)"
+  kill "$pid"
+  running="$running $pid"
 done
 
 if [ -z "$running" ]; then

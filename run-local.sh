@@ -12,7 +12,8 @@ cd "$(dirname "$0")"
 
 # Muss zu opentelemetry-api in build.gradle.kts und zum Dockerfile passen – nur gemeinsam ändern
 OTEL_AGENT_VERSION=2.32.0
-OTEL_AGENT=".otel/opentelemetry-javaagent-${OTEL_AGENT_VERSION}.jar"
+# Absolute Pfade, damit stop-local.sh die Prozesse auch ohne PID-Datei an der Kommandozeile erkennt
+OTEL_AGENT="$PWD/.otel/opentelemetry-javaagent-${OTEL_AGENT_VERSION}.jar"
 
 with_swarm=false
 for arg in "$@"; do
@@ -53,6 +54,18 @@ for pid_file in .run/*.pid; do
   fi
   rm -f "$pid_file"
 done
+# Verwaiste Services (PID-Datei fehlt) halten Ports und die H2-Datei des Leaderboards gesperrt
+orphans=$(pgrep -f -- "-jar $PWD/" || true)
+if [ -n "$orphans" ]; then
+  echo "Es laufen noch Services aus diesem Verzeichnis ohne PID-Datei (PID $(echo $orphans)). Erst ./stop-local.sh ausführen." >&2
+  exit 1
+fi
+for port in "$PHYSICS_PORT" "$LEADERBOARD_PORT" "$ENEMY_AI_PORT" "$GAME_PORT"; do
+  if (exec 3<>"/dev/tcp/localhost/$port") 2>/dev/null; then
+    echo "Port $port ist schon belegt – läuft noch eine ältere Instanz? Prozess finden z. B. mit: lsof -i :$port" >&2
+    exit 1
+  fi
+done
 
 # ---------- OTel-Java-Agent (einmalig) ----------
 if [ ! -f "$OTEL_AGENT" ]; then
@@ -69,7 +82,7 @@ echo "Baue die Services (./gradlew bootJar) ..."
 boot_jar() {
   local module=$1 jar
   for jar in "$module"/build/libs/"$module"-*.jar; do
-    case "$jar" in *-plain.jar) ;; *) echo "$jar"; return ;; esac
+    case "$jar" in *-plain.jar) ;; *) echo "$PWD/$jar"; return ;; esac
   done
   echo "Kein bootJar für $module gefunden" >&2
   exit 1
