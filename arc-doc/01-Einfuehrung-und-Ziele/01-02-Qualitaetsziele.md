@@ -21,5 +21,9 @@ Zielkonflikte:
   DB-Infrastruktur, dafür verzögert der Chaos-Schalter „Leaderboard langsam“ den Request per `Thread.sleep` und nicht
   die Datenbank: Im Trace erscheint ein langer HTTP-Span statt eines langen DB-Spans.
 
+- **Spielspaß (Darstellungsvariante) vs. Beobachtbarkeit:** Die Slop-Variante zeigt umgerechnete bzw. qualitative
+  Werte und andere Namen als die Telemetrie (ADR-12). Für den Abgleich von Anzeige und Metriken ist die U-Boot-Variante
+  gedacht; sie bleibt Standard.
+
 > Ansätze zur Erreichung: [Kapitel 4](../04-Loesungsstrategie/04-01-Strategie.md).
 > Detaillierte Szenarien: [Kapitel 10](../10-Qualitaetsanforderungen/).

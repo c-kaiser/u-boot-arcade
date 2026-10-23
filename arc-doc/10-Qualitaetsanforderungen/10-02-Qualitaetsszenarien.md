@@ -76,3 +76,9 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 **Umgebung:** Start ohne Docker, lokal oder in GitHub Codespaces; Telemetrie-Betriebsart „ohne Telemetrie“ (`OTEL_*_EXPORTER=none`, Standard) oder ein konfiguriertes, aber nicht erreichbares OTLP-Ziel.
 **Reaktion:** Alle Services starten, das Spiel ist spielbar. Ohne Telemetrie keine Export-Logs; bei nicht erreichbarem Ziel Fehler-Logs des Agents je Exportversuch (ADR-10).
 **Metrik:** Kein Absturz, kein Hänger beim Start (in der Sandbox gleiche Startzeit wie mit Ziel), Tick-Dauer wie im Normalbetrieb (QS-04).
+
+## QS-13: Darstellungsvariante nur im Frontend
+
+**Stimulus:** Eine neue Darstellungsvariante oder neue Texte für eine bestehende (z. B. Slop) werden gebraucht.
+**Reaktion:** Änderung nur unter `game-server/src/main/resources/static/` (`theme.js`, `game.js`, `style.css`).
+**Metrik:** Keine Änderung an Kotlin-Code, WebSocket-Protokoll, Metrik- oder Lognamen (ADR-12).
