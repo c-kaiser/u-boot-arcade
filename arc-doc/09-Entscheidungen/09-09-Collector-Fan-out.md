@@ -1,6 +1,6 @@
 # ADR-09: Lokaler OTel Collector als Fan-out an SigNoz und Langfuse
 
-**Status:** proposed (Collector lokal im Telemetrie-Compose vorhanden, #5; Fan-out an Langfuse noch nicht umgesetzt)
+**Status:** proposed (Collector lokal im Telemetrie-Compose vorhanden, #5; Fan-out an Langfuse noch nicht umgesetzt, #11)
 
 **Datum:** <!-- TODO: Bitte ergänzen -->
 

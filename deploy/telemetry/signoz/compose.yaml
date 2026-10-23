@@ -17,6 +17,7 @@ services:
     - /bin/sh
     environment:
     - SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_DSN=tcp://signoz-telemetrystore-clickhouse-0-0:9000
+    - LOW_CARDINAL_EXCEPTION_GROUPING=false
     - SIGNOZ_OTEL_COLLECTOR_TIMEOUT=10m
     image: signoz/signoz-otel-collector:v0.144.14
     networks:
@@ -53,7 +54,7 @@ services:
     networks:
     - signoz-network
     ports:
-    - 8080:8080
+    - 127.0.0.1:8080:8080
     restart: unless-stopped
     volumes:
     - signoz-metastore-sqlite-0-data:/var/lib/signoz
@@ -146,6 +147,7 @@ services:
     - /bin/sh
     environment:
     - SIGNOZ_OTEL_COLLECTOR_CLICKHOUSE_DSN=tcp://signoz-telemetrystore-clickhouse-0-0:9000
+    - LOW_CARDINAL_EXCEPTION_GROUPING=false
     - SIGNOZ_OTEL_COLLECTOR_TIMEOUT=10m
     image: signoz/signoz-otel-collector:v0.144.14
     networks:

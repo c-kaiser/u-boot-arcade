@@ -13,7 +13,7 @@ graph LR
     LB -->|JDBC, eingebettet| DB[(H2-Datei)]
     AI -->|HTTP, OpenAI-kompatibel /v1/chat/completions| LL[LiteLLM :4000]
     LL -->|HTTPS| M[Ollama / Anthropic / Heribert]
-    GS & PH & AI & LB & SW -.->|OTLP, optional| SZ[SigNoz bzw. OTLP-Ziel]
+    GS & PH & AI & LB & SW -.->|OTLP, optional| SZ[SigNoz bzw. OTLP-Ziel<br/>lokal: Gateway-Collector → SigNoz]
     LL -->|OTLP callback otel| SZ
     COL[OTel Collector, Fan-out geplant] -.->|OTLP/HTTP /api/public/otel| LF[Langfuse]
 ```

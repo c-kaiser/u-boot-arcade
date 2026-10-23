@@ -1,6 +1,6 @@
 # Verteilungssicht
 
-<!-- ABGELEITET: Aus Code erkannt (Dockerfile, run-local.sh, deploy/helm, deploy/litellm-config.yaml, README.md), bitte verifizieren -->
+<!-- ABGELEITET: Aus Code erkannt (Dockerfile, run-local.sh, deploy/helm, deploy/litellm-config.yaml, deploy/telemetry, README.md), bitte verifizieren -->
 
 ## Infrastruktur Ebene 1
 
@@ -62,7 +62,8 @@ flowchart LR
 | `player-swarm` | – | JVM-Prozess (optional, `--swarm`) | Deployment, `playersPerPod` 10 |
 | LiteLLM | 4000 | `pip install 'litellm[proxy]'` mit `deploy/litellm-config.yaml` (geplant) oder extern | nicht im Chart, `llm.baseUrl` zeigt auf externe Instanz |
 | Modell | – | Ollama nativ (`qwen2.5:3b`), Anthropic / Heribert (Cloud) | extern |
-| OTel Collector | 4317/4318 | `otelcol-contrib`-Binary (geplant) | – (SigNoz-Collector im Cluster) |
+| OTel Collector | 4317/4318 | mit Docker: Gateway-Collector im Telemetrie-Compose (`deploy/telemetry`, umgesetzt #5); ohne Docker: `otelcol-contrib`-Binary (geplant) | – (SigNoz-Collector im Cluster) |
+| SigNoz (lokal) | 8080 | Telemetrie-Compose (`deploy/telemetry`, ADR-13), nur an `127.0.0.1` | – (gehostet bzw. im Cluster) |
 | OTel-Java-Agent | – | einmal nach `.otel/` heruntergeladen, per `-javaagent` | im Image `/otel/opentelemetry-javaagent.jar` |
 
 ### Knoten-Beschreibungen

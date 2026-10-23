@@ -101,8 +101,11 @@ docker compose -f deploy/telemetry/docker-compose.yaml down    # stoppen (mit -v
 - Reihenfolge egal: Ist die Telemetrie zwischendurch weg, senden die Services danach ohne Neustart wieder; Daten
   aus der Lücke gehen verloren. Der erste Start dauert 2–3 Minuten (Datenbank-Migration).
 - Speicher: rund 1 GB RAM mit laufendem Spiel (gemessen; ClickHouse den größten Teil).
+- Alle Ports nur an `127.0.0.1`. Ein anderes lokales SigNoz (Container `signoz-*`) vorher stoppen – die Namen kollidieren.
+- Beim Start lädt ein Init-Container ein Hilfsprogramm von `github.com`; ohne Netz startet SigNoz nicht.
 - Die SigNoz-Dateien unter `deploy/telemetry/signoz/` sind mit [Foundry](https://github.com/SigNoz/foundry) aus
-  `signoz/casting.yaml` erzeugt (Versionen dort festgelegt); zum Aktualisieren `foundryctl forge -f casting.yaml`
+  `signoz/casting.yaml` erzeugt (Versionen von SigNoz dort, ClickHouse aus Foundry v0.3.0, Gateway-Collector in
+  `docker-compose.yaml`); zum Aktualisieren `foundryctl forge -f casting.yaml`
   ausführen und `pours/deployment/` übernehmen.
 
 | Variable | Bedeutung |
@@ -115,7 +118,7 @@ docker compose -f deploy/telemetry/docker-compose.yaml down    # stoppen (mit -v
 | `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | OpenAI-kompatibler Endpunkt für die Gegner-KI (LiteLLM) |
 
 Langfuse nimmt OTLP **nur per HTTP** an (`https://<host>/api/public/otel`, Basic-Auth mit Public/Secret Key).
-Geplant ist, den lokalen Collector als Verteiler zu nutzen: alles an SigNoz, nur die GenAI-Spans an Langfuse (ADR-09).
+Geplant ist, den lokalen Collector als Verteiler zu nutzen: alles an SigNoz, nur die GenAI-Spans an Langfuse (ADR-09, #11).
 
 ## Was man beobachten kann
 

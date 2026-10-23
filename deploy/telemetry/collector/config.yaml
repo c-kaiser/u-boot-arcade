@@ -13,6 +13,12 @@ processors:
     check_interval: 1s
     limit_mib: 400
   batch: {}
+  resource/environment:
+    # SigNoz filtert nach deployment.environment, run-local.sh setzt die neuere Variante deployment.environment.name
+    attributes:
+      - key: deployment.environment
+        from_attribute: deployment.environment.name
+        action: insert
 
 exporters:
   otlp/signoz:
@@ -25,13 +31,13 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
+      processors: [memory_limiter, resource/environment, batch]
       exporters: [otlp/signoz]
     metrics:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
+      processors: [memory_limiter, resource/environment, batch]
       exporters: [otlp/signoz]
     logs:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
+      processors: [memory_limiter, resource/environment, batch]
       exporters: [otlp/signoz]

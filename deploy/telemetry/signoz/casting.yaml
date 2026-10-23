@@ -20,10 +20,19 @@ spec:
   ingester:
     spec:
       image: signoz/signoz-otel-collector:v0.144.14
+      env:
+        # wird in ingester.yaml referenziert, aber von Foundry nicht gesetzt
+        LOW_CARDINAL_EXCEPTION_GROUPING: "false"
   metastore:
     kind: sqlite
   patches:
     - target: "deployment/compose.yaml"
       operations:
+        # OTLP nimmt nur unser Gateway-Collector an (../docker-compose.yaml)
         - op: remove
           path: /services/ingester/ports
+        # UI nur auf diesem Rechner erreichbar – das Admin-Passwort steht im Repo
+        - op: replace
+          path: /services/signoz-signoz-0/ports
+          value:
+            - 127.0.0.1:8080:8080

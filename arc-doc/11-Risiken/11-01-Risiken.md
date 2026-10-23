@@ -7,7 +7,7 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 | ID | Risiko | Wahrsch. | Auswirkung | Maßnahme |
 |---|---|---|---|---|
 | R1 | **Spring-Services nur teilweise erprobt** – per `run-local.sh` mit Agent gestartet (Spiel, Leaderboard, Schwarm, Export an einen Collector geprüft); Helm und der LLM-Pfad sind noch nicht gelaufen | mittel | hoch | Helm (falls Workshop-Cluster) und LLM-Pfad (lokales Modell) starten, Smoke-Test |
-| R2 | **Unbekannte Workshop-Endpunkte** (OTLP SigNoz, Langfuse, Zugangsdaten) – Export-Konfiguration nicht vorab testbar | hoch | hoch | Beim Veranstalter anfragen; alles über `.env`; lokal mit SigNoz/Langfuse in Docker proben |
+| R2 | **Unbekannte Workshop-Endpunkte** (OTLP SigNoz, Langfuse, Zugangsdaten) – Export-Konfiguration nicht vorab testbar | hoch | hoch | Beim Veranstalter anfragen; alles über `.env`; lokal mit dem Telemetrie-Compose proben (SigNoz; Langfuse nach #11) |
 | R3 | **LLM-Kosten** – Entscheidung ≈ 1/s pro Gegner, Runaway × 8 mit wachsendem Kontext, kein Budget-Limit | mittel | hoch | Intervall 5–10 s bei LLM, Runaway deckeln, LiteLLM `max_budget`; Default `GAME_LLM_ENABLED=false` (umgesetzt) |
 | R4 | **Start ohne Docker im Workshop nicht erprobt** – `run-local.sh` ist umgesetzt (TD1), aber nur lokal/in der Sandbox geprüft; das Collector-Binary für den Fan-out fehlt noch | mittel | hoch | `run-local.sh` in Codespaces und im Browser-VS-Code proben; TD5 vor dem Workshop umsetzen |
 | R5 | **Telemetrie-Volumen** – 20 Root-Traces/s pro Instanz × Teilnehmende bei gehostetem SigNoz; Default `parentbased_always_on` | mittel | mittel | `parentbased_traceidratio` 0.1 empfehlen/vorbelegen; Metriken bleiben vollständig |
@@ -18,6 +18,9 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 | R10 | **Helm-Chart nie mit `helm lint`/echtem Cluster geprüft** | mittel | niedrig (Workshop ohne Cluster) | `helm lint` / `helm template` in CI |
 | R11 | **Game-Server Single Point of Failure**, Zustand nur im Speicher (ADR-03) | niedrig | mittel | Akzeptiert; Neustart = neue Runde |
 | R14 | ~~**Gemeinsame `.env` für `run-local.sh` und Compose** (`localhost` vs. `host.docker.internal`)~~ – erledigt: kein Compose für die Anwendung (ADR-11) | – | – | – |
+| R15 | **Lokales SigNoz von außen erreichbar** – Admin-Passwort steht im Repo (`casting.yaml`, README), OTLP ohne Authentifizierung | niedrig | mittel | Alle Host-Ports des Telemetrie-Compose nur an `127.0.0.1` (umgesetzt); Konto nur lokal verwenden |
+| R16 | **Namenskollision mit anderer SigNoz-Installation** – feste Namen aus Foundry (Container `signoz-*`, Netz `signoz-network`, Volumes `signoz-*`); `up` scheitert oder übernimmt fremde Daten, `down -v` löscht sie | niedrig | mittel | Andere SigNoz-Installationen vorher stoppen; bei Bedarf Präfixe per Foundry-Patch (ADR-13) |
+| R17 | **Versionsabweichung zum gehosteten SigNoz** – lokal v0.146.0, im Workshop evtl. andere Version; lokale Proben (R2) nur bedingt aussagekräftig | mittel | niedrig | Version beim Veranstalter erfragen, `casting.yaml` angleichen |
 | R12 | **Admin-API ohne Authentifizierung**, WebSocket erlaubt alle Origins | niedrig | niedrig | Akzeptabel bei Instanz pro Person; vor öffentlichem Betrieb absichern |
 | R13 | **Leaderboard nicht skalierbar, Daten im Helm-Chart flüchtig** – eingebettete H2-Datei pro Instanz (ADR-07) | niedrig | niedrig | Akzeptiert; `leaderboard.replicas` bleibt 1, bei Bedarf PersistentVolumeClaim statt `emptyDir`, dann mit Update-Strategie `Recreate` (sonst öffnen zwei Pods dieselbe H2-Datei) |
 
@@ -29,7 +32,7 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 | TD2 | ~~Leaderboard-Profil `local` mit H2 fehlt~~ – erledigt: H2 in allen Verteilungsvarianten (ADR-07) | leaderboard | – | – |
 | TD3 | ~~`pg_sleep`-Chaos nicht H2-kompatibel~~ – erledigt: `Thread.sleep` (ADR-07) | leaderboard, Chaos | – | – |
 | TD4 | Kosten-Bremse fehlt (Intervall bei LLM, Runaway-Deckel, `max_budget`) | game-server, enemy-ai, LiteLLM | <!-- TODO --> | hoch |
-| TD5 | Collector-Fan-out SigNoz/Langfuse fehlt (ADR-09); lokal steht der Collector im Telemetrie-Compose (#5), es fehlen Langfuse-Pipeline und Variante ohne Docker | Betrieb/Telemetrie | <!-- TODO --> | hoch |
+| TD5 | Collector-Fan-out SigNoz/Langfuse fehlt (ADR-09); lokal steht der Collector im Telemetrie-Compose (#5), es fehlen Langfuse-Pipeline (#11) und Variante ohne Docker | Betrieb/Telemetrie | <!-- TODO --> | hoch |
 | TD6 | Langfuse-Attribute fehlen (`gen_ai.prompt`/`completion` bzw. `langfuse.observation.*`, `langfuse.session.id`, `gen_ai.usage.cost`) | enemy-ai `LlmClient` | <!-- TODO --> | mittel |
 | TD7 | Anthropic-Modell und Heribert nicht final in `litellm-config.yaml`; LiteLLM ohne Docker nicht erprobt | deploy | <!-- TODO --> | mittel |
 | TD8 | Chaos pro U-Boot auf Skala (Zielbild) nicht umgesetzt; heute nur globale Schalter | game-server, UI | <!-- TODO --> | mittel |

@@ -21,7 +21,7 @@ flowchart LR
         SW["player-swarm"]
     end
     LL["LiteLLM (callbacks: otel)"]
-    App -- "OTLP gRPC :4317<br/>Traces, Metriken, Logs" --> SZ["SigNoz"]
+    App -- "OTLP gRPC :4317<br/>Traces, Metriken, Logs" --> SZ["SigNoz (bereitgestellt)<br/>bzw. Gateway-Collector (lokal)"]
     LL -- "OTLP HTTP :4318" --> SZ
 ```
 
@@ -30,7 +30,7 @@ flowchart LR
 `deploy/telemetry/docker-compose.yaml` startet die Telemetrie-Services getrennt von der Anwendung (ADR-10, ADR-11).
 Einziger Eingang am Host ist ein eigener Gateway-Collector (`otel/opentelemetry-collector-contrib`); er leitet alle
 Signale an den Collector von SigNoz („ingester“) weiter, der in ClickHouse schreibt. Die SigNoz-Dateien sind mit
-Foundry aus `deploy/telemetry/signoz/casting.yaml` erzeugt (Versionen dort festgelegt, Metadaten in SQLite).
+Foundry aus `deploy/telemetry/signoz/casting.yaml` erzeugt (Metadaten in SQLite); Begründung in ADR-13.
 
 ```mermaid
 flowchart LR
@@ -42,25 +42,25 @@ flowchart LR
     end
 ```
 
-| Container | Image | Host-Port |
-|---|---|---|
-| `collector` | `otel/opentelemetry-collector-contrib:0.163.1` | 4317, 4318 |
-| `ingester` | `signoz/signoz-otel-collector:v0.144.14` | – |
-| `signoz-signoz-0` | `signoz/signoz:v0.146.0` | 8080 |
-| `signoz-telemetrystore-clickhouse-0-0` | `clickhouse/clickhouse-server:25.12.5` | – |
-| `signoz-telemetrykeeper-clickhousekeeper-0` | `clickhouse/clickhouse-keeper:25.12.5` | – |
-| Init: `…-user-scripts`, `…-migrator` | wie oben | – (laufen beim Start und beenden sich) |
+| Service | Image | Host-Port (nur `127.0.0.1`) | Version festgelegt in |
+|---|---|---|---|
+| `collector` | `otel/opentelemetry-collector-contrib:0.163.1` | 4317, 4318 | `docker-compose.yaml` |
+| `ingester` | `signoz/signoz-otel-collector:v0.144.14` | – | `casting.yaml` |
+| `signoz-signoz-0` | `signoz/signoz:v0.146.0` | 8080 | `casting.yaml` |
+| `signoz-telemetrystore-clickhouse-0-0` | `clickhouse/clickhouse-server:25.12.5` | – | Foundry v0.3.0 |
+| `signoz-telemetrykeeper-clickhousekeeper-0` | `clickhouse/clickhouse-keeper:25.12.5` | – | Foundry v0.3.0 |
+| Init: `…-user-scripts`, `…-migrator` | wie oben | – (laufen beim Start und beenden sich; `user-scripts` lädt von GitHub) | – |
 
 - **Admin-Konto beim Start:** SigNoz legt per `SIGNOZ_USER_ROOT_*` ein festes Konto samt Organisation an. Ohne
   Organisation gibt SigNoz seinem Collector per OpAMP nur eine leere Konfiguration, und der nimmt keine Daten an.
 - **Ausfall:** Fehlt der Gateway-Collector, verwerfen die Agents die Daten und loggen Fehler; danach exportieren sie ohne
-  Neustart weiter (geprüft). Der Gateway-Collector puffert kurz, wenn SigNoz noch startet.
+  Neustart weiter (geprüft). Startet SigNoz noch, puffert der Gateway-Collector kurz (Standard-Queue und -Retry des OTLP-Exporters, bis 5 min).
 - **Speicher:** rund 1 GB RAM mit laufendem Spiel, davon gut die Hälfte ClickHouse.
 
-## Geplant: Collector als Fan-out
+## Geplant: Collector als Fan-out (#11)
 
 Der Gateway-Collector bekommt eine zweite Pipeline: alle Signale weiter an SigNoz, nur GenAI-Spans (`enemy-ai`,
-`litellm`) an Langfuse (Profil `langfuse` im Telemetrie-Compose). Ohne Docker (Workshop) bleibt dafür nur ein
+`litellm`) an Langfuse (Ausgestaltung in #11). Ohne Docker (Workshop) bleibt dafür nur ein
 `otelcol-contrib`-Binary.
 
 ```mermaid

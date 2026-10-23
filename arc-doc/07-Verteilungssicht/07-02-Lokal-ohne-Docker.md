@@ -33,8 +33,9 @@ flowchart LR
     GS --> PH & AI & LB
     LB --> H2
     AI -. "nur mit LLM" .-> LL --> CLOUD["Anthropic / Heribert"]
-    VS -. "OTLP direkt (lokal / bereitgestellt)" .-> SZ
-    VS -. "OTLP über Collector (geplant)" .-> COL
+    VS -. "OTLP direkt (bereitgestellt)" .-> SZ
+    VS -. "OTLP :4317 (lokal)" .-> TC["Telemetrie-Compose (Docker):<br/>Gateway-Collector → SigNoz"]
+    VS -. "OTLP über Collector ohne Docker (geplant)" .-> COL
     COL -- "alles" --> SZ["SigNoz / OTLP-Ziel<br/>(lokal oder gehostet)"]
     COL -- "nur GenAI-Spans, OTLP/HTTP" --> LF["Langfuse (gehostet)"]
 ```
@@ -72,6 +73,6 @@ Ohne Telemetrie-Backend und mit regelbasiertem Gegner (`GAME_LLM_ENABLED=false`)
 - **LLM-Kosten:** Echte Cloud-Modelle kosten Geld – Entscheidungsintervall auf 5–10 s, Runaway deckeln, LiteLLM `max_budget` (geplant).
 - **Lokal mit Docker für die Backends:** Läuft der Rechner mit Docker, startet `deploy/telemetry/docker-compose.yaml`
   SigNoz mit vorgeschaltetem Collector; die JVM-Prozesse exportieren an `localhost:4317` (Telemetrie-Betriebsart
-  „lokal“, [07-05](07-05-Telemetrie-Fluss.md)). Langfuse folgt.
+  „lokal“, [07-05](07-05-Telemetrie-Fluss.md)). Langfuse folgt (#11).
 - Ressourcen der Workshop-Umgebung. <!-- TODO: Bitte ergänzen – Speicher/CPU des Workshop-VS-Code -->
 - OTLP-Adressen und Zugangsdaten der gehosteten Backends. <!-- TODO: Bitte ergänzen – vom Veranstalter noch nicht bekannt -->
