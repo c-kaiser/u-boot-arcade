@@ -104,7 +104,7 @@ class GameWebSocketHandler(
 
         when (type) {
             "join" -> if (client.subId == null) {
-                val name = node.path("name").asText("").trim().ifEmpty { "Mensch" }
+                val name = node.path("name").asText("").trim().ifEmpty { "Kapitän" }
                 val subId = loop.join(name)
                 client.subId = subId
                 client.session.sendMessage(TextMessage(mapper.writeValueAsString(mapOf("type" to "welcome", "id" to subId))))

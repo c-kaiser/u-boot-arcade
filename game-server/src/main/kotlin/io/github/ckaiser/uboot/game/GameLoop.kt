@@ -333,12 +333,12 @@ class GameLoop(
         val c = s.chaos
         if (c.physicsLatencyMs > 0) add("Physik +${c.physicsLatencyMs} ms")
         if (c.physicsErrorRate > 0) add("Physik-Fehler ${(c.physicsErrorRate * 100).toInt()} %")
-        if (c.boilerCoolingBroken) add("Kaffeemaschine kaputt")
-        if (c.hullLeak) add("Benachrichtigungsflut")
-        if (c.current != 0.0) add("Hype-Welle ${c.current}")
+        if (c.boilerCoolingBroken) add("Kesselkühlung defekt")
+        if (c.hullLeak) add("Leck im Rumpf")
+        if (c.current != 0.0) add("Strömung ${c.current}")
         if (c.leaderboardSlowMs > 0) add("Leaderboard +${c.leaderboardSlowMs} ms")
         if (c.aiLatencyMs > 0) add("KI +${c.aiLatencyMs} ms")
-        if (c.aiRunaway) add("Agent denkt nach (Endlosschleife)")
+        if (c.aiRunaway) add("KI-Endlosschleife")
         if (c.gameServerMemoryLeak) add("Memory Leak")
     }
 

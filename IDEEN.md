@@ -36,20 +36,23 @@ wieder als langer DB-Span sichtbar.
 - Langfuse an LiteLLM hängen und die Qualität der Gegner-Entscheidungen bewerten
 - kAgent fragen: „Warum ruckelt das Spiel?“, während Physik-Latenz aktiv ist
 
-## Thema „Slop Arcade“ (Entwurf)
+## Variante „Slop Arcade“
 
-**Zielbild:** Statt Krieg mit U-Booten ein spielerisches Setting: KI-Agenten werfen mit KI-Slop, Menschen werfen mit
-Verstand (Geistesblitze). Der Entwurf auf dem Branch `feature/slop-arcade-draft` ändert nur die Oberfläche, die
-Gegnernamen und den LLM-Prompt. Mechanik, Modell, Metriken und Logs sind noch die alten.
+**Zielbild:** Neben dem U-Boot-Setting eine spielerische Variante: KI-Agenten werfen mit KI-Slop, Menschen werfen mit
+Verstand (Geistesblitze). Die Variante ist rein clientseitig (`static/theme.js`) und lässt sich im Spiel und im
+Admin-Bereich umschalten (Knopf „Variante“ oder `?theme=slop`, gemerkt im Browser). Server, Mechanik, Gegnernamen,
+LLM-Prompt, Metriken und Logs bleiben beim U-Boot.
 
-| Heute (intern) | Im Spiel sichtbar |
+| Intern (U-Boot) | In der Slop-Variante |
 | --- | --- |
 | U-Boot (`Sub`) | Figur: Mensch (Spieler, Kolleg:innen-Bots) oder KI-Agent (Gegner) |
+| Kraken, Leviathan, Nautilus, Moby, Nessie | SlopGPT, Halluzinator, Buzzwordinator, Copypasta, Promptimus |
 | Tiefe, Zerstörungstiefe | Slop-Pegel, „Ab hier versinkt man im Slop“ |
 | Dampfdruck, Kessel überhitzt | Denkdruck, „Kopf raucht“ |
 | Rumpf | Geduld |
 | Torpedo | Geistesblitz (Mensch) bzw. Slop-Wurf (Agent) |
 | Kesselkühlung defekt / Leck im Rumpf / Meeresströmung | Kaffeemaschine kaputt / Benachrichtigungsflut / Hype-Welle |
 
-**Offen:** interne Begriffe und Metriknamen (`sub.*`, Paketname `uboot`), Log-Texte, arc42-Doku, Repo-Name; optional
-lässt das LLM den Slop-Text selbst erzeugen (sichtbar in Langfuse, kostet Tokens, daher standardmäßig aus).
+**Offen:** LLM-Prompt in Slop-Fassung (gilt serverweit, wäre also eine Admin-Einstellung statt eines Umschalters pro
+Browser); optional lässt das LLM den Slop-Text selbst erzeugen (sichtbar in Langfuse, kostet Tokens, daher
+standardmäßig aus).

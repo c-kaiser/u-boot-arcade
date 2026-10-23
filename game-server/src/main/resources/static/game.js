@@ -1,9 +1,9 @@
-// Slop Arcade – Browser-Client. Keine Abhängigkeiten.
+// U-Boot / Slop Arcade – Browser-Client. Keine Abhängigkeiten; Varianten in theme.js.
 (() => {
   "use strict";
 
   const WORLD_W = 1600, WORLD_H = 600, CRUSH = 420, OVERHEAT = 9.5;
-  const canvas = document.getElementById("arena");
+  const canvas = document.getElementById("sea");
   const ctx = canvas.getContext("2d");
   const $ = (id) => document.getElementById(id);
 
@@ -50,7 +50,7 @@
 
   $("join-form").addEventListener("submit", (e) => {
     e.preventDefault();
-    wantName = $("name").value.trim() || "Mensch";
+    wantName = $("name").value.trim() || Theme.current.defaultName;
     if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: "join", name: wantName }));
     canvas.focus();
   });
@@ -93,41 +93,56 @@
     $("g-llm").textContent = msg.llmEnabled ? "LLM aktiv" : "Regelbasiert";
     const chaos = $("chaos");
     chaos.innerHTML = "";
-    for (const c of msg.chaosActive) { const li = document.createElement("li"); li.textContent = c; chaos.appendChild(li); }
+    for (const c of msg.chaosActive) { const li = document.createElement("li"); li.textContent = Theme.chaos(c); chaos.appendChild(li); }
 
     const me = msg.subs.find((s) => s.id === myId);
     if (me) {
-      $("g-depth").textContent = (me.depth / WORLD_H * 100).toFixed(0);
-      $("g-speed").textContent = (Math.abs(me.vx) * 3.6).toFixed(1);
+      const slop = Theme.id === "slop";
+      $("g-depth").textContent = slop ? (me.depth / WORLD_H * 100).toFixed(0) : me.depth.toFixed(0);
+      $("g-speed").textContent = (Math.abs(me.vx) * (slop ? 3.6 : 1.944)).toFixed(1);
       $("g-pressure").value = me.pressure;
-      $("g-pressure-v").textContent = me.pressure > OVERHEAT ? "raucht!" : me.pressure > OVERHEAT - 1.5 ? "heiß" : "kühl";
+      $("g-pressure-v").textContent = !slop ? me.pressure.toFixed(1)
+        : me.pressure > OVERHEAT ? "raucht!" : me.pressure > OVERHEAT - 1.5 ? "heiß" : "kühl";
+      $("g-temp").textContent = me.temp.toFixed(0);
       $("g-hull").value = me.hull;
       $("g-hull-v").textContent = me.hull.toFixed(0);
       $("g-score").textContent = me.score;
       $("g-kills").textContent = me.kills;
       $("dead").classList.toggle("hidden", me.alive);
-      if (!me.alive) $("respawn").textContent = `Frischer Kopf in ${me.respawnIn.toFixed(1)} s`;
+      if (!me.alive) $("respawn").textContent = Theme.current.respawn(me.respawnIn.toFixed(1));
     } else {
       $("dead").classList.add("hidden");
     }
   }
 
+  // Ereignistexte je Variante.
+  const UBOOT_EVENTS = {
+    HIT: (n, o) => `${n} getroffen von ${o}`,
+    KILL: (n, o) => `${n} versenkt ${o}!`,
+    DESTROYED: (n, o, d) => d === "torpedo" ? null : `${n} verloren: ${({ overheat: "Kesselexplosion", crush: "zerdrückt", leak: "Leck" })[d] || d}`,
+    RESPAWN: () => null,
+    OVERHEAT: (n, o, d) => `${n}: Kessel überhitzt (${d})`,
+    VALVE_VENT: (n) => `${n}: Sicherheitsventil bläst ab`,
+    CRUSH_DEPTH: (n, o, d) => `${n} unter Zerstörungstiefe (${d})`,
+    SURFACED: () => null,
+  };
+
   // n/kn = Figur des Ereignisses und ihr Typ, o/k = die andere Figur und ihr Typ
-  const EVENT_TEXT = {
+  const SLOP_EVENTS = {
     HIT: (n, o, d, k) => k === "ENEMY" ? `${n} kriegt Slop von ${o} ab` : `${o} wirft ${n} einen Geistesblitz an den Kopf`,
     KILL: (n, o, d, k, kn) => kn === "ENEMY" ? `${n} begräbt ${o} unter Slop!` : k === "ENEMY" ? `${n} erdet ${o} mit Verstand!` : `${n} überzeugt ${o} mit Argumenten`,
     DESTROYED: (n, o, d) => d === "torpedo" ? null : `${n}: ${({ overheat: "Kopf geplatzt", crush: "im Slop versunken", leak: "Geduld ausgelaufen" })[d] || d}`,
     RESPAWN: () => null,
-    OVERHEAT: (n, o, d) => `${n}: Kopf raucht (${d})`,
+    OVERHEAT: (n) => `${n}: Kopf raucht`,
     VALVE_VENT: (n) => `${n} atmet tief durch`,
-    CRUSH_DEPTH: (n, o, d) => `${n} versinkt im Slop (${d})`,
+    CRUSH_DEPTH: (n) => `${n} versinkt im Slop`,
     SURFACED: () => null,
   };
 
   function logEvent(ev, names) {
-    const f = EVENT_TEXT[ev.type];
+    const f = (Theme.id === "slop" ? SLOP_EVENTS : UBOOT_EVENTS)[ev.type];
     if (!f) return;
-    const text = f(names[ev.subId] || ev.subId, names[ev.otherId] || ev.otherId || "", ev.detail, kindOf(ev.otherId), kindOf(ev.subId));
+    const text = f(Theme.name(names[ev.subId] || ev.subId), Theme.name(names[ev.otherId] || ev.otherId || ""), ev.detail, kindOf(ev.otherId), kindOf(ev.subId));
     if (!text) return;
     const li = document.createElement("li");
     li.textContent = text;
@@ -144,9 +159,9 @@
       ol.innerHTML = "";
       for (const r of rows) {
         const li = document.createElement("li");
-        li.textContent = `${r.name} – ${r.best} `;
+        li.textContent = `${Theme.name(r.name)} – ${r.best} `;
         const meta = document.createElement("span");
-        meta.textContent = `(${r.kills} Treffer, ${r.rounds} Runden)`;
+        meta.textContent = `(${r.kills} ${Theme.t("kills")}, ${r.rounds} Runden)`;
         li.appendChild(meta);
         ol.appendChild(li);
       }
@@ -154,10 +169,125 @@
   }
   setInterval(refreshLeaderboard, 5000);
   refreshLeaderboard();
+  Theme.onChange(() => { $("events").innerHTML = ""; refreshLeaderboard(); });
 
   // ---------- Zeichnen ----------
   const sx = (x) => x / WORLD_W * canvas.width;
   const sy = (d) => d / WORLD_H * canvas.height;
+
+  // ---------- Variante U-Boot ----------
+  function drawSea(now) {
+    const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
+    g.addColorStop(0, "#1f6fa3");
+    g.addColorStop(0.5, "#0d3b63");
+    g.addColorStop(1, "#04111f");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Wellen
+    ctx.strokeStyle = "rgba(255,255,255,0.35)";
+    ctx.beginPath();
+    for (let x = 0; x <= canvas.width; x += 8) {
+      const y = 3 + Math.sin(x / 40 + now / 600) * 2;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // Tiefenskala
+    ctx.fillStyle = "rgba(255,255,255,0.4)";
+    ctx.font = "12px monospace";
+    for (let d = 100; d < WORLD_H; d += 100) {
+      ctx.fillRect(0, sy(d), 8, 1);
+      ctx.fillText(`${d} m`, 12, sy(d) + 4);
+    }
+    // Zerstörungstiefe
+    ctx.strokeStyle = "rgba(255,90,95,0.7)";
+    ctx.setLineDash([10, 8]);
+    ctx.beginPath(); ctx.moveTo(0, sy(CRUSH)); ctx.lineTo(canvas.width, sy(CRUSH)); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(255,90,95,0.8)";
+    ctx.fillText(`Zerstörungstiefe ${CRUSH} m`, canvas.width - 190, sy(CRUSH) - 6);
+    // Meeresgrund
+    ctx.fillStyle = "#2b2116";
+    ctx.fillRect(0, canvas.height - 6, canvas.width, 6);
+  }
+
+  function ubootColor(s) {
+    if (s.id === myId) return "#ffd23f";
+    return { PLAYER: "#59d2fe", BOT: "#9aa7b1", ENEMY: "#ff5a5f" }[s.kind] || "#fff";
+  }
+
+  function drawBoat(s, now) {
+    let p = drawn.get(s.id);
+    if (!p) { p = { x: s.x, depth: s.depth }; drawn.set(s.id, p); }
+    p.x += (s.x - p.x) * 0.35;
+    p.depth += (s.depth - p.depth) * 0.35;
+    if (!s.alive) return;
+
+    let x = sx(p.x), y = sy(p.depth);
+    if (s.belowCrushDepth) { x += (Math.random() - 0.5) * 3; y += (Math.random() - 0.5) * 3; }
+    const dir = s.facing;
+    const len = 46, h = 13;
+
+    ctx.save();
+    ctx.translate(x, y);
+    if (s.overheating) {
+      ctx.shadowColor = "#ff3b30";
+      ctx.shadowBlur = 18;
+    }
+    ctx.fillStyle = ubootColor(s);
+    ctx.beginPath();
+    ctx.ellipse(0, 0, len / 2, h / 2, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillRect(-6 + dir * 4, -h / 2 - 8, 12, 9);        // Turm
+    ctx.fillRect(dir * 2, -h / 2 - 14, 2, 7);               // Periskop
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(-dir * (len / 2 + 4) - 2, -4, 4, 8);       // Schraube
+    ctx.restore();
+
+    // Dampfwolken bei Überdruck
+    if (s.pressure > OVERHEAT - 0.5) {
+      ctx.fillStyle = "rgba(255,255,255,0.5)";
+      for (let i = 0; i < 3; i++) {
+        const t = ((now / 300) + i / 3) % 1;
+        ctx.beginPath();
+        ctx.arc(x - dir * 4, y - h - t * 25, 3 + t * 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Name + Rumpfanzeige
+    ctx.fillStyle = "#fff";
+    ctx.font = s.id === myId ? "bold 13px monospace" : "12px monospace";
+    ctx.textAlign = "center";
+    ctx.fillText(Theme.name(s.name), x, y - h - 14);
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(x - 20, y + h, 40, 4);
+    ctx.fillStyle = s.hull > 60 ? "#4cd98b" : s.hull > 30 ? "#ffd23f" : "#ff5a5f";
+    ctx.fillRect(x - 20, y + h, 40 * s.hull / 100, 4);
+    ctx.textAlign = "start";
+  }
+
+  function drawTorpedo(t) {
+    const x = sx(t.x), y = sy(t.depth);
+    const dir = Math.sign(t.vx) || 1;
+    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+    ctx.beginPath(); ctx.moveTo(x - dir * 30, y); ctx.lineTo(x, y); ctx.stroke();
+    ctx.fillStyle = t.ownerId === myId ? "#ffd23f" : "#ff9f1c";
+    ctx.fillRect(x - 6, y - 2, 12, 4);
+  }
+
+  function drawUbootExplosions(now) {
+    for (let i = explosions.length - 1; i >= 0; i--) {
+      const e = explosions[i];
+      const age = (now - e.t) / 800;
+      if (age > 1) { explosions.splice(i, 1); continue; }
+      ctx.strokeStyle = `rgba(255,180,60,${1 - age})`;
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(sx(e.x), sy(e.depth), 10 + age * 50, 0, Math.PI * 2); ctx.stroke();
+      ctx.lineWidth = 1;
+    }
+  }
 
   // Jeder Agent hat seinen eigenen Lieblings-Slop
   const SLOP = ["Synergie!", "Great question!", "Paradigmenwechsel", "Lass uns das delven", "10x 🚀", "Quelle: trust me",
@@ -165,7 +295,8 @@
   const hash = (str) => [...str].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7);
   const kindOf = (id) => state?.subs.find((s) => s.id === id)?.kind;
 
-  function drawArena(now) {
+  // ---------- Variante Slop ----------
+  function drawSlopArena(now) {
     // oben klarer Kopf, unten Slop
     const g = ctx.createLinearGradient(0, 0, 0, canvas.height);
     g.addColorStop(0, "#e9f4ff");
@@ -207,28 +338,28 @@
     ctx.fillText("Ab hier versinkt man im Slop", canvas.width - 230, top - 8);
   }
 
-  function colorFor(s) {
+  function slopColor(s) {
     if (s.id === myId) return "#ffb000";
     return { PLAYER: "#2f8fd8", BOT: "#8a96a3", ENEMY: "#c04cff" }[s.kind] || "#fff";
   }
 
   // Mensch: Kopf mit Brille, Körper, ein Arm zum Werfen
   function drawHuman(s, dir) {
-    ctx.fillStyle = colorFor(s);
+    ctx.fillStyle = slopColor(s);
     ctx.beginPath(); ctx.roundRect(-9, -2, 18, 20, 6); ctx.fill();            // Körper
     ctx.fillStyle = "#f2c9a0";
     ctx.beginPath(); ctx.arc(0, -11, 10, 0, Math.PI * 2); ctx.fill();         // Kopf
     ctx.strokeStyle = "#222"; ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.arc(dir * 4, -12, 3, 0, Math.PI * 2); ctx.stroke(); // Brille
     ctx.beginPath(); ctx.arc(dir * 4 - dir * 7, -12, 3, 0, Math.PI * 2); ctx.stroke();
-    ctx.strokeStyle = colorFor(s); ctx.lineWidth = 4; ctx.lineCap = "round";
+    ctx.strokeStyle = slopColor(s); ctx.lineWidth = 4; ctx.lineCap = "round";
     ctx.beginPath(); ctx.moveTo(dir * 6, 2); ctx.lineTo(dir * 15, -4); ctx.stroke(); // Wurfarm
     ctx.lineWidth = 1; ctx.lineCap = "butt";
   }
 
   // Agent: Roboterkasten mit Antenne und LED-Augen
   function drawAgent(s, dir, now) {
-    ctx.fillStyle = colorFor(s);
+    ctx.fillStyle = slopColor(s);
     ctx.beginPath(); ctx.roundRect(-14, -16, 28, 30, 6); ctx.fill();
     ctx.strokeStyle = "#333"; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.moveTo(0, -16); ctx.lineTo(0, -25); ctx.stroke();
@@ -242,7 +373,7 @@
     ctx.fillRect(-7, 4, 14, 3);                                               // Lautsprecher-Mund
   }
 
-  function drawSub(s, now) {
+  function drawFigure(s, now) {
     let p = drawn.get(s.id);
     if (!p) { p = { x: s.x, depth: s.depth }; drawn.set(s.id, p); }
     p.x += (s.x - p.x) * 0.35;
@@ -275,7 +406,7 @@
     ctx.fillStyle = "#14202b";
     ctx.font = s.id === myId ? "bold 13px monospace" : "12px monospace";
     ctx.textAlign = "center";
-    ctx.fillText(s.name, x, y - h - 16);
+    ctx.fillText(Theme.name(s.name), x, y - h - 16);
     ctx.fillStyle = "rgba(0,0,0,0.35)";
     ctx.fillRect(x - 20, y + h, 40, 4);
     ctx.fillStyle = s.hull > 60 ? "#2fb36b" : s.hull > 30 ? "#e0a800" : "#e04848";
@@ -315,7 +446,7 @@
     }
   }
 
-  function drawExplosions(now) {
+  function drawSlopExplosions(now) {
     for (let i = explosions.length - 1; i >= 0; i--) {
       const e = explosions[i];
       const age = (now - e.t) / 800;
@@ -347,14 +478,15 @@
   }
 
   function frame(now) {
-    drawArena(now);
+    const slop = Theme.id === "slop";
+    slop ? drawSlopArena(now) : drawSea(now);
     if (state) {
-      for (const t of state.torpedoes) drawProjectile(t, now);
+      for (const t of state.torpedoes) slop ? drawProjectile(t, now) : drawTorpedo(t);
       // eigene Figur zuletzt, damit sie oben liegt
       const subs = [...state.subs].sort((a, b) => (a.id === myId) - (b.id === myId));
-      for (const s of subs) drawSub(s, now);
+      for (const s of subs) slop ? drawFigure(s, now) : drawBoat(s, now);
     }
-    drawExplosions(now);
+    slop ? drawSlopExplosions(now) : drawUbootExplosions(now);
     requestAnimationFrame(frame);
   }
 
