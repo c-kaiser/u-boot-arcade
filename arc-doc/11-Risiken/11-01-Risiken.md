@@ -1,6 +1,6 @@
 # Risiken und technische Schulden
 
-Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Priorität. Stand: `main` nach PR #7 (2026-10-23).
+Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Priorität. Stand: 2026-10-23.
 
 ## Risiken
 
