@@ -29,7 +29,7 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 | TD2 | ~~Leaderboard-Profil `local` mit H2 fehlt~~ – erledigt: H2 in allen Verteilungsvarianten (ADR-07) | leaderboard | – | – |
 | TD3 | ~~`pg_sleep`-Chaos nicht H2-kompatibel~~ – erledigt: `Thread.sleep` (ADR-07) | leaderboard, Chaos | – | – |
 | TD4 | Kosten-Bremse fehlt (Intervall bei LLM, Runaway-Deckel, `max_budget`) | game-server, enemy-ai, LiteLLM | <!-- TODO --> | hoch |
-| TD5 | Collector-Fan-out SigNoz/Langfuse fehlt (ADR-09) | Betrieb/Telemetrie | <!-- TODO --> | hoch |
+| TD5 | Collector-Fan-out SigNoz/Langfuse fehlt (ADR-09); lokal steht der Collector im Telemetrie-Compose (#5), es fehlen Langfuse-Pipeline und Variante ohne Docker | Betrieb/Telemetrie | <!-- TODO --> | hoch |
 | TD6 | Langfuse-Attribute fehlen (`gen_ai.prompt`/`completion` bzw. `langfuse.observation.*`, `langfuse.session.id`, `gen_ai.usage.cost`) | enemy-ai `LlmClient` | <!-- TODO --> | mittel |
 | TD7 | Anthropic-Modell und Heribert nicht final in `litellm-config.yaml`; LiteLLM ohne Docker nicht erprobt | deploy | <!-- TODO --> | mittel |
 | TD8 | Chaos pro U-Boot auf Skala (Zielbild) nicht umgesetzt; heute nur globale Schalter | game-server, UI | <!-- TODO --> | mittel |

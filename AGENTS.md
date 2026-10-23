@@ -20,7 +20,8 @@ Die Architektur ist in **[arc-doc/](arc-doc/)** nach arc42 dokumentiert.
 - `game-core` bleibt frei von Frameworks (kein Spring, keine OTel-Abhängigkeit).
 - In Sandboxen mit Netzwerk-Firewall braucht der erste Build Zugriff auf `services.gradle.org`
   (leitet auf `release-assets.githubusercontent.com` weiter), `plugins.gradle.org` und Maven Central; `run-local.sh`
-  lädt den OTel-Agent zusätzlich von `github.com` (Releases).
+  lädt den OTel-Agent zusätzlich von `github.com` (Releases). Das Telemetrie-Compose (`deploy/telemetry`) braucht
+  Docker Hub: `registry-1.docker.io`, `auth.docker.io`, `production.cloudfront.docker.com`.
 
 ## arc42-Dokumentation
 

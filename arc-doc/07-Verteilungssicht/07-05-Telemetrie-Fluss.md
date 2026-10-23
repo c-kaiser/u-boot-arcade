@@ -4,8 +4,10 @@
 
 ## Heute (umgesetzt)
 
-Alle Services exportieren über den OTel-Java-Agent direkt an **ein** OTLP-Ziel (`OTEL_EXPORTER_OTLP_ENDPOINT`,
+Alle Services exportieren über den OTel-Java-Agent an **ein** OTLP-Ziel (`OTEL_EXPORTER_OTLP_ENDPOINT`,
 in `.env.example` und Helm gRPC). LiteLLM exportiert separat per OTLP/HTTP. Langfuse ist **nicht** angebunden.
+Je Telemetrie-Betriebsart ist das Ziel das gehostete SigNoz (*bereitgestellt*) oder der Collector aus dem
+Telemetrie-Compose (*lokal*, siehe unten).
 In der Telemetrie-Betriebsart „ohne Telemetrie“ (Standard in `.env.example`, `OTEL_*_EXPORTER=none`) gibt es keinen Export; die
 Services laufen trotzdem instrumentiert (ADR-10).
 
@@ -23,10 +25,43 @@ flowchart LR
     LL -- "OTLP HTTP :4318" --> SZ
 ```
 
-## Geplant: lokaler Collector als Fan-out
+## Lokal: Telemetrie-Compose (umgesetzt, #5)
 
-Ein lokaler OpenTelemetry Collector (`otelcol-contrib`-Binary, ohne Docker) nimmt alles an und verteilt:
-alle Signale an SigNoz, nur GenAI-Spans (`enemy-ai`, `litellm`) an Langfuse.
+`deploy/telemetry/docker-compose.yaml` startet die Telemetrie-Services getrennt von der Anwendung (ADR-10, ADR-11).
+Einziger Eingang am Host ist ein eigener Gateway-Collector (`otel/opentelemetry-collector-contrib`); er leitet alle
+Signale an den Collector von SigNoz („ingester“) weiter, der in ClickHouse schreibt. Die SigNoz-Dateien sind mit
+Foundry aus `deploy/telemetry/signoz/casting.yaml` erzeugt (Versionen dort festgelegt, Metadaten in SQLite).
+
+```mermaid
+flowchart LR
+    App["Services mit OTel-Java-Agent<br/>(run-local.sh, ohne Docker)"] -- "OTLP gRPC localhost:4317" --> GW
+    subgraph TC["Docker Compose deploy/telemetry"]
+        GW["collector<br/>Gateway, Host-Ports 4317/4318"] -- "OTLP gRPC" --> IN["ingester<br/>signoz-otel-collector"]
+        IN --> CH[("ClickHouse<br/>+ ClickHouse Keeper")]
+        SZ["signoz<br/>UI/API :8080, SQLite"] --> CH
+    end
+```
+
+| Container | Image | Host-Port |
+|---|---|---|
+| `collector` | `otel/opentelemetry-collector-contrib:0.163.1` | 4317, 4318 |
+| `ingester` | `signoz/signoz-otel-collector:v0.144.14` | – |
+| `signoz-signoz-0` | `signoz/signoz:v0.146.0` | 8080 |
+| `signoz-telemetrystore-clickhouse-0-0` | `clickhouse/clickhouse-server:25.12.5` | – |
+| `signoz-telemetrykeeper-clickhousekeeper-0` | `clickhouse/clickhouse-keeper:25.12.5` | – |
+| Init: `…-user-scripts`, `…-migrator` | wie oben | – (laufen beim Start und beenden sich) |
+
+- **Admin-Konto beim Start:** SigNoz legt per `SIGNOZ_USER_ROOT_*` ein festes Konto samt Organisation an. Ohne
+  Organisation gibt SigNoz seinem Collector per OpAMP nur eine leere Konfiguration, und der nimmt keine Daten an.
+- **Ausfall:** Fehlt der Gateway-Collector, verwerfen die Agents die Daten und loggen Fehler; danach exportieren sie ohne
+  Neustart weiter (geprüft). Der Gateway-Collector puffert kurz, wenn SigNoz noch startet.
+- **Speicher:** rund 1 GB RAM mit laufendem Spiel, davon gut die Hälfte ClickHouse.
+
+## Geplant: Collector als Fan-out
+
+Der Gateway-Collector bekommt eine zweite Pipeline: alle Signale weiter an SigNoz, nur GenAI-Spans (`enemy-ai`,
+`litellm`) an Langfuse (Profil `langfuse` im Telemetrie-Compose). Ohne Docker (Workshop) bleibt dafür nur ein
+`otelcol-contrib`-Binary.
 
 ```mermaid
 flowchart LR

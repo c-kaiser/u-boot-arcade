@@ -1,7 +1,7 @@
 # Verteilungssicht — Lokal als JVM-Prozesse ohne Docker
 
 > **Status:** `run-local.sh`/`stop-local.sh` sind umgesetzt (#3), lokal und in einer Linux-Sandbox geprüft.
-> In GitHub Codespaces und im Workshop-VS-Code noch nicht erprobt. LiteLLM ohne Docker und der lokale Collector sind
+> In GitHub Codespaces und im Workshop-VS-Code noch nicht erprobt. LiteLLM ohne Docker und ein Collector ohne Docker sind
 > weiterhin **geplant**.
 
 ## Zielumgebungen
@@ -70,7 +70,8 @@ Ohne Telemetrie-Backend und mit regelbasiertem Gegner (`GAME_LLM_ENABLED=false`)
   Gradle-Cache rund 1–1,5 Minuten (je Service 20–30 s Startzeit mit Agent; physics, leaderboard und enemy-ai parallel,
   danach game-server).
 - **LLM-Kosten:** Echte Cloud-Modelle kosten Geld – Entscheidungsintervall auf 5–10 s, Runaway deckeln, LiteLLM `max_budget` (geplant).
-- **Lokal mit Docker für die Backends:** Läuft der Rechner mit Docker, können SigNoz und Langfuse dort in Containern
-  laufen; die JVM-Prozesse exportieren an `localhost` (eigenes Compose geplant, #5).
+- **Lokal mit Docker für die Backends:** Läuft der Rechner mit Docker, startet `deploy/telemetry/docker-compose.yaml`
+  SigNoz mit vorgeschaltetem Collector; die JVM-Prozesse exportieren an `localhost:4317` (Telemetrie-Betriebsart
+  „lokal“, [07-05](07-05-Telemetrie-Fluss.md)). Langfuse folgt.
 - Ressourcen der Workshop-Umgebung. <!-- TODO: Bitte ergänzen – Speicher/CPU des Workshop-VS-Code -->
 - OTLP-Adressen und Zugangsdaten der gehosteten Backends. <!-- TODO: Bitte ergänzen – vom Veranstalter noch nicht bekannt -->

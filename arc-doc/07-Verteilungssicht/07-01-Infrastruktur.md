@@ -29,7 +29,7 @@ flowchart LR
     SW --> GS
     GS --> PH & AI & LB
     AI --> LL["LiteLLM"] --> M["Modell: Ollama / Anthropic / Heribert"]
-    Knoten -. OTLP .-> O["SigNoz (gehostet oder lokal in Docker)"]
+    Knoten -. OTLP .-> O["SigNoz (gehostet oder lokal per Telemetrie-Compose)"]
 ```
 
 ### Motivation

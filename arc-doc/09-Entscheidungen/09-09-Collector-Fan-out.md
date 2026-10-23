@@ -1,6 +1,6 @@
 # ADR-09: Lokaler OTel Collector als Fan-out an SigNoz und Langfuse
 
-**Status:** proposed (geplant, nicht umgesetzt)
+**Status:** proposed (Collector lokal im Telemetrie-Compose vorhanden, #5; Fan-out an Langfuse noch nicht umgesetzt)
 
 **Datum:** <!-- TODO: Bitte ergänzen -->
 
@@ -8,7 +8,8 @@
 
 SigNoz soll alle Signale erhalten, Langfuse nur GenAI-Spans. Der Agent exportiert an genau ein OTLP-Ziel.
 Langfuse nimmt OTLP **nur per HTTP** an (`https://<host>/api/public/otel`, Basic-Auth mit Public/Secret Key,
-`x-langfuse-ingestion-version=4`). Ohne Docker kommt nur ein Binary (otelcol-contrib) in Frage.
+`x-langfuse-ingestion-version=4`). Lokal mit Docker läuft der Collector im Telemetrie-Compose (`deploy/telemetry`,
+heute nur Weiterleitung an SigNoz); ohne Docker (Workshop) kommt nur ein Binary (otelcol-contrib) in Frage.
 
 ## Entscheidung (vorgeschlagen)
 

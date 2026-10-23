@@ -1,6 +1,6 @@
 # ADR-10: Trennung von Anwendung und Telemetrie, „ohne Telemetrie“ per Exporter `none`
 
-**Status:** accepted (umgesetzt für `run-local.sh`; eigenes Compose für die Telemetrie-Services offen, #5)
+**Status:** accepted (umgesetzt für `run-local.sh`; Telemetrie-Compose `deploy/telemetry` umgesetzt, #5)
 
 **Datum:** 2026-10-22
 
@@ -22,7 +22,7 @@ Agent normal und blockiert nicht, verwirft die Daten aber und loggt bei jedem Ex
 - **Drei Telemetrie-Betriebsarten**, als Blöcke in `.env.example`: *ohne Telemetrie*, *lokal*, *bereitgestellt*.
 - **„Ohne Telemetrie“** = `OTEL_TRACES_EXPORTER=none`, `OTEL_METRICS_EXPORTER=none`, `OTEL_LOGS_EXPORTER=none`.
   Der Agent bleibt geladen und instrumentiert weiter, exportiert aber nichts. Das ist der Standard in `.env.example`.
-- Die lokalen Telemetrie-Services bekommen ein eigenes Docker Compose, getrennt von der Anwendung (#5, offen); ein Compose für die Anwendung gibt es nicht (ADR-11).
+- Die lokalen Telemetrie-Services haben ein eigenes Docker Compose (`deploy/telemetry`, #5), getrennt von der Anwendung; ein Compose für die Anwendung gibt es nicht (ADR-11).
 - **Geltungsbereich:** `run-local.sh`. Das Helm-Chart (`uboot.otelEnv`) setzt weder Exporter-Schalter
   noch Header und exportiert immer per OTLP an `otel.endpoint`; „ohne Telemetrie“ ist dort nicht vorgesehen.
 

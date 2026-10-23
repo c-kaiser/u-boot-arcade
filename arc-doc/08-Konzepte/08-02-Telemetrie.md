@@ -85,9 +85,9 @@ Adressen (ADR-10). Das gilt für `run-local.sh`; das Helm-Chart exportiert immer
 | Telemetrie-Betriebsart | Ziel | Status |
 |---|---|---|
 | Ohne Telemetrie (Standard) | kein Export: `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER` = `none`; Agent instrumentiert weiter | umgesetzt |
-| Lokal | SigNoz oder Collector auf dem eigenen Rechner: Exporter `otlp`, `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317`; eigenes Compose für die Telemetrie-Services geplant (#5) | umgesetzt |
+| Lokal | Telemetrie-Compose `deploy/telemetry` (Collector vor SigNoz) auf dem eigenen Rechner: Exporter `otlp`, `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` ([07-05](../07-Verteilungssicht/07-05-Telemetrie-Fluss.md)) | umgesetzt (#5) |
 | Bereitgestellt (z. B. Workshop) | gehostetes SigNoz, Zugang über `OTEL_EXPORTER_OTLP_HEADERS` | umgesetzt, Endpunkte unbekannt |
-| Langfuse | lokaler OTel Collector (otelcol-contrib) als Fan-out: alles an SigNoz, GenAI-Spans (enemy-ai/litellm) per **OTLP/HTTP** an `https://<host>/api/public/otel` (Basic-Auth, `x-langfuse-ingestion-version=4`) | geplant, [ADR-09](../09-Entscheidungen/09-09-Collector-Fan-out.md) |
+| Langfuse | lokaler OTel Collector aus `deploy/telemetry` als Fan-out: alles an SigNoz, GenAI-Spans (enemy-ai/litellm) per **OTLP/HTTP** an `https://<host>/api/public/otel` (Basic-Auth, `x-langfuse-ingestion-version=4`) | geplant, [ADR-09](../09-Entscheidungen/09-09-Collector-Fan-out.md) |
 
 ## Geltungsbereich
 

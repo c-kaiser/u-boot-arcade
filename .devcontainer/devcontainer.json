@@ -1,6 +1,6 @@
 {
   // Für GitHub Codespaces und VS Code Dev Containers: JDK 21 (Build und Laufzeit)
-  // und Docker (für lokale Telemetrie-Services, siehe #5, und zum Bauen der Images für Helm).
+  // und Docker (für die lokalen Telemetrie-Services in deploy/telemetry, und zum Bauen der Images für Helm).
   // Die Anwendung selbst läuft ohne Docker: ./run-local.sh
   "name": "U-Boot Arcade",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
