@@ -60,8 +60,13 @@ if [ -n "$orphans" ]; then
   echo "Es laufen noch Services aus diesem Verzeichnis ohne PID-Datei (PID $(echo $orphans)). Erst ./stop-local.sh ausführen." >&2
   exit 1
 fi
+echo "Prüfe, ob die Ports frei sind ..."
 for port in "$PHYSICS_PORT" "$LEADERBOARD_PORT" "$ENEMY_AI_PORT" "$GAME_PORT"; do
-  if (exec 3<>"/dev/tcp/localhost/$port") 2>/dev/null; then
+  # curl mit Timeout statt /dev/tcp: verworfene Verbindungen würden sonst minutenlang hängen.
+  # 7 = Verbindung abgelehnt, 28 = Timeout – beides heißt: dort lauscht nichts
+  rc=0
+  curl -s --noproxy '*' --connect-timeout 1 --max-time 2 -o /dev/null "http://localhost:$port/" || rc=$?
+  if [ "$rc" -ne 7 ] && [ "$rc" -ne 28 ]; then
     echo "Port $port ist schon belegt – läuft noch eine ältere Instanz? Prozess finden z. B. mit: lsof -i :$port" >&2
     exit 1
   fi
