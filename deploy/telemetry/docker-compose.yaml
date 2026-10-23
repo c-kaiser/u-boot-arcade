@@ -1,0 +1,29 @@
+# Lokale Telemetrie-Services für die Betriebsart „Lokal“ (#5, ADR-10) – getrennt von der Anwendung,
+# die ohne Docker per ./run-local.sh läuft (ADR-11).
+#
+#   docker compose -f deploy/telemetry/docker-compose.yaml up -d     # starten
+#   docker compose -f deploy/telemetry/docker-compose.yaml down      # stoppen (mit -v: Daten löschen)
+#
+# Die Services exportieren an den Gateway-Collector (localhost:4317 gRPC / 4318 HTTP), der alles an SigNoz
+# weiterleitet. SigNoz-UI: http://localhost:8080. Später verteilt der Collector zusätzlich an Langfuse (ADR-09).
+name: u-boot-telemetry
+
+include:
+  # Mit Foundry erzeugt, siehe signoz/casting.yaml
+  - signoz/compose.yaml
+
+services:
+  collector:
+    image: otel/opentelemetry-collector-contrib:0.163.1
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./collector/config.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      # nur auf diesem Rechner – der OTLP-Eingang hat keine Authentifizierung
+      - "127.0.0.1:4317:4317"   # OTLP gRPC (Java-Agent, .env Block „Lokal“)
+      - "127.0.0.1:4318:4318"   # OTLP HTTP (z. B. LiteLLM)
+    networks:
+      - signoz-network
+    depends_on:
+      - ingester
+    restart: unless-stopped

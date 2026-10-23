@@ -27,7 +27,7 @@ graph LR
 | Workshop-Teilnehmende (Admin) | Anzahl Bots/Gegner, LLM an/aus, Chaos-Schalter | Status (Tick, Clients, Boote), aktuelle Einstellungen | Über `admin.html`; ohne Anmeldung | umgesetzt |
 | player-swarm | Wie Spieler*in, viele Clients parallel | Spielstand | Erzeugt WebSocket-Last und Client-Metriken (`game.client.rtt`, `swarm.state.interval`) | umgesetzt |
 | LLM über LiteLLM | Antwort mit Steuerbefehl und Begründung, Token-Verbrauch | Systemprompt und Spielzustand aus Sicht eines Gegners | Steuert Gegner, wenn „LLM für Gegner“ aktiv; sonst regelbasierter Fallback | umgesetzt (Ollama, Anthropic-Eintrag vorhanden); Heribert **geplant** |
-| SigNoz | – | Traces, Metriken, Logs (inkl. fachlicher Werte und Events) | Lokal in Docker oder gehostet vom Veranstalter; optional – ohne Telemetrie-Ziel läuft das Spiel ebenso (ADR-10) | umgesetzt (direkter OTLP-Export) |
+| SigNoz | – | Traces, Metriken, Logs (inkl. fachlicher Werte und Events) | Lokal im Telemetrie-Compose oder gehostet vom Veranstalter; optional – ohne Telemetrie-Ziel läuft das Spiel ebenso (ADR-10) | umgesetzt (OTLP direkt oder lokal über Gateway-Collector) |
 | Langfuse | – | GenAI-Spans mit Prompt, Completion, Session, Kosten | Analyse der LLM-Aufrufe | **geplant** (Collector-Fan-out, Langfuse-Attribute) |
 | Jev (TypeSafe „System One“) | Entscheidung mit Konfidenz | Spielzustand und Fragen | Optionale dritte Gegner-KI-Variante, nur bei Zugang | **geplant, optional** |
 

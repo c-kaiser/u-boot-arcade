@@ -30,7 +30,7 @@ damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 | F7 | Chaos pro U-Boot | In der UI pro U-Boot eine Störung auf einer Skala einstellen, die gezieltes Chaos (z. B. Latenz) auslöst | geplant, Umsetzung offen |
 | F8 | Telemetrie | Traces, Metriken, Logs per OTLP; eigene fachliche Metriken und GenAI-Spans | umgesetzt |
 | F9 | Lastgenerator | `player-swarm` mit echten WebSocket-Clients für Last und Client-Metriken | umgesetzt |
-| F10 | Export an SigNoz und Langfuse | Lokaler OTel Collector als Verteiler: alles an SigNoz, nur GenAI-Spans an Langfuse | geplant |
+| F10 | Export an SigNoz und Langfuse | Lokaler OTel Collector als Verteiler: alles an SigNoz, nur GenAI-Spans an Langfuse | teilweise: Collector lokal im Telemetrie-Compose (#5), Fan-out an Langfuse offen (#11) |
 | F11 | Start ohne Docker | Die Anwendung startet lokal und in GitHub Codespaces als JVM-Prozesse ohne Docker (`run-local.sh`/`stop-local.sh`, Konfiguration über `.env`) | umgesetzt (#3), Codespaces noch nicht erprobt |
 | F12 | Betrieb ohne Telemetrie-Backend | Die Anwendung läuft auch, wenn kein Telemetrie-Ziel (SigNoz, Collector, Langfuse) gestartet oder erreichbar ist – Standard ist die Telemetrie-Betriebsart „ohne Telemetrie“ (`OTEL_*_EXPORTER=none`, ADR-10) | umgesetzt (#3), Codespaces noch nicht erprobt |
 | F13 | Darstellungsvariante | Spiel und Admin-Panel wahlweise als U-Boot (Standard) oder als „Slop Arcade“ (KI-Agenten werfen mit Slop, Menschen mit Verstand); pro Browser umschaltbar, ändert nur die Anzeige (ADR-12) | umgesetzt, im Browser geprüft |

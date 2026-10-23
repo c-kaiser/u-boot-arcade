@@ -19,7 +19,7 @@ Das Compose der Anwendung war dafür überflüssig, musste aber parallel gepfleg
 - Die Anwendung hat nur noch zwei Verteilungsvarianten: **ohne Docker** (`run-local.sh`/`stop-local.sh`, lokal und in
   Codespaces) und **Kubernetes per Helm**.
 - `docker-compose.yaml` der Anwendung entfällt. `Dockerfile` und `deploy/build-images.sh` bleiben für die Helm-Images.
-- Telemetrie-Services (SigNoz, Collector, Langfuse) bekommen ein **eigenes** Compose, getrennt von der Anwendung (#5, ADR-10).
+- Telemetrie-Services haben ein **eigenes** Compose, getrennt von der Anwendung (`deploy/telemetry`, #5: SigNoz und Gateway-Collector, ADR-13; Langfuse folgt mit #11).
 - LiteLLM und Ollama gehören nicht mehr zum Repository-Start: Für die Gegner-KI mit LLM zeigt `LLM_BASE_URL` auf eine
   LiteLLM-Instanz (lokal per `pip`, geplant, oder extern). Standard ist `http://localhost:4000/v1`.
 

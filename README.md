@@ -79,11 +79,34 @@ genau einer ist aktiv:
 | Betriebsart | Ziel | Einstellungen |
 | --- | --- | --- |
 | **Ohne Telemetrie** (Standard) | kein Export – der Agent instrumentiert, sendet aber nichts | `OTEL_TRACES_EXPORTER`, `OTEL_METRICS_EXPORTER`, `OTEL_LOGS_EXPORTER` = `none` |
-| **Lokal** | SigNoz oder Collector auf dem eigenen Rechner, z. B. aus dem `o11y-playground` | Exporter `otlp`, `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` |
+| **Lokal** | SigNoz mit vorgeschaltetem Collector auf dem eigenen Rechner, per Docker Compose (siehe unten) | Exporter `otlp`, `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`, `OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317` |
 | **Bereitgestellt** | gehostetes SigNoz (z. B. im Workshop) | wie lokal, dazu Endpunkt des Anbieters und `OTEL_EXPORTER_OTLP_HEADERS` |
 
 Ist ein Ziel gesetzt, aber nicht erreichbar, läuft das Spiel weiter; der Agent loggt dann bei jedem Exportversuch einen Fehler.
-Ein eigenes Docker Compose für die lokalen Telemetrie-Services ist geplant (#5).
+
+### Lokale Telemetrie-Services (Docker)
+
+Für die Betriebsart **Lokal** gibt es ein eigenes Docker Compose, getrennt von der Anwendung:
+
+```bash
+docker compose -f deploy/telemetry/docker-compose.yaml up -d   # SigNoz + Collector starten
+# .env: Block „Lokal“ aktivieren, dann ./run-local.sh
+docker compose -f deploy/telemetry/docker-compose.yaml down    # stoppen (mit -v: gespeicherte Daten löschen)
+```
+
+- SigNoz-UI: http://localhost:8080, Anmeldung mit dem lokalen Admin-Konto `admin@u-boot-arcade.local` /
+  `U-Boot-Arcade-1` (in `deploy/telemetry/signoz/casting.yaml` festgelegt, nur für den lokalen Betrieb)
+- OTLP-Eingang: `localhost:4317` (gRPC) und `localhost:4318` (HTTP) – das ist ein eigener OpenTelemetry Collector
+  (`deploy/telemetry/collector/config.yaml`), der alles an SigNoz weiterleitet. Später verteilt er zusätzlich an Langfuse.
+- Reihenfolge egal: Ist die Telemetrie zwischendurch weg, senden die Services danach ohne Neustart wieder; Daten
+  aus der Lücke gehen verloren. Der erste Start dauert 2–3 Minuten (Datenbank-Migration).
+- Speicher: rund 1 GB RAM mit laufendem Spiel (gemessen; ClickHouse den größten Teil).
+- Alle Ports nur an `127.0.0.1`. Ein anderes lokales SigNoz (Container `signoz-*`) vorher stoppen – die Namen kollidieren.
+- Beim Start lädt ein Init-Container ein Hilfsprogramm von `github.com`; ohne Netz startet SigNoz nicht.
+- Die SigNoz-Dateien unter `deploy/telemetry/signoz/` sind mit [Foundry](https://github.com/SigNoz/foundry) aus
+  `signoz/casting.yaml` erzeugt (Versionen von SigNoz dort, ClickHouse aus Foundry v0.3.0, Gateway-Collector in
+  `docker-compose.yaml`); zum Aktualisieren `foundryctl forge -f casting.yaml`
+  ausführen und `pours/deployment/` übernehmen.
 
 | Variable | Bedeutung |
 | --- | --- |
@@ -95,7 +118,7 @@ Ein eigenes Docker Compose für die lokalen Telemetrie-Services ist geplant (#5)
 | `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | OpenAI-kompatibler Endpunkt für die Gegner-KI (LiteLLM) |
 
 Langfuse nimmt OTLP **nur per HTTP** an (`https://<host>/api/public/otel`, Basic-Auth mit Public/Secret Key).
-Geplant ist ein lokaler OpenTelemetry Collector als Verteiler: alles an SigNoz, nur die GenAI-Spans an Langfuse.
+Geplant ist, den lokalen Collector als Verteiler zu nutzen: alles an SigNoz, nur die GenAI-Spans an Langfuse (ADR-09, #11).
 
 ## Was man beobachten kann
 
