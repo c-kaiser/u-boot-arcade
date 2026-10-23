@@ -20,7 +20,7 @@ flowchart TB
         DS["Downstreams<br/>(RestClients)"]
         TEL["GameTelemetry<br/>(Tracer, Meter)"]
         CFG["GameServerApplication<br/>GameProperties, ClientConfig, WebSocketConfig"]
-        STATIC["Frontend<br/>index.html, game.js, admin.html, style.css"]
+        STATIC["Frontend<br/>index.html, game.js, theme.js, admin.html, style.css"]
     end
 
     PH["physics-service"]
@@ -66,7 +66,7 @@ flowchart TB
 | `SettingsStore` / `GameSettings` | Zur Laufzeit änderbare Einstellungen (Bots 0–60, Gegner 0–5, LLM an/aus, `Chaos`) mit Wertebegrenzung (`sanitized`, z. B. Physik-Latenz ≤ 1500 ms unter dem 2-s-Timeout). Nur im Speicher. |
 | `Downstreams` / `ClientConfig` | Drei `RestClient`s auf JDK-`HttpClient` mit Connect-Timeout 2 s und Read-Timeouts 2 s (Physik), 90 s (Gegner-KI, wegen Runaway), 10 s (Leaderboard). |
 | `GameTelemetry` | Tracer/Meter `u-boot-arcade.game-server`; Metriken wie `game.tick.duration`, `game.tick.overruns`, `game.physics.failures`, `game.events`, `game.enemy.decision.latency`, `game.state.size`; Observable Gauges pro Boot (`sub.depth`, `sub.boiler.pressure`, …). |
-| Frontend (`static/`) | `index.html` + `game.js`: Canvas-Rendering, Eingabe alle 50 ms, Ping jede Sekunde, Reconnect nach 2 s, Leaderboard-Abruf alle 5 s. `admin.html`: Schieberegler/Checkboxen für Einstellungen und Chaos, Statusanzeige. |
+| Frontend (`static/`) | `index.html` + `game.js`: Canvas-Rendering, Eingabe alle 50 ms, Ping jede Sekunde, Reconnect nach 2 s, Leaderboard-Abruf alle 5 s. `admin.html`: Schieberegler/Checkboxen für Einstellungen und Chaos, Statusanzeige. `theme.js`: Darstellungsvarianten U-Boot und Slop (Texte, Anzeigenamen, Chaos-Bezeichnungen), Auswahl pro Browser, siehe [ADR-12](../09-Entscheidungen/09-12-Darstellungsvarianten-im-Frontend.md). |
 
 ### Offene Punkte
 

@@ -118,6 +118,11 @@
     },
   };
 
+  // Wechsel in einem anderen Tab (Spiel ↔ Admin) übernehmen
+  window.addEventListener("storage", (e) => {
+    if (e.key === "theme" && THEMES[e.newValue] && e.newValue !== id) { id = e.newValue; apply(); }
+  });
+
   document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("theme-toggle")?.addEventListener("click", () => window.Theme.toggle());
     apply();

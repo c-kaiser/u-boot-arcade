@@ -35,3 +35,5 @@ classDiagram
 - Die Modellklassen sind zugleich das **Austauschformat** zwischen den Services (`StepRequest/StepResponse`,
   `DecideRequest/DecideResponse`, `ScoreEntry` als JSON).
 - `game-core` ist frameworkfrei (siehe [ADR-02](../09-Entscheidungen/09-02-game-core-frameworkfrei.md)).
+- Das Modell spricht immer U-Boot. Die Darstellungsvariante „Slop“ benennt nur in der Anzeige um, Modell, Protokoll und
+  Telemetrie bleiben gleich (siehe [ADR-12](../09-Entscheidungen/09-12-Darstellungsvarianten-im-Frontend.md)).

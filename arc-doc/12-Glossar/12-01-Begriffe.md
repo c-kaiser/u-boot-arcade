@@ -30,6 +30,8 @@
 | Chaos / Chaos-Schalter | Gezielt auslösbare Störung (`Chaos`), heute global im Admin-Panel: Physik-Latenz, Physik-Fehlerrate, Leaderboard langsam (verzögert den Insert-Request, nicht die DB), KI-Latenz, KI-Endlosschleife, Memory Leak, Kesselkühlung defekt, Leck im Rumpf, Meeresströmung. Zielbild (**geplant**): Störung pro U-Boot auf einer Skala. |
 | KI-Endlosschleife (Runaway) | Chaos-Schalter `aiRunaway`: Gegner-KI fragt das LLM bis zu 8× pro Entscheidung mit wachsendem Kontext; treibt Tokens und Kosten. |
 | Admin-Panel | `admin.html` im Game-Server: Bots, Gegner, LLM an/aus, Chaos-Schalter. |
+| Darstellungsvariante | Aussehen und Texte des Frontends, pro Browser wählbar (`theme.js`, Knopf „Variante“ oder `?theme=`): *U-Boot* (Standard) oder *Slop*. Ändert nur die Anzeige, nicht Spiel oder Telemetrie (ADR-12). |
+| Slop-Variante | Darstellungsvariante, in der KI-Agenten (Gegner) mit KI-Slop werfen und Menschen (Spieler, Bots) mit Geistesblitzen. Anzeige statt Modellbegriff: Tiefe → Slop-Pegel, Dampfdruck → Denkdruck, Rumpf → Geduld, Torpedo → Geistesblitz bzw. Slop, Gegnernamen → SlopGPT, Halluzinator, Buzzwordinator, Copypasta, Promptimus; Chaos „Kesselkühlung defekt / Leck im Rumpf / Meeresströmung“ → Kaffeemaschine kaputt / Benachrichtigungsflut / Hype-Welle. |
 | Fallback | Regelbasierte Gegner-Entscheidung, wenn LLM aus ist oder fehlschlägt (`source=fallback`, `outcome` z. B. `timeout`, `parse_error`). |
 | Schwarm | `player-swarm`: Lastgenerator mit echten WebSocket-Clients. |
 | Heribert | Vom Veranstalter bereitgestellter LLM-Zugang; Art des Endpunkts unklar, vermutlich OpenAI-kompatibel. <!-- TODO: Bitte ergänzen --> |

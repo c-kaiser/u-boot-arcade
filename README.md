@@ -46,6 +46,8 @@ cp .env.example .env     # Standard: ohne Telemetrie, regelbasierte Gegner
 
 - Spiel: http://localhost:8088 (← → Fahrt, ↑ ↓ Tauchen, Leertaste Torpedo), in Codespaces über die Port-Weiterleitung
 - Admin: http://localhost:8088/admin.html (dort auch „LLM für Gegner verwenden“ einschalten)
+- Darstellung: Knopf „Variante“ oder `?theme=slop` wechselt zur Slop-Variante (KI-Agenten werfen mit Slop, Menschen
+  mit Verstand); nur Anzeige, Spiel und Telemetrie bleiben gleich (ADR-12)
 - Logs unter `logs/<service>.log`, PID-Dateien unter `.run/`, Leaderboard-Datenbank (H2) unter `data/`
 - Der OTel-Java-Agent wird beim ersten Start nach `.otel/` geladen (braucht Zugriff auf GitHub-Releases)
 - Speicher pro JVM über `JAVA_OPTS` (Standard `-Xmx256m`), andere Konfigurationsdatei per `ENV_FILE=… ./run-local.sh`
