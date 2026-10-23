@@ -77,7 +77,7 @@ fi
 
 # ---------- Bauen ----------
 echo "Baue die Services (./gradlew bootJar) ..."
-./gradlew --quiet bootJar
+./gradlew bootJar
 
 boot_jar() {
   local module=$1 jar
