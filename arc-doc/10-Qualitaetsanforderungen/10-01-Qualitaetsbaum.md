@@ -22,6 +22,7 @@ mindmap
       QS-09 Zielwechsel nur per Umgebung
     Änderbarkeit #flexible
       QS-10 Modellwechsel ohne Code
+      QS-13 Darstellungsvariante nur im Frontend
     Testbarkeit #testable
       QS-11 Spiellogik ohne Infrastruktur testbar
 ```
@@ -39,6 +40,7 @@ mindmap
 | #operable | Start ohne Docker lokal, in Codespaces und im Workshop-VS-Code | Hoch | QS-08 | umgesetzt, Codespaces/Workshop nicht erprobt |
 | #operable | Telemetrie-Ziele ohne Codeänderung umstellbar | Hoch | QS-09 | umgesetzt |
 | #flexible | LLM-Modell ohne Codeänderung wechseln | Mittel | QS-10 | umgesetzt |
+| #flexible | Darstellungsvariante ohne Änderung an Server, Protokoll oder Telemetrie | Niedrig | QS-13 | umgesetzt (ADR-12) |
 | #testable | Spiellogik ohne Spring/Netz testbar | Mittel | QS-11 | umgesetzt |
 
 <!-- TODO: Bitte ergänzen – Prioritäten mit Sektion 1.2 abgleichen -->

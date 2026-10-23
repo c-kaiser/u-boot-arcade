@@ -28,6 +28,8 @@ Standardwert aus `application.yaml` (`${VAR:default}`), gebunden an `@Configurat
 - **Zwei Ebenen**: Startwerte aus der Umgebung; Bots, Gegner, LLM-Schalter und Chaos sind zur Laufzeit im
   Admin-Panel änderbar (nur im Speicher, siehe [08-03](08-03-Chaos-und-Stoerungen.md)).
 - Welches echte Modell hinter `enemy-brain` steckt, entscheidet nur `deploy/litellm-config.yaml`.
+- Die Darstellungsvariante (U-Boot, Slop) ist bewusst keine Server-Konfiguration: Sie wird pro Browser gewählt
+  (Knopf „Variante“ bzw. `?theme=`, ADR-12).
 
 ## Offene Punkte
 

@@ -10,7 +10,7 @@
 | Bootsart | `SubKind` | Wer ein U-Boot steuert: `PLAYER` (Mensch im Browser oder Schwarm-Client), `BOT` (regelbasiert), `ENEMY` (Gegner-KI). |
 | Spieler*in | `PLAYER` | U-Boot, das ein Mensch (oder `player-swarm`) per WebSocket steuert. |
 | Bot | `BOT` | Vom Game-Server regelbasiert gesteuertes U-Boot (`BotBrain`). |
-| Gegner | `ENEMY` | U-Boot, das die Gegner-KI steuert (LLM oder regelbasierter Fallback). Namen z. B. Kraken, Leviathan, Nautilus. |
+| Gegner | `ENEMY` | U-Boot, das die Gegner-KI steuert (LLM oder regelbasierter Fallback). Namen z. B. Kraken, Leviathan, Nautilus; in der Slop-Variante als KI-Agenten mit eigenen Anzeigenamen (ADR-12). |
 | Welt | `World` | Spielzustand eines Ticks: Tick-Nummer, alle U-Boote, alle Torpedos. |
 | Tick | `tick` | Ein Simulationsschritt des Game-Servers, 20 pro Sekunde (50 ms). |
 | Steuerbefehl | `Controls` | Eingabe für einen Tick: Fahrt (`throttle` −1..1), Tauchen (`dive` −1..1), Torpedo feuern. |
@@ -30,6 +30,8 @@
 | Chaos / Chaos-Schalter | Gezielt auslösbare Störung (`Chaos`), heute global im Admin-Panel: Physik-Latenz, Physik-Fehlerrate, Leaderboard langsam (verzögert den Insert-Request, nicht die DB), KI-Latenz, KI-Endlosschleife, Memory Leak, Kesselkühlung defekt, Leck im Rumpf, Meeresströmung. Zielbild (**geplant**): Störung pro U-Boot auf einer Skala. |
 | KI-Endlosschleife (Runaway) | Chaos-Schalter `aiRunaway`: Gegner-KI fragt das LLM bis zu 8× pro Entscheidung mit wachsendem Kontext; treibt Tokens und Kosten. |
 | Admin-Panel | `admin.html` im Game-Server: Bots, Gegner, LLM an/aus, Chaos-Schalter. |
+| Darstellungsvariante | Aussehen und Texte des Frontends, pro Browser wählbar (`theme.js`, Knopf „Variante“ oder `?theme=`): *U-Boot* (Standard) oder *Slop*. Ändert nur die Anzeige, nicht Spiel oder Telemetrie (ADR-12). Unabhängig von Verteilungsvariante und Telemetrie-Betriebsart. |
+| Slop-Variante | Darstellungsvariante, in der KI-Agenten (Gegner) mit KI-Slop werfen und Menschen (Spieler, Bots als „Kolleg:in N“) mit Geistesblitzen, also mit Verstand. Anzeige statt Modellbegriff, z. B. Tiefe → Slop-Pegel (%), Dampfdruck → Denkdruck, Rumpf → Geduld, Torpedo → Geistesblitz bzw. Slop. Vollständige Zuordnung von Namen, Werten und Chaos-Schaltern in ADR-12. |
 | Fallback | Regelbasierte Gegner-Entscheidung, wenn LLM aus ist oder fehlschlägt (`source=fallback`, `outcome` z. B. `timeout`, `parse_error`). |
 | Schwarm | `player-swarm`: Lastgenerator mit echten WebSocket-Clients. |
 | Heribert | Vom Veranstalter bereitgestellter LLM-Zugang; Art des Endpunkts unklar, vermutlich OpenAI-kompatibel. <!-- TODO: Bitte ergänzen --> |

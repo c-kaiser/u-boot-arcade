@@ -1,6 +1,6 @@
 # Risiken und technische Schulden
 
-Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Priorität. Stand: Branch `feature/3-start-ohne-docker`.
+Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Priorität. Stand: Branch `feature/slop-arcade-draft`.
 
 ## Risiken
 
@@ -36,5 +36,6 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 | TD9 | Keine Tests für Spring-Services (nur `game-core`) | alle Services | <!-- TODO --> | mittel |
 | TD10 | `gen_ai.provider.name` fest `openai`, auch bei Anthropic hinter LiteLLM | enemy-ai | gering | niedrig |
 | TD11 | Optional: Jev (TypeSafe „System One“) als dritte Gegner-KI – nur bei Zugang | enemy-ai | <!-- TODO --> | niedrig |
+| TD12 | Darstellungsvarianten (ADR-12): doppelte Zeichenlogik in `game.js`, Zuordnung in `theme.js` an Server-Texte (Gegnernamen, Chaos-Bezeichnungen) gekoppelt, keine Frontend-Tests | game-server/Frontend | gering | niedrig |
 
 <!-- TODO: Bitte ergänzen – Verantwortliche und Termine (vor dem Workshop) -->

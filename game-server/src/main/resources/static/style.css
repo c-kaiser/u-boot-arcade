@@ -7,23 +7,48 @@
   --accent: #ffd23f;
   --danger: #ff5a5f;
   --ok: #4cd98b;
+  --canvas-bg: #0a2a45;
+  --overlay-bg: rgba(3, 10, 18, 0.6);
+  --input-bg: #04101b;
+  --dead: var(--danger);
+  --dead-shadow: none;
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
 }
+/* Variante „Slop“: hell, Büro statt Tiefsee (siehe theme.js) */
+:root[data-theme="slop"] {
+  --bg: #f4f1ea;
+  --panel: #ffffff;
+  --line: #d9d2c3;
+  --text: #1f2a33;
+  --muted: #6b7680;
+  --accent: #e09a00;
+  --danger: #c43d3d;
+  --ok: #2f9e5f;
+  --canvas-bg: #e9f4ff;
+  --overlay-bg: rgba(40, 50, 20, 0.45);
+  --input-bg: #fbfaf6;
+  --dead: #e8f5b0;
+  --dead-shadow: 0 2px 4px #000;
+}
+:root[data-theme="slop"] [data-only="uboot"] { display: none; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--bg); color: var(--text); }
 header { display: flex; align-items: baseline; justify-content: space-between; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+header .tagline { margin: 0 auto 0 16px; color: var(--muted); font-size: 13px; }
+header nav { display: flex; gap: 12px; align-items: baseline; }
+#theme-toggle { font: inherit; font-size: 13px; padding: 3px 10px; border-radius: 4px; border: 1px solid var(--line); background: var(--panel); color: var(--text); cursor: pointer; }
 header h1 { margin: 0; font-size: 20px; letter-spacing: 2px; color: var(--accent); }
 a { color: var(--accent); }
 main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 12px; padding: 12px 16px; }
 @media (max-width: 1000px) { main { grid-template-columns: 1fr; } }
 .stage { position: relative; }
-canvas { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 6px; background: #0a2a45; }
-.overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(3, 10, 18, 0.6); border-radius: 6px; }
-.overlay p { font-size: 32px; text-align: center; color: var(--danger); }
+canvas { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 6px; background: var(--canvas-bg); }
+.overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: var(--overlay-bg); border-radius: 6px; }
+.overlay p { font-size: 32px; text-align: center; color: var(--dead); text-shadow: var(--dead-shadow); }
 .overlay form { background: var(--panel); padding: 24px; border: 1px solid var(--line); border-radius: 8px; text-align: center; }
 .overlay h2 { margin-top: 0; }
 .overlay input, .overlay button { font: inherit; padding: 8px 12px; border-radius: 4px; border: 1px solid var(--line); }
-.overlay input { background: #04101b; color: var(--text); }
+.overlay input { background: var(--input-bg); color: var(--text); }
 .overlay button { background: var(--accent); color: #111; font-weight: bold; cursor: pointer; }
 .hint { color: var(--muted); font-size: 13px; }
 .hidden { display: none !important; }

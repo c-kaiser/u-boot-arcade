@@ -8,8 +8,9 @@
 </head>
 <body>
 <header>
-  <h1>U-Boot Arcade</h1>
-  <nav><a href="admin.html" target="_blank">Admin &amp; Chaos</a></nav>
+  <h1 data-t="title">U-Boot Arcade</h1>
+  <p class="tagline" data-t="tagline"></p>
+  <nav><button id="theme-toggle" type="button">Variante</button> <a href="admin.html" target="_blank">Admin &amp; Chaos</a></nav>
 </header>
 
 <main>
@@ -17,26 +18,26 @@
     <canvas id="sea" width="1600" height="600" aria-label="Spielfeld"></canvas>
     <div id="join" class="overlay">
       <form id="join-form">
-        <h2>Bereit zum Tauchen?</h2>
+        <h2 data-t="joinTitle">Bereit zum Tauchen?</h2>
         <input id="name" maxlength="16" placeholder="Dein Name" autocomplete="off" required>
-        <button type="submit">Abtauchen!</button>
-        <p class="hint">← → Fahrt &nbsp;·&nbsp; ↑ ↓ Tauchen &nbsp;·&nbsp; Leertaste Torpedo</p>
+        <button type="submit" data-t="joinButton">Abtauchen!</button>
+        <p class="hint" data-t="hint"></p>
       </form>
     </div>
-    <div id="dead" class="overlay hidden"><p>Versenkt!<br><span id="respawn"></span></p></div>
+    <div id="dead" class="overlay hidden"><p><span data-t="dead">Versenkt!</span><br><span id="respawn"></span></p></div>
     <div id="frozen" class="banner hidden">Physik-Service antwortet nicht – die Welt steht still</div>
   </section>
 
   <aside>
     <div class="panel">
-      <h3>Dein Boot</h3>
+      <h3 data-t="panelSelf">Dein Boot</h3>
       <dl class="gauges">
-        <dt>Tiefe</dt><dd><span id="g-depth">–</span> m</dd>
-        <dt>Fahrt</dt><dd><span id="g-speed">–</span> kn</dd>
-        <dt>Dampfdruck</dt><dd><meter id="g-pressure" min="0" max="12" low="8" high="9.5" optimum="5"></meter> <span id="g-pressure-v">–</span> bar</dd>
-        <dt>Kessel</dt><dd><span id="g-temp">–</span> °C</dd>
-        <dt>Rumpf</dt><dd><meter id="g-hull" min="0" max="100" low="30" high="70" optimum="100"></meter> <span id="g-hull-v">–</span> %</dd>
-        <dt>Punkte</dt><dd><span id="g-score">0</span> · <span id="g-kills">0</span> Abschüsse</dd>
+        <dt data-t="depth">Tiefe</dt><dd><span id="g-depth">–</span> <span data-t="depthUnit">m</span></dd>
+        <dt data-t="speed">Fahrt</dt><dd><span id="g-speed">–</span> <span data-t="speedUnit">kn</span></dd>
+        <dt data-t="pressure">Dampfdruck</dt><dd><meter id="g-pressure" min="0" max="12" low="8" high="9.5" optimum="5"></meter> <span id="g-pressure-v">–</span> <span data-t="pressureUnit">bar</span></dd>
+        <dt data-only="uboot">Kessel</dt><dd data-only="uboot"><span id="g-temp">–</span> °C</dd>
+        <dt data-t="hull">Rumpf</dt><dd><meter id="g-hull" min="0" max="100" low="30" high="70" optimum="100"></meter> <span id="g-hull-v">–</span> %</dd>
+        <dt>Punkte</dt><dd><span id="g-score">0</span> · <span id="g-kills">0</span> <span data-t="kills">Abschüsse</span></dd>
       </dl>
     </div>
     <div class="panel">
@@ -49,7 +50,7 @@
       <ul id="chaos" class="chaos"></ul>
     </div>
     <div class="panel">
-      <h3>Funkspruch</h3>
+      <h3 data-t="panelEvents">Funkspruch</h3>
       <ul id="events" class="events"></ul>
     </div>
     <div class="panel">
@@ -59,6 +60,7 @@
   </aside>
 </main>
 
+<script src="theme.js"></script>
 <script src="game.js"></script>
 </body>
 </html>
