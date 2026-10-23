@@ -33,7 +33,7 @@ damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 | F10 | Export an SigNoz und Langfuse | Lokaler OTel Collector als Verteiler: alles an SigNoz, nur GenAI-Spans an Langfuse | geplant |
 | F11 | Start ohne Docker | Die Anwendung startet lokal und in GitHub Codespaces als JVM-Prozesse ohne Docker (`run-local.sh`/`stop-local.sh`, Konfiguration über `.env`) | umgesetzt (#3), Codespaces noch nicht erprobt |
 | F12 | Betrieb ohne Telemetrie-Backend | Die Anwendung läuft auch, wenn kein Telemetrie-Ziel (SigNoz, Collector, Langfuse) gestartet oder erreichbar ist – Standard ist die Telemetrie-Betriebsart „ohne Telemetrie“ (`OTEL_*_EXPORTER=none`, ADR-10) | umgesetzt (#3), Codespaces noch nicht erprobt |
-| F13 | Darstellungsvariante | Spiel und Admin-Panel wahlweise als U-Boot (Standard) oder als „Slop Arcade“ (KI-Agenten werfen mit Slop, Menschen mit Verstand); pro Browser umschaltbar, ändert nur die Anzeige (ADR-12) | umgesetzt, nur per Smoke-Test ohne Browser geprüft |
+| F13 | Darstellungsvariante | Spiel und Admin-Panel wahlweise als U-Boot (Standard) oder als „Slop Arcade“ (KI-Agenten werfen mit Slop, Menschen mit Verstand); pro Browser umschaltbar, ändert nur die Anzeige (ADR-12) | umgesetzt, im Browser geprüft |
 
 <!-- ABGELEITET: Aus Code erkannt, bitte verifizieren -->
 <!-- TODO: Anforderungen nach Erreichen des Initialstands erneut prüfen. Initialstand = grundsätzliches Review erfolgt und ein erster Durchstich funktional und abgenommen -->
