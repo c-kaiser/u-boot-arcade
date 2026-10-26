@@ -6,14 +6,14 @@
 
 ## Kontext
 
-Die Gegner-KI soll mit lokalen Modellen (Ollama), Anthropic und „Heribert“ (Art des Endpunkts unklar, vermutlich
+Die Gegner-KI soll mit Anthropic und „Heribert“ (Art des Endpunkts unklar, vermutlich
 OpenAI-kompatibel) laufen. Der Veranstalter wünscht gezieltes Experimentieren mit Modellen.
 
 ## Entscheidung
 
 enemy-ai spricht nur das OpenAI-kompatible Chat-API (`LLM_BASE_URL`, Modellalias `enemy-brain`). Welches echte
-Modell dahinter steckt, legt `deploy/litellm-config.yaml` fest (heute `ollama_chat/qwen2.5:3b` und
-`enemy-brain-cloud` → `anthropic/claude-haiku-4-5`). LiteLLM exportiert eigene OTel-Spans.
+Modell dahinter steckt, legt `deploy/litellm-config.yaml` fest (heute `anthropic/claude-haiku-4-5`;
+lokale Modelle sind seit ADR-14 ausgeschlossen). LiteLLM exportiert eigene OTel-Spans.
 
 ## Konsequenzen
 

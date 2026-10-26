@@ -70,7 +70,7 @@ Ohne Telemetrie-Backend und mit regelbasiertem Gegner (`GAME_LLM_ENABLED=false`)
 - **Speicher:** `JAVA_OPTS` (Standard `-Xmx256m`) je JVM. In der Sandbox dauerte `run-local.sh` mit warmem
   Gradle-Cache rund 1–1,5 Minuten (je Service 20–30 s Startzeit mit Agent; physics, leaderboard und enemy-ai parallel,
   danach game-server).
-- **LLM-Kosten:** Echte Cloud-Modelle kosten Geld – Entscheidungsintervall auf 5–10 s, Runaway deckeln, LiteLLM `max_budget` (geplant).
+- **LLM-Kosten:** Echte Cloud-Modelle kosten Geld – Runaway deckeln, LiteLLM `max_budget` (geplant).
 - **Lokal mit Docker für die Backends:** Läuft der Rechner mit Docker, startet `deploy/telemetry/docker-compose.yaml`
   SigNoz mit vorgeschaltetem Collector; die JVM-Prozesse exportieren an `localhost:4317` (Telemetrie-Betriebsart
   „lokal“, [07-05](07-05-Telemetrie-Fluss.md)). Langfuse folgt (#11).

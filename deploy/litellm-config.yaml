@@ -1,21 +1,13 @@
 # LiteLLM-Proxy für die Gegner-KI. Der Game-Server ruft immer das Modell "enemy-brain" auf,
 # welches echte Modell dahintersteckt, wird nur hier entschieden.
+# Kein lokales Modell (ADR-14): ANTHROPIC_API_KEY setzen. Jeder Aufruf kostet Geld.
 model_list:
   - model_name: enemy-brain
-    litellm_params:
-      model: ollama_chat/qwen2.5:3b
-      api_base: http://localhost:11434   # Ollama auf demselben Rechner
-      # Lokale Modelle kosten nichts – fiktive Preise, damit die Kosten-Dashboards etwas zeigen
-      input_cost_per_token: 0.000003
-      output_cost_per_token: 0.000015
-
-  # Alternative: Cloud-Modell. ANTHROPIC_API_KEY setzen und LLM_MODEL=enemy-brain-cloud
-  - model_name: enemy-brain-cloud
     litellm_params:
       model: anthropic/claude-haiku-4-5
       api_key: os.environ/ANTHROPIC_API_KEY
 
 litellm_settings:
   callbacks: ["otel"]
-  # Bei langsamen lokalen Modellen lieber abbrechen als das Spiel blockieren
+  # Bei langsamen Antworten lieber abbrechen als das Spiel blockieren
   request_timeout: 30

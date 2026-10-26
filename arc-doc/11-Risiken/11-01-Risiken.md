@@ -6,9 +6,9 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 
 | ID | Risiko | Wahrsch. | Auswirkung | Maßnahme |
 |---|---|---|---|---|
-| R1 | **Spring-Services nur teilweise erprobt** – per `run-local.sh` mit Agent gestartet (Spiel, Leaderboard, Schwarm, Export an einen Collector geprüft); Helm und der LLM-Pfad sind noch nicht gelaufen | mittel | hoch | Helm (falls Workshop-Cluster) und LLM-Pfad (lokales Modell) starten, Smoke-Test |
+| R1 | **Spring-Services nur teilweise erprobt** – per `run-local.sh` mit Agent gestartet (Spiel, Leaderboard, Schwarm, Export an einen Collector geprüft); Helm und der LLM-Pfad sind noch nicht gelaufen | mittel | hoch | Helm (falls Workshop-Cluster) und LLM-Pfad (günstiges Cloud-Modell, erst nach TD4) starten, Smoke-Test |
 | R2 | **Unbekannte Workshop-Endpunkte** (OTLP SigNoz, Langfuse, Zugangsdaten) – Export-Konfiguration nicht vorab testbar | hoch | hoch | Beim Veranstalter anfragen; alles über `.env`; lokal mit dem Telemetrie-Compose proben (SigNoz; Langfuse nach #11) |
-| R3 | **LLM-Kosten** – Entscheidung ≈ 1/s pro Gegner, Runaway × 8 mit wachsendem Kontext, kein Budget-Limit | mittel | hoch | Intervall 5–10 s bei LLM, Runaway deckeln, LiteLLM `max_budget`; Default `GAME_LLM_ENABLED=false` (umgesetzt) |
+| R3 | **LLM-Kosten** – Entscheidung ≈ 1/s pro Gegner, Runaway × 8 mit wachsendem Kontext, kein Budget-Limit | mittel | hoch | Runaway deckeln, LiteLLM `max_budget`; Default `GAME_LLM_ENABLED=false` (umgesetzt) |
 | R4 | **Start ohne Docker im Workshop nicht erprobt** – `run-local.sh` ist umgesetzt (TD1), aber nur lokal/in der Sandbox geprüft; das Collector-Binary für den Fan-out fehlt noch | mittel | hoch | `run-local.sh` in Codespaces und im Browser-VS-Code proben; TD5 vor dem Workshop umsetzen |
 | R5 | **Telemetrie-Volumen** – 20 Root-Traces/s pro Instanz × Teilnehmende bei gehostetem SigNoz; Default `parentbased_always_on` | mittel | mittel | `parentbased_traceidratio` 0.1 empfehlen/vorbelegen; Metriken bleiben vollständig |
 | R6 | **Heribert-API unklar** (OpenAI-kompatibel?) | mittel | mittel | Klären; sonst nur Anthropic/lokal; enemy-ai fällt bei Fehlern auf `BotBrain` zurück |
@@ -31,7 +31,7 @@ Bewertung qualitativ (Wahrscheinlichkeit × Auswirkung), sortiert nach Prioritä
 | TD1 | ~~`run-local.sh`/`stop-local.sh` fehlen~~ – erledigt (#3, 07-02) | Betrieb | – | – |
 | TD2 | ~~Leaderboard-Profil `local` mit H2 fehlt~~ – erledigt: H2 in allen Verteilungsvarianten (ADR-07) | leaderboard | – | – |
 | TD3 | ~~`pg_sleep`-Chaos nicht H2-kompatibel~~ – erledigt: `Thread.sleep` (ADR-07) | leaderboard, Chaos | – | – |
-| TD4 | Kosten-Bremse fehlt (Intervall bei LLM, Runaway-Deckel, `max_budget`) | game-server, enemy-ai, LiteLLM | <!-- TODO --> | hoch |
+| TD4 | Kosten-Bremse fehlt (Runaway-Deckel, `max_budget`) | game-server, enemy-ai, LiteLLM | <!-- TODO --> | hoch |
 | TD5 | Collector-Fan-out SigNoz/Langfuse fehlt (ADR-09); lokal steht der Collector im Telemetrie-Compose (#5), es fehlen Langfuse-Pipeline (#11) und Variante ohne Docker | Betrieb/Telemetrie | <!-- TODO --> | hoch |
 | TD6 | Langfuse-Attribute fehlen (`gen_ai.prompt`/`completion` bzw. `langfuse.observation.*`, `langfuse.session.id`, `gen_ai.usage.cost`) | enemy-ai `LlmClient` | <!-- TODO --> | mittel |
 | TD7 | Anthropic-Modell und Heribert nicht final in `litellm-config.yaml`; LiteLLM ohne Docker nicht erprobt | deploy | <!-- TODO --> | mittel |
