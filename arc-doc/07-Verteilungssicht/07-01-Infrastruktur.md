@@ -1,11 +1,11 @@
 # Verteilungssicht
 
-<!-- ABGELEITET: Aus Code erkannt (Dockerfile, run-local.sh, deploy/helm, deploy/litellm-config.yaml, deploy/telemetry, README.md), bitte verifizieren -->
+<!-- ABGELEITET: Aus Code erkannt (Dockerfile, run-local.sh, deploy/helm, deploy/telemetry, README.md), bitte verifizieren -->
 
 ## Infrastruktur Ebene 1
 
 Die Anwendung besteht aus fünf Spring-Boot-Prozessen (JDK 21, je ein Fat-JAR aus `./gradlew bootJar`) (das Leaderboard
-mit eingebetteter H2-Datei-DB) und optional LiteLLM. Sie wird in zwei Varianten betrieben (ADR-11, kein Docker Compose für die Anwendung):
+mit eingebetteter H2-Datei-DB) und nutzt optional das LiteLLM des Workshop-Clusters. Sie wird in zwei Varianten betrieben (ADR-11, kein Docker Compose für die Anwendung):
 
 | Variante | Status | Zielumgebung | Details |
 |----------|--------|--------------|---------|
@@ -28,7 +28,7 @@ flowchart LR
     end
     SW --> GS
     GS --> PH & AI & LB
-    AI --> LL["LiteLLM"] --> M["Modell: Anthropic / Heribert"]
+    AI --> LL["LiteLLM (Workshop-Cluster)"] --> M["Modell: DeepSeek"]
     Knoten -. OTLP .-> O["SigNoz (gehostet oder lokal per Telemetrie-Compose)"]
 ```
 
@@ -60,8 +60,8 @@ flowchart LR
 | `leaderboard` | 8082 | JVM-Prozess, H2-Datei unter `./data/` | Deployment 1 Replica, H2-Datei in `emptyDir` |
 | `enemy-ai` | 8083 | JVM-Prozess | Deployment 1 Replica, API-Key aus Secret |
 | `player-swarm` | – | JVM-Prozess (optional, `--swarm`) | Deployment, `playersPerPod` 10 |
-| LiteLLM | 4000 | `pip install 'litellm[proxy]'` mit `deploy/litellm-config.yaml` (geplant) oder extern | nicht im Chart, `llm.baseUrl` zeigt auf externe Instanz |
-| Modell | – | Anthropic / Heribert (Cloud); kein lokales Modell (ADR-14) | extern |
+| LiteLLM | 4000 | Workshop-Cluster, per SSH-Tunnel über den Coder-Workspace auf `localhost:4000` (ADR-15) | nicht im Chart, `llm.baseUrl` = `http://litellm-service.litellm:4000/v1` |
+| Modell | – | `eu.deepseek-v4.1-flash` über das Workshop-Gateway; kein lokales Modell (ADR-14) | extern |
 | OTel Collector | 4317/4318 | mit Docker: Gateway-Collector im Telemetrie-Compose (`deploy/telemetry`, umgesetzt #5); ohne Docker: `otelcol-contrib`-Binary (geplant) | – (SigNoz-Collector im Cluster) |
 | SigNoz (lokal) | 8080 | Telemetrie-Compose (`deploy/telemetry`, ADR-13), nur an `127.0.0.1` | – (gehostet bzw. im Cluster) |
 | OTel-Java-Agent | – | einmal nach `.otel/` heruntergeladen, per `-javaagent` | im Image `/otel/opentelemetry-javaagent.jar` |

@@ -21,7 +21,7 @@ Das Compose der Anwendung war dafür überflüssig, musste aber parallel gepfleg
 - `docker-compose.yaml` der Anwendung entfällt. `Dockerfile` und `deploy/build-images.sh` bleiben für die Helm-Images.
 - Telemetrie-Services haben ein **eigenes** Compose, getrennt von der Anwendung (`deploy/telemetry`, #5: SigNoz und Gateway-Collector, ADR-13; Langfuse folgt mit #11).
 - LiteLLM und Ollama gehören nicht mehr zum Repository-Start: Für die Gegner-KI mit LLM zeigt `LLM_BASE_URL` auf eine
-  LiteLLM-Instanz (lokal per `pip`, geplant, oder extern). Standard ist `http://localhost:4000/v1`.
+  LiteLLM-Instanz (seit ADR-15 das Gateway des Workshop-Clusters). Standard ist `http://localhost:4000/v1`.
 
 ### Betrachtete Alternativen
 
@@ -35,8 +35,8 @@ Das Compose der Anwendung war dafür überflüssig, musste aber parallel gepfleg
 - Weniger zu pflegen und zu dokumentieren.
 
 ### Negativ
-- Der Ein-Kommando-Start von LiteLLM und Ollama entfällt. Für LLM-Experimente muss LiteLLM separat laufen
-  (`pip install 'litellm[proxy]'`, `deploy/litellm-config.yaml`); Ollama entfällt seit ADR-14.
+- Der Ein-Kommando-Start von LiteLLM und Ollama entfällt. Für LLM-Experimente nutzt enemy-ai das LiteLLM des
+  Workshop-Clusters (ADR-15); Ollama entfällt seit ADR-14.
 - Wer Docker nutzen will, muss die Images selbst starten (`deploy/build-images.sh`) oder Helm verwenden.
 
 ### Neutral

@@ -24,7 +24,7 @@ flowchart LR
         H2[("H2-Datei-DB<br/>./data/")]
         AI["enemy-ai :8083"]
         SW["player-swarm<br/>(optional, --swarm)"]
-        LL["LiteLLM :4000<br/>(pip, geplant)"]
+        LL["LiteLLM :4000<br/>(SSH-Tunnel ins Workshop-Cluster)"]
         COL["otelcol-contrib<br/>:4317/:4318 (geplant)"]
         LOGS[/"logs/*.log, .run/*.pid"/]
     end
@@ -32,7 +32,7 @@ flowchart LR
     SW --> GS
     GS --> PH & AI & LB
     LB --> H2
-    AI -. "nur mit LLM" .-> LL --> CLOUD["Anthropic / Heribert"]
+    AI -. "nur mit LLM" .-> LL --> CLOUD["DeepSeek"]
     VS -. "OTLP direkt (bereitgestellt)" .-> SZ
     VS -. "OTLP :4317 (lokal)" .-> TC["Telemetrie-Compose (Docker):<br/>Gateway-Collector → SigNoz"]
     VS -. "OTLP über Collector ohne Docker (geplant)" .-> COL
@@ -70,7 +70,7 @@ Ohne Telemetrie-Backend und mit regelbasiertem Gegner (`GAME_LLM_ENABLED=false`)
 - **Speicher:** `JAVA_OPTS` (Standard `-Xmx256m`) je JVM. In der Sandbox dauerte `run-local.sh` mit warmem
   Gradle-Cache rund 1–1,5 Minuten (je Service 20–30 s Startzeit mit Agent; physics, leaderboard und enemy-ai parallel,
   danach game-server).
-- **LLM-Kosten:** Echte Cloud-Modelle kosten Geld – Runaway deckeln, LiteLLM `max_budget` (geplant).
+- **LLM-Kosten:** Echte Cloud-Modelle kosten Geld – Runaway deckeln, Budget-Deckel in enemy-ai (geplant).
 - **Lokal mit Docker für die Backends:** Läuft der Rechner mit Docker, startet `deploy/telemetry/docker-compose.yaml`
   SigNoz mit vorgeschaltetem Collector; die JVM-Prozesse exportieren an `localhost:4317` (Telemetrie-Betriebsart
   „lokal“, [07-05](07-05-Telemetrie-Fluss.md)). Langfuse folgt (#11).

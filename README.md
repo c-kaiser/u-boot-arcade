@@ -51,9 +51,10 @@ cp .env.example .env     # Standard: ohne Telemetrie, regelbasierte Gegner
 - Logs unter `logs/<service>.log`, PID-Dateien unter `.run/`, Leaderboard-Datenbank (H2) unter `data/`
 - Der OTel-Java-Agent wird beim ersten Start nach `.otel/` geladen (braucht Zugriff auf GitHub-Releases)
 - Speicher pro JVM über `JAVA_OPTS` (Standard `-Xmx256m`), andere Konfigurationsdatei per `ENV_FILE=… ./run-local.sh`
-- Gegner-KI mit LLM: eine LiteLLM-Instanz mit [deploy/litellm-config.yaml](deploy/litellm-config.yaml) starten
-  (z. B. `pip install 'litellm[proxy]'`, `litellm --config deploy/litellm-config.yaml --port 4000`) und `LLM_*` in `.env`
-  setzen. Echte Cloud-Modelle kosten Geld.
+- Gegner-KI mit LLM: Das LiteLLM-Gateway stellt das Workshop-Cluster (ADR-15), eine eigene Instanz gibt es nicht.
+  Von außen per SSH-Tunnel über den Coder-Workspace erreichbar:
+  `ssh -N -L 4000:litellm-service.litellm:4000 coder.<workspace>`. Die Defaults (`http://localhost:4000/v1`,
+  Modell `eu.deepseek-v4.1-flash`) passen dazu. Echte Cloud-Modelle kosten Geld.
 
 Ein Docker Compose für die Anwendung gibt es bewusst nicht (ADR-11).
 
@@ -115,7 +116,7 @@ docker compose -f deploy/telemetry/docker-compose.yaml down    # stoppen (mit -v
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP-Ziel (SigNoz oder lokaler Collector), z. B. `http://localhost:4317` |
 | `OTEL_EXPORTER_OTLP_HEADERS` | Zugangsdaten für gehostete Ziele, z. B. `signoz-ingestion-key=…` |
 | `OTEL_TRACES_SAMPLER`, `OTEL_TRACES_SAMPLER_ARG` | Sampling – bei 20 Traces/s für gehostetes SigNoz empfohlen: `parentbased_traceidratio`, `0.1` |
-| `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | OpenAI-kompatibler Endpunkt für die Gegner-KI (LiteLLM) |
+| `LLM_BASE_URL`, `LLM_MODEL`, `LLM_API_KEY` | OpenAI-kompatibler Endpunkt für die Gegner-KI (LiteLLM im Workshop-Cluster) |
 
 Langfuse nimmt OTLP **nur per HTTP** an (`https://<host>/api/public/otel`, Basic-Auth mit Public/Secret Key).
 Geplant ist, den lokalen Collector als Verteiler zu nutzen: alles an SigNoz, nur die GenAI-Spans an Langfuse (ADR-09, #11).
@@ -125,7 +126,7 @@ Geplant ist, den lokalen Collector als Verteiler zu nutzen: alles an SigNoz, nur
 ### Traces
 - **`game.tick`** (20 pro Sekunde): Physik-Aufruf, `game.broadcast`, asynchron die Gegner-Entscheidungen
   und Leaderboard-Einträge (`INSERT` als DB-Span; die Chaos-Verzögerung verlängert den HTTP-Span `POST /api/scores`)
-- **`chat enemy-brain`** in `enemy-ai`: GenAI-Span mit `gen_ai.usage.input_tokens`/`output_tokens` und Kosten.
+- **`chat eu.deepseek-v4.1-flash`** in `enemy-ai`: GenAI-Span mit `gen_ai.usage.input_tokens`/`output_tokens` und Kosten.
   Darunter der HTTP-Span zu LiteLLM und dessen eigene Spans, die Trace-ID wird durchgereicht.
 
 ### Eigene Metriken (Auswahl)
@@ -167,7 +168,7 @@ game-server/      Tick-Loop, WebSocket /ws, Admin-API, Frontend (src/main/resour
 enemy-ai/         POST /api/decide – LLM über LiteLLM, sonst regelbasiert
 leaderboard/      POST /api/scores, GET /api/scores/top – H2-Datei-DB über JDBC
 player-swarm/     Lastgenerator mit echten WebSocket-Clients
-deploy/           LiteLLM-Konfiguration, Helm-Chart, Build-Skript
+deploy/           Helm-Chart, Telemetrie-Compose, Build-Skript
 run-local.sh      Start ohne Docker (JVM-Prozesse), stop-local.sh beendet sie
 arc-doc/          Architekturdokumentation nach arc42
 IDEEN.md          Ideen: Störungen (Chaos), Ideen für Teams

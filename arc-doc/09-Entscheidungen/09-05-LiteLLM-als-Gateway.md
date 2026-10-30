@@ -1,6 +1,6 @@
 # ADR-05: LiteLLM als Gateway für die Gegner-KI
 
-**Status:** accepted (umgesetzt in `deploy/litellm-config.yaml` und den Helm-Werten; Workshop-Modelle offen)
+**Status:** accepted; das Gateway stellt seit [ADR-15](09-15-LiteLLM-aus-dem-Workshop-Cluster.md) das Workshop-Cluster
 
 **Datum:** 2026-10-22 <!-- ABGELEITET: Datum des Commits, in dem die Entscheidung im Code sichtbar wird -->
 
@@ -11,17 +11,18 @@ OpenAI-kompatibel) laufen. Der Veranstalter wünscht gezieltes Experimentieren m
 
 ## Entscheidung
 
-enemy-ai spricht nur das OpenAI-kompatible Chat-API (`LLM_BASE_URL`, Modellalias `enemy-brain`). Welches echte
-Modell dahinter steckt, legt `deploy/litellm-config.yaml` fest (heute `anthropic/claude-haiku-4-5`;
-lokale Modelle sind seit ADR-14 ausgeschlossen). LiteLLM exportiert eigene OTel-Spans.
+enemy-ai spricht nur das OpenAI-kompatible Chat-API (`LLM_BASE_URL`, `LLM_MODEL`) und erreicht die Modelle über
+LiteLLM. Ursprünglich war eine eigene Instanz mit `deploy/litellm-config.yaml` und dem Alias `enemy-brain` vorgesehen;
+seit ADR-15 nutzt enemy-ai das Gateway des Workshop-Clusters, Modell `eu.deepseek-v4.1-flash`. Lokale Modelle sind
+seit ADR-14 ausgeschlossen.
 
 ## Konsequenzen
 
 ### Positiv
 - Modellwechsel ohne Codeänderung; einheitliche Token-/Kosten-Telemetrie.
-- Spätere Budgetgrenze zentral möglich (`max_budget`, geplant).
+- Budgetgrenze zentral im Gateway möglich – liegt seit ADR-15 beim Betreiber.
 
 ### Negativ
-- Zusätzlicher Prozess; seit ADR-11 kein Compose-Profil mehr, ohne Docker per `pip install 'litellm[proxy]'` (geplant, nicht erprobt).
+- Abhängigkeit vom Gateway; ohne Erreichbarkeit fällt enemy-ai auf `BotBrain` zurück.
 - Alternativ ist enemy-ai direkt gegen einen OpenAI-kompatiblen Endpunkt nutzbar – dann fehlen LiteLLM-Spans/-Budget.
-- Heribert noch nicht eingetragen. <!-- TODO: Bitte ergänzen, sobald API-Art bekannt -->
+- Ob „Heribert“ dieses Gateway ist, ist offen. <!-- TODO: Bitte ergänzen -->

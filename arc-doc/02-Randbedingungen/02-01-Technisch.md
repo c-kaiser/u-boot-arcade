@@ -2,7 +2,7 @@
 
 | Randbedingung | Beschreibung | Hintergrund/Motivation | Verhandelbar |
 |--------------|-------------|----------------------|--------------|
-| Kein Docker im Workshop | Services laufen im Workshop direkt als JVM-Prozesse im Browser-VS-Code | Vorgabe der Workshop-Umgebung. Folge: Start per `run-local.sh` als JVM-Prozesse (umgesetzt); das Leaderboard nutzt eine eingebettete H2-Datei-DB (ADR-07); LiteLLM und Collector brauchen Alternativen ohne Container (`pip install`, Binary), **geplant** | nein |
+| Kein Docker im Workshop | Services laufen im Workshop direkt als JVM-Prozesse im Browser-VS-Code | Vorgabe der Workshop-Umgebung. Folge: Start per `run-local.sh` als JVM-Prozesse (umgesetzt); das Leaderboard nutzt eine eingebettete H2-Datei-DB (ADR-07); LiteLLM stellt das Workshop-Cluster (ADR-15); der Collector braucht eine Alternative ohne Container, **geplant** | nein |
 | Gehostete Zielsysteme | SigNoz, OpenTelemetry Demo und Langfuse werden vom Veranstalter bereitgestellt; Adressen und Zugangsdaten noch unbekannt <!-- TODO: Bitte ergänzen --> | Folge: Ziele nur per Umgebungsvariablen konfigurierbar, keine Adressen im Code | nein |
 | Langfuse-OTLP nur per HTTP | `https://<host>/api/public/otel`, Basic-Auth (Public/Secret Key), Header `x-langfuse-ingestion-version=4`; kein gRPC | Eigenschaft von Langfuse. Folge: Fan-out über Collector (**geplant**) | nein |
 | LLM-Zugang | Anthropic und „Heribert“ (Endpunkt-Art unklar, vermutlich OpenAI-kompatibel <!-- TODO: Bitte ergänzen -->) | Vom Veranstalter bereitgestellt. Folge: Gegner-KI spricht OpenAI-kompatible API, LiteLLM übersetzt | teilweise |

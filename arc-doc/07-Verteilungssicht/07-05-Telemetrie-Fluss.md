@@ -16,7 +16,7 @@ flowchart LR
     subgraph App["Services mit OTel-Java-Agent 2.32.0"]
         GS["game-server"]
         PH["physics"]
-        AI["enemy-ai<br/>GenAI-Spans chat enemy-brain"]
+        AI["enemy-ai<br/>GenAI-Spans chat eu.deepseek-v4.1-flash"]
         LB["leaderboard"]
         SW["player-swarm"]
     end

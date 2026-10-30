@@ -17,7 +17,7 @@ flowchart LR
         SW["Deployment player-swarm<br/>10 Spieler/Pod"] --> SGS
         SEC[["Secret: llm api-key"]]
     end
-    AI -- "llm.baseUrl" --> LL["LiteLLM (außerhalb des Charts)"]
+    AI -- "llm.baseUrl" --> LL["LiteLLM (Namespace litellm, außerhalb des Charts)"]
     NS -. "OTLP gRPC otel.endpoint" .-> SZ["SigNoz-Collector im Cluster"]
 ```
 
@@ -31,5 +31,5 @@ flowchart LR
 - **Ingress:** optional; Annotationen für ingress-nginx setzen WebSocket-Timeouts auf 3600 s.
 - **Leaderboard-Daten:** H2-Datei in einem `emptyDir` an `/data`, bewusst flüchtig. `leaderboard.replicas` muss 1 bleiben,
   da jede Replica ihre eigene Datei hätte.
-- **LiteLLM/Modell** sind nicht Teil des Charts. <!-- TODO: Bitte ergänzen – wo läuft LiteLLM im Cluster-Szenario? -->
+- **LiteLLM/Modell** sind nicht Teil des Charts: Das Workshop-Cluster stellt LiteLLM als `litellm-service.litellm:4000` (ADR-15).
 - Ob das Cluster-Szenario im Workshop überhaupt genutzt wird, ist offen. <!-- TODO: Bitte ergänzen -->

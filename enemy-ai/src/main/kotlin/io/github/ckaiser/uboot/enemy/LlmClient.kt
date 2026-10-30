@@ -18,7 +18,7 @@ import java.time.Duration
 @ConfigurationProperties("llm")
 data class LlmProperties(
     val baseUrl: String = "http://localhost:4000/v1",
-    val model: String = "enemy-brain",
+    val model: String = "eu.deepseek-v4.1-flash",
     val apiKey: String = "sk-local",
     val timeoutMs: Long = 4000,
     val maxTokens: Int = 60,

@@ -57,7 +57,7 @@ Histogramme setzen eigene Bucket-Grenzen über `setExplicitBucketBoundariesAdvic
 - Metriken `gen_ai.client.token.usage` (`gen_ai.token.type`) und `gen_ai.client.operation.duration` (s).
 - Darunter erzeugt der Agent den HTTP-Span zu LiteLLM und reicht die Trace-ID weiter; LiteLLM exportiert eigene
   Spans (`callbacks: ["otel"]`, OTLP/HTTP).
-- `gen_ai.provider.name` ist fest `openai` (Protokoll), auch wenn hinter LiteLLM Anthropic steckt.
+- `gen_ai.provider.name` ist fest `openai` (Protokoll), auch wenn hinter LiteLLM DeepSeek oder Anthropic steckt.
   <!-- TODO: Bitte ergänzen – gewollt oder aus gen_ai.response.model ableiten? -->
 
 **Geplant (nicht umgesetzt):** für Langfuse `gen_ai.prompt`/`gen_ai.completion` bzw.

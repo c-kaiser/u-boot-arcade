@@ -9,10 +9,10 @@ management:
       exposure:
         include: health
 
-# OpenAI-kompatibler Endpunkt, typischerweise LiteLLM
+# OpenAI-kompatibler Endpunkt: LiteLLM im Workshop-Cluster, lokal per SSH-Tunnel auf localhost:4000 (ADR-15)
 llm:
   base-url: ${LLM_BASE_URL:http://localhost:4000/v1}
-  model: ${LLM_MODEL:enemy-brain}
+  model: ${LLM_MODEL:eu.deepseek-v4.1-flash}
   api-key: ${LLM_API_KEY:sk-local}
   timeout-ms: ${LLM_TIMEOUT_MS:4000}
   max-tokens: ${LLM_MAX_TOKENS:60}

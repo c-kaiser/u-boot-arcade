@@ -44,7 +44,7 @@ damit Teilnehmende die Folgen in SigNoz und Langfuse wiederfinden.
 - Alle Module kompilieren (`./gradlew build`). Die Spring-Services laufen per `run-local.sh` (Spiel, Leaderboard, Schwarm,
   OTLP-Export geprüft); Helm und der LLM-Pfad sind noch nicht gestartet (R1).
 - Weitere geplante Punkte: Kostenbremse für echte LLMs, Langfuse-Attribute (Prompt/Completion, Session-ID),
-  Anthropic- und Heribert-Anbindung in LiteLLM, optional Jev als dritte Gegner-KI-Variante.
+  optional Jev als dritte Gegner-KI-Variante.
   Details in [Kapitel 11](../11-Risiken/) bzw. als GitHub Issues.
 
 ## Verweise

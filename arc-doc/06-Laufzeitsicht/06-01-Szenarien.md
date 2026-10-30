@@ -120,7 +120,7 @@ sequenceDiagram
     else useLlm = true
         D->>D: Prompt aus LlmProtocol
         D->>C: chat(messages) [Runaway-Chaos: 8 Runden]
-        C->>X: POST /chat/completions (Span chat enemy-brain)
+        C->>X: POST /chat/completions (Span chat eu.deepseek-v4.1-flash)
         alt Antwort ok und JSON parsbar
             X-->>C: Text + usage
             C-->>D: ChatResult (Tokens, Kosten als Metrik)
