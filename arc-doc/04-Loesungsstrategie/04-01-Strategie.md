@@ -7,7 +7,7 @@
 | Programmiersprache | Kotlin 2.2.21, Bytecode Java 21 (`jvmTarget 21`, siehe ADR-08) | Kompakter Code, Data Classes für das Spielmodell; JDK 21 für virtuelle Threads. <!-- ABGELEITET: Aus Code erkannt, bitte verifizieren --> |
 | Framework | Spring Boot 3.5.16 (Web, WebSocket, RestClient, JDBC) | Vom OTel-Java-Agent vollständig instrumentiert, bekannter Stack. <!-- ABGELEITET --> |
 | Telemetrie | OTel-Java-Agent 2.32.0 (Zero-Code) + `opentelemetry-api` 1.66.0 über `GlobalOpenTelemetry` | HTTP, JDBC, Logs, JVM ohne Codeänderung; eigener Code nur für fachliche Spans/Metriken und GenAI-Telemetrie |
-| LLM-Anbindung | OpenAI-kompatible API, LiteLLM als Gateway (Modellalias `enemy-brain`) | Modell wechseln ohne Codeänderung (Ollama lokal, Anthropic, Heribert); LiteLLM liefert eigene Spans und Kosten |
+| LLM-Anbindung | OpenAI-kompatible API, LiteLLM als Gateway (Modellalias `enemy-brain`) | Modell wechseln ohne Codeänderung (Anthropic, Heribert; kein lokales Modell, ADR-14); LiteLLM liefert eigene Spans und Kosten |
 | Datenbank | H2 als eingebettete Datei-DB über JDBC, in allen Verteilungsvarianten (ADR-07) | JDBC-Spans durch den Agent; keine DB-Infrastruktur, weil im Workshop kein Docker; nur ein DB-Dialekt |
 | Build | Gradle Wrapper 9.6.0, Multi-Projekt | Läuft in allen Zielumgebungen mit JDK ≥ 21, ohne weitere Installation |
 | Betrieb | JVM-Prozesse ohne Docker (`run-local.sh`, lokal und in Codespaces) oder Helm-Chart (Kubernetes), kein Compose für die Anwendung (ADR-11); Telemetrie-Ziel nur per Konfiguration (ADR-10) | Workshop-Umgebung ohne Docker; lokal SigNoz per Telemetrie-Compose (`deploy/telemetry`, ADR-13), Langfuse geplant (#11) |
@@ -44,7 +44,7 @@ Details: [Kapitel 5](../05-Bausteinsicht/), Entscheidungen in [Kapitel 9](../09-
 | Einfache Inbetriebnahme | Gradle Wrapper, nur JDK ≥ 21 nötig; Konfiguration nur über Umgebungsvariablen; Dev Container für Codespaces | umgesetzt |
 | Einfache Inbetriebnahme ohne Docker | `run-local.sh`/`stop-local.sh` mit OTel-Agent, `.env`, Logs nach `logs/`; Standard „ohne Telemetrie“ (ADR-10) | umgesetzt; LiteLLM per `pip` **geplant** |
 | Kostenkontrolle LLM | Regelbasierter Fallback, LLM per Schalter (Default aus), `max_tokens` 60, Kostenmetrik `enemy_ai.llm.cost`, LiteLLM als zentrale Stelle | umgesetzt |
-| Kostenkontrolle LLM (Bremse) | Entscheidungsintervall 5–10 s bei LLM, Runaway-Chaos bei Cloud-Modellen deckeln, LiteLLM `max_budget` | **geplant** |
+| Kostenkontrolle LLM (Bremse) | Runaway-Chaos bei Cloud-Modellen deckeln, LiteLLM `max_budget`; Entscheidungsintervall bleibt bei ≈ 1 s | **geplant** |
 | Flüssiges Spiel | Fester Tick (50 ms) im eigenen Thread; Gegner-KI und Leaderboard asynchron; Broadcast pro Client über virtuelle Threads, alte Frames werden verworfen (`game.websocket.frames_dropped`); Timeouts an allen HTTP-Clients | umgesetzt |
 | Datenvolumen | Sampling `parentbased_traceidratio` per Umgebungsvariable | konfigurierbar, nicht voreingestellt |
 

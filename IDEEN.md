@@ -32,6 +32,6 @@ wieder als langer DB-Span sichtbar.
 - Dashboard „Brücke“: Tiefe, Druck und Rumpf je Boot, dazu Ereignisse als Zeitreihe
 - Alert auf `sub.boiler.pressure > 9.5` und auf p95 von `game.tick.duration > 50 ms`
 - SLO: 99 % der Ticks unter 50 ms. Welcher Chaos-Schalter reißt es?
-- Kosten pro Gegner und Stunde aus `enemy_ai.llm.cost`. Lokales Modell und Cloud-Modell vergleichen
+- Kosten pro Gegner und Stunde aus `enemy_ai.llm.cost`. Verschiedene Cloud-Modelle vergleichen
 - Langfuse an LiteLLM hängen und die Qualität der Gegner-Entscheidungen bewerten
 - kAgent fragen: „Warum ruckelt das Spiel?“, während Physik-Latenz aktiv ist

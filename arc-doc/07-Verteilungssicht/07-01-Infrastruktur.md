@@ -28,7 +28,7 @@ flowchart LR
     end
     SW --> GS
     GS --> PH & AI & LB
-    AI --> LL["LiteLLM"] --> M["Modell: Ollama / Anthropic / Heribert"]
+    AI --> LL["LiteLLM"] --> M["Modell: Anthropic / Heribert"]
     Knoten -. OTLP .-> O["SigNoz (gehostet oder lokal per Telemetrie-Compose)"]
 ```
 
@@ -61,7 +61,7 @@ flowchart LR
 | `enemy-ai` | 8083 | JVM-Prozess | Deployment 1 Replica, API-Key aus Secret |
 | `player-swarm` | – | JVM-Prozess (optional, `--swarm`) | Deployment, `playersPerPod` 10 |
 | LiteLLM | 4000 | `pip install 'litellm[proxy]'` mit `deploy/litellm-config.yaml` (geplant) oder extern | nicht im Chart, `llm.baseUrl` zeigt auf externe Instanz |
-| Modell | – | Ollama nativ (`qwen2.5:3b`), Anthropic / Heribert (Cloud) | extern |
+| Modell | – | Anthropic / Heribert (Cloud); kein lokales Modell (ADR-14) | extern |
 | OTel Collector | 4317/4318 | mit Docker: Gateway-Collector im Telemetrie-Compose (`deploy/telemetry`, umgesetzt #5); ohne Docker: `otelcol-contrib`-Binary (geplant) | – (SigNoz-Collector im Cluster) |
 | SigNoz (lokal) | 8080 | Telemetrie-Compose (`deploy/telemetry`, ADR-13), nur an `127.0.0.1` | – (gehostet bzw. im Cluster) |
 | OTel-Java-Agent | – | einmal nach `.otel/` heruntergeladen, per `-javaagent` | im Image `/otel/opentelemetry-javaagent.jar` |

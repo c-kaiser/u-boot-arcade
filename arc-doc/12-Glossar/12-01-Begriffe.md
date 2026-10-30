@@ -58,7 +58,6 @@
 | SigNoz | Observability-Plattform für Traces, Metriken und Logs | Lokal im Telemetrie-Compose oder gehostet |
 | Langfuse | LLM-Observability-Plattform (Prompts, Completions, Kosten, Sessions); OTLP nur per HTTP | **geplant** |
 | LiteLLM | Proxy mit OpenAI-kompatibler API vor verschiedenen LLM-Anbietern, mit Kosten-Tracking und Budget | Gateway der Gegner-KI |
-| Ollama | Laufzeit für lokale Modelle (hier `qwen2.5:3b`) | nativ neben LiteLLM, Alias `enemy-brain` |
 | GenAI-Semantic-Conventions | OTel-Namenskonventionen für LLM-Telemetrie (`gen_ai.*`) | Span `chat <model>`, `gen_ai.client.token.usage` |
 | Sampling | Nur ein Teil der Traces wird exportiert (`parentbased_traceidratio`) | Gegen 20 Traces/s bei gehostetem SigNoz |
 | Overrun | Tick dauert länger als 50 ms (`game.tick.overruns`) | Zeichen für Überlast/Chaos |

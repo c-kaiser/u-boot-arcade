@@ -60,7 +60,7 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 
 ## QS-10: Modellwechsel
 
-**Stimulus:** Wechsel von Ollama auf Anthropic oder Heribert.
+**Stimulus:** Wechsel von Anthropic auf Heribert oder auf ein anderes Anthropic-Modell.
 **Reaktion:** Eintrag in `deploy/litellm-config.yaml` bzw. `LLM_MODEL`/`LLM_BASE_URL` ändern.
 **Metrik:** Keine Codeänderung in enemy-ai.
 

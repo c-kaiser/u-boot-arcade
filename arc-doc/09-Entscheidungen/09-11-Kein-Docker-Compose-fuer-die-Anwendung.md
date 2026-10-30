@@ -36,7 +36,7 @@ Das Compose der Anwendung war dafür überflüssig, musste aber parallel gepfleg
 
 ### Negativ
 - Der Ein-Kommando-Start von LiteLLM und Ollama entfällt. Für LLM-Experimente muss LiteLLM separat laufen
-  (`pip install 'litellm[proxy]'`, `deploy/litellm-config.yaml`), Ollama nativ.
+  (`pip install 'litellm[proxy]'`, `deploy/litellm-config.yaml`); Ollama entfällt seit ADR-14.
 - Wer Docker nutzen will, muss die Images selbst starten (`deploy/build-images.sh`) oder Helm verwenden.
 
 ### Neutral

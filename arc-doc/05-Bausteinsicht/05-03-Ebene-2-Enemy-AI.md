@@ -33,7 +33,7 @@ flowchart LR
 - Fallback auf die regelbasierte `BotBrain` hält das Spiel auch ohne LLM spielbar; die Ursache steht im
   `outcome` der Antwort und in der Metrik `enemy_ai.decisions`.
 - `LlmClient` spricht nur das OpenAI-kompatible Chat-Completions-Format. Welches Modell dahinter steckt, entscheidet
-  LiteLLM über den Alias (`enemy-brain` → Ollama `qwen2.5:3b`, `enemy-brain-cloud` → Anthropic `claude-haiku-4-5`).
+  LiteLLM über den Alias (`enemy-brain` → Anthropic `claude-haiku-4-5`; kein lokales Modell, ADR-14).
 
 ### Enthaltene Bausteine
 
@@ -49,7 +49,7 @@ flowchart LR
 
 - **Langfuse-Tauglichkeit:** `gen_ai.prompt`/`gen_ai.completion` bzw. `langfuse.observation.input/output`,
   `langfuse.session.id` pro Spielrunde/Gegner und `gen_ai.usage.cost` am Span setzen – heute nicht umgesetzt.
-- **Kosten-Bremse:** Entscheidungsintervall bei LLM-Betrieb 5–10 s (heute alle 20 Ticks ≈ 1 s, gesteuert vom
-  `game-server`), Runaway bei Cloud-Modellen deckeln, LiteLLM `max_budget`.
+- **Kosten-Bremse:** Runaway bei Cloud-Modellen deckeln, LiteLLM `max_budget`. Das Entscheidungsintervall
+  (alle 20 Ticks ≈ 1 s, gesteuert vom `game-server`) bleibt auch bei LLM-Betrieb unverändert ([08-06](../08-Konzepte/08-06-LLM-Kostenkontrolle.md)).
 - **Modelle:** Anthropic (kleines Modell) und Heribert in `deploy/litellm-config.yaml`. <!-- TODO: Bitte ergänzen – Art des Heribert-Endpunkts -->
 - **Optional Jev (TypeSafe „System One“)** als dritte Variante (regelbasiert / LLM / Jev), nur bei Zugang.
