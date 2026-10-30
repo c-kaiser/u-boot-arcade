@@ -60,8 +60,8 @@ Kurzformat (Q42-Stil). Zahlen ohne Beleg sind als TODO markiert.
 
 ## QS-10: Modellwechsel
 
-**Stimulus:** Wechsel von Anthropic auf Heribert oder auf ein anderes Anthropic-Modell.
-**Reaktion:** Eintrag in `deploy/litellm-config.yaml` bzw. `LLM_MODEL`/`LLM_BASE_URL` ändern.
+**Stimulus:** Wechsel von DeepSeek auf ein anderes Modell des Workshop-Gateways (z. B. `claude-haiku-5-5`).
+**Reaktion:** `LLM_MODEL` bzw. `LLM_BASE_URL` ändern.
 **Metrik:** Keine Codeänderung in enemy-ai.
 
 ## QS-11: Testbarkeit der Spiellogik

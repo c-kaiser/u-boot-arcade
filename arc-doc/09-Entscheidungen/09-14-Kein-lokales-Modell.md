@@ -1,6 +1,6 @@
 # ADR-14: Kein lokales Modell für die Gegner-KI
 
-**Status:** accepted
+**Status:** accepted; Modellwahl und eigene LiteLLM-Konfiguration ersetzt durch [ADR-15](09-15-LiteLLM-aus-dem-Workshop-Cluster.md)
 
 **Datum:** 2026-10-26
 

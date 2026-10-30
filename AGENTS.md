@@ -12,7 +12,7 @@ Die Architektur ist in **[arc-doc/](arc-doc/)** nach arc42 dokumentiert.
 ## Leitplanken
 
 - Vor dem Abschluss einer Änderung `./gradlew build` ausführen und das Ergebnis ehrlich berichten.
-- Echte LLM-Modelle (Anthropic, Heribert) kosten Geld: keine Schleifen, Lasttests oder Chaos-Runaway gegen Cloud-Modelle
+- Echte LLM-Modelle (LiteLLM im Workshop-Cluster) kosten Geld: keine Schleifen, Lasttests oder Chaos-Runaway gegen Cloud-Modelle
   laufen lassen, ohne vorher zu fragen. Für Tests den regelbasierten Gegner (`GAME_LLM_ENABLED=false`) nutzen.
 - `opentelemetry-api` in `build.gradle.kts` muss zur Version des OTel-Java-Agents passen. Die Agent-Version steht im
   `Dockerfile` und in `run-local.sh` – alle drei nur gemeinsam ändern.

@@ -36,7 +36,6 @@
 | Schwarm | `player-swarm`: Lastgenerator mit echten WebSocket-Clients. |
 | Heribert | Vom Veranstalter bereitgestellter LLM-Zugang; Art des Endpunkts unklar, vermutlich OpenAI-kompatibel. <!-- TODO: Bitte ergänzen --> |
 | Jev | „System One“-Modell von TypeSafe mit eigener, nicht OpenAI-kompatibler API; optionale dritte Gegner-KI-Variante (**geplant**, nur mit Zugang). |
-| `enemy-brain` | Modellalias in LiteLLM, den die Gegner-KI aufruft; welches echte Modell dahinter steckt, entscheidet nur die LiteLLM-Konfiguration. |
 | Workshop-Umgebung | Codespace bzw. Browser-VS-Code pro Person (Anwendung ohne Docker per `run-local.sh`), ggf. ein Kubernetes-Cluster; dazu gehostetes SigNoz, OTel Demo und Langfuse. |
 | Telemetrie-Betriebsart | Wohin die Telemetrie geht, gewählt nur in `.env`: *ohne Telemetrie* (Standard, `OTEL_*_EXPORTER=none`), *lokal* (Telemetrie-Compose auf dem eigenen Rechner) oder *bereitgestellt* (gehostete Ziele mit Zugangsdaten), siehe ADR-10. Nicht zu verwechseln mit der Verteilungsvariante. |
 | Verteilungsvariante | Wie die Services betrieben werden: ohne Docker (`run-local.sh`, lokal oder in Codespaces) oder Kubernetes (Helm), siehe Kapitel 7. Unabhängig von der Telemetrie-Betriebsart. |
@@ -57,7 +56,7 @@
 | Foundry / `casting.yaml` | Werkzeug von SigNoz (`foundryctl forge`), das aus einer `casting.yaml` die Compose-Dateien erzeugt | `deploy/telemetry/signoz/`, ADR-13 |
 | SigNoz | Observability-Plattform für Traces, Metriken und Logs | Lokal im Telemetrie-Compose oder gehostet |
 | Langfuse | LLM-Observability-Plattform (Prompts, Completions, Kosten, Sessions); OTLP nur per HTTP | **geplant** |
-| LiteLLM | Proxy mit OpenAI-kompatibler API vor verschiedenen LLM-Anbietern, mit Kosten-Tracking und Budget | Gateway der Gegner-KI |
+| LiteLLM | Proxy mit OpenAI-kompatibler API vor verschiedenen LLM-Anbietern, mit Kosten-Tracking und Budget | Gateway der Gegner-KI, gestellt vom Workshop-Cluster (ADR-15) |
 | GenAI-Semantic-Conventions | OTel-Namenskonventionen für LLM-Telemetrie (`gen_ai.*`) | Span `chat <model>`, `gen_ai.client.token.usage` |
 | Sampling | Nur ein Teil der Traces wird exportiert (`parentbased_traceidratio`) | Gegen 20 Traces/s bei gehostetem SigNoz |
 | Overrun | Tick dauert länger als 50 ms (`game.tick.overruns`) | Zeichen für Überlast/Chaos |

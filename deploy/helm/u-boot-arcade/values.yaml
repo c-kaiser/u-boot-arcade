@@ -26,9 +26,9 @@ game:
   tickMillis: 50
 
 llm:
-  # OpenAI-kompatibler Endpunkt (LiteLLM)
-  baseUrl: http://litellm:4000/v1
-  model: enemy-brain
+  # OpenAI-kompatibler Endpunkt: LiteLLM des Workshop-Clusters (ADR-15)
+  baseUrl: http://litellm-service.litellm:4000/v1
+  model: eu.deepseek-v4.1-flash
   apiKey: sk-local
   timeoutMs: 8000
   priceInputPerMtok: 3.0
